@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  SUPERADMIN
+  ADMIN
+}
+
+enum StatusTransaction {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum StatusLoan {
+  ACTIVE
+  INACTIVE
+  CANCELED
+  SETTLED
+}
+
+enum TypeCapitalLedger {
+  INJECTION
+  WITHDRAWAL
+  LOAN
+  OPS
+}
+
+model User {
+  id            String    @id @default(uuid())
+  full_name     String
+  username      String
+  email         String    @unique
+  password_hash String    @db.Text
+  phone_number  String?
+  birthday      DateTime?
+  address       String?   @db.Text
+  regency       String?
+  province      String?
+  zip_code      String?
+  images        String?
+  access_token  String?   @db.Text
+  role          UserRole  @default(ADMIN)
+  isActive      Boolean   @default(true)
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  customers              Customer[]
+  products               Product[]
+  capital_ledgers        CapitalLedger[]
+  loan_accounts          LoanAccount[]
+  transactions_processed Transaction[]   @relation("processed")
+  transactions_approved  Transaction[]   @relation("approved")
+
+  @@map("users")
+}
+
+model Customer {
+  id           String  @id @default(uuid())
+  user_id      String
+  full_name    String
+  phone_number String? @default("082100000000")
+  address      String
+  regency      String? @default("Data masih kosong")
+  province     String? @default("Data masih kosong")
+  zip_code     String? @default("Data masih kosong")
+  job          String? @default("Data masih kosong")
+  isActive     Boolean @default(true)
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  loan_accounts LoanAccount[]
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("customers")
+}
+
+model Product {
+  id           String    @id @default(uuid())
+  user_id      String
+  product_name String
+  slug         String?   @unique
+  description  String    @db.Text
+  price        Decimal
+  isActive     Boolean   @default(true)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted_at   DateTime?
+
+  loan_accounts LoanAccount[]
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("products")
+}
+
+model CapitalLedger {
+  id              String            @id @default(uuid())
+  created_by_id   String
+  amount          Decimal
+  type            TypeCapitalLedger @default(INJECTION)
+  description     String            @db.Text
+  refrence_number String?
+  notes           String?           @db.Text
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  user User @relation(fields: [created_by_id], references: [id])
+
+  @@map("capital_ledgers")
+}
+
+model LoanAccount {
+  id               String   @id @default(uuid())
+  no_rekening      String   @unique
+  marketing_id     String
+  customer_id      String
+  product_id       String
+  principal_amount Decimal
+  rate_percent     Decimal
+  rate_amount      Decimal
+  start_date       DateTime
+  period_start     DateTime
+
+  current_debt_principal Decimal
+  current_debt_interest  Decimal
+
+  status StatusLoan @default(ACTIVE)
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  transactions Transaction[]
+
+  user     User     @relation(fields: [marketing_id], references: [id])
+  customer Customer @relation(fields: [customer_id], references: [id])
+  product  Product  @relation(fields: [product_id], references: [id])
+
+  @@map("loan_accounts")
+}
+
+model Transaction {
+  id                  String            @id @default(uuid())
+  invoice_number      String            @unique
+  loan_account_id     String
+  processed_by_id     String
+  approved_by_id      String
+  amount_paid         Decimal
+  principal_cut       Decimal
+  interest_cut        Decimal
+  remaining_principal Decimal
+  remaining_interest  Decimal
+  payment_method      String            @default("Tunai")
+  payment_attachment  String?           @default("Tidak ada attachment")
+  payment_status      StatusTransaction @default(SUCCESS)
+  paid_date           DateTime
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  loan_account LoanAccount @relation(fields: [loan_account_id], references: [id])
+  processed    User        @relation("processed", fields: [processed_by_id], references: [id])
+  approved     User        @relation("approved", fields: [approved_by_id], references: [id])
+
+  @@map("transactions")
+}

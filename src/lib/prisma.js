@@ -1,4 +1,6 @@
-import { PrismaClient } from "../generated/client/client";
+// lib/prisma.js
+// IMPORT IMPORTANCE: Point to 'client', not 'index.js'
+import { PrismaClient } from "../../generated/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 

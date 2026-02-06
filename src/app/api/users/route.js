@@ -1,15 +1,11 @@
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-} from "@prisma/client/runtime/library";
-import { hashSync } from "bcrypt";
+
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import  prisma  from "@/src/lib/prisma";
 
 export async function GET() {
   try {
     // Ambil semua data customer dari database
-    const users = await db.user.findMany();
+    const users = await prisma.user.findMany();
 
     return NextResponse.json({ users }, { status: 200 });
   } catch (error) {

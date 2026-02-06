@@ -39,7 +39,6 @@ export default function Home() {
                 Daftar
               </Link>
             </div>
-            
           </div>
         </div>
       </div>
