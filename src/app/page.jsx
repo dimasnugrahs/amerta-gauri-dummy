@@ -18,7 +18,7 @@ export default function Home() {
         </div>
         <div className="text-center md:text-left">
           <div className="md:px-6 pt-10 md:pt-24 font-extrabold md:font-bold text-2xl md:text-4xl">
-            Selamat Datang di Amerta Gauri Dashboard
+            Selamat Datang di Dashboard Amerta Gauri
           </div>
           <div className="font-light md:px-6">
             Pencatatan, pelaporan, monitoring dan operasional kini lebih mudah,
