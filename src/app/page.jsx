@@ -14,6 +14,7 @@ export default function Home() {
             src={Background}
             className="w-[80%] md:w-[70%]"
             alt="Profile"
+            loading="eager"
           />
         </div>
         <div className="text-center md:text-left">

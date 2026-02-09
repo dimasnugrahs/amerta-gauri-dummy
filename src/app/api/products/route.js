@@ -1,11 +1,5 @@
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
-import bcrypt from "bcryptjs";
-
-/**
- * @method GET
- * @description Mengambil semua data product
- */
 
 export async function GET() {
   try {
@@ -50,7 +44,7 @@ export async function GET() {
   } catch (error) {
     console.error("Kesahalan saat mengambil data:", error);
 
-    // 5. Pengecekan Tipe Error (Database vs Code)
+    // Pengecekan Tipe Error
     if (error.code === "P2021") {
       return NextResponse.json(
         { success: false, message: "Tabel database tidak ditemukan." },
@@ -75,9 +69,9 @@ export async function POST(request) {
   try {
     // get data from body request
     const body = await request.json();
-    const { user_id, product_name, slug, description, price } = body;
+    const { user_id, product_name, description, price } = body;
 
-    // 1. Validasi Input Wajib
+    // Validasi Input Wajib
     if (!user_id || !product_name || !price) {
       return NextResponse.json(
         {
@@ -88,15 +82,12 @@ export async function POST(request) {
       );
     }
 
-    // 2. Membuat Slug Otomatis (Contoh: "Kopi Susu" -> "kopi-susu-12345")
-    // Kita tambah suffix random agar slug selalu unik
-    const generatedSlug =
-      product_name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)+/g, "") +
-      "-" +
-      Math.random().toString(36).substring(2, 7);
+    // slug convert
+    const generatedSlug = product_name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
 
     const newProduct = await prisma.product.create({
       data: {
@@ -123,7 +114,7 @@ export async function POST(request) {
       );
     }
 
-    // Error jika User ID tidak ditemukan (Foreign Key Constraint)
+    // Error jika User ID tidak ditemukan
     if (error.code === "P2003") {
       return NextResponse.json(
         {

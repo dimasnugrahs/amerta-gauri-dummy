@@ -15,6 +15,7 @@ export default function SignInPage() {
             src={Background}
             className="w-[80%] md:w-[70%]"
             alt="Profile"
+            loading="eager"
           />
         </div>
         <div className="amerta-form-signin bg-amerta-100 rounded-xl px-4 md:px-10 py-6 md:py-13">
