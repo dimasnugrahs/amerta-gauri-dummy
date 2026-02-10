@@ -2,17 +2,52 @@
 
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/src/lib/axios";
+import Swal from "sweetalert2"; // Import Swal
 
 export default function LogoutButton({ isMobile }) {
   const router = useRouter();
 
   const handleLogout = async () => {
-    try {
-      await axiosInstance.post("/auth/signout");
-      router.push("/signin");
-      router.refresh();
-    } catch (error) {
-      console.error("Logout gagal", error);
+    // Tampilkan konfirmasi dahulu (Optional tapi bagus untuk UX)
+    const confirm = await Swal.fire({
+      title: "Apakah anda yakin?",
+      text: "Anda akan keluar dari sesi ini.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#10b981", // warna amerta-500
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, Keluar!",
+      cancelButtonText: "Batal",
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        const response = await axiosInstance.post("/auth/signout");
+
+        if (response.data.success) {
+          // Alert Berhasil
+          await Swal.fire({
+            icon: "success",
+            title: "Logout Berhasil",
+            text: "Sampai jumpa lagi!",
+            showConfirmButton: false,
+            timer: 1500, // Hilang otomatis dalam 1.5 detik
+          });
+
+          router.push("/signin");
+          router.refresh();
+        }
+      } catch (error) {
+        // Alert Gagal
+        Swal.fire({
+          icon: "error",
+          title: "Logout Gagal",
+          text:
+            error.response?.data?.message ||
+            "Terjadi kesalahan saat menghubungi server.",
+          confirmButtonColor: "#10b981",
+        });
+      }
     }
   };
 
