@@ -43,9 +43,25 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="flex items-center gap-2 text-red-600 hover:bg-red-50 p-2 rounded transition-all"
+      className={`block px-3 py-4 w-full rounded bg-gray-200 hover:bg-gray-400 hover:text-white transition duration-150`}
     >
-      <span>Keluar</span>
+      <div className="flex gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="size-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9"
+          />
+        </svg>
+        Logout
+      </div>
     </button>
   );
 }

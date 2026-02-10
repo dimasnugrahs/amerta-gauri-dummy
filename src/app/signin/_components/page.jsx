@@ -38,7 +38,7 @@ export default function Form() {
         icon: "error",
         title: "Login Gagal",
         text: error.response?.data?.message || "Terjadi kesalahan server",
-        confirmButtonColor: "#10b981", // Warna amerta-500
+        confirmButtonColor: "#10b981",
       });
     } finally {
       setLoading(false);
@@ -50,7 +50,7 @@ export default function Form() {
       <div className="mb-2 md:mb-3">
         <label className="font-light">Username / Email</label>
         <input
-          type="text" // Ubah ke text agar bisa menerima username juga
+          type="text"
           required
           value={formData.loginId}
           onChange={(e) =>
@@ -85,7 +85,7 @@ export default function Form() {
         </button>
 
         <Link
-          href="/auth/signup"
+          href="/signup"
           className="text-center text-amerta-700 border border-amerta-700 hover:bg-amerta-800 hover:text-white w-full py-2 rounded transition-all"
         >
           Belum Memiliki Akun

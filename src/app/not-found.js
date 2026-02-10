@@ -7,10 +7,10 @@ export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-9xl font-bold text-amerta-500">404</h1>
-      <h2 className="text-2xl font-semibold mt-4 text-gray-800">
+      <h2 className="text-2xl font-semibold mt-4 px-2 text-center text-gray-800">
         Opps! Halaman Tidak Ditemukan
       </h2>
-      <p className="text-gray-500 mt-2 mb-8">
+      <p className="text-gray-500 text-center px-4 mt-2 mb-8">
         Sepertinya kamu tersesat. Halaman yang kamu cari tidak tersedia.
       </p>
 

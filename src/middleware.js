@@ -5,7 +5,7 @@ export async function middleware(request) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("authToken")?.value;
 
-  // 1. Verifikasi Token
+  // Verifikasi Token
   let isAuthenticated = false;
   try {
     if (token) {
@@ -17,18 +17,21 @@ export async function middleware(request) {
     isAuthenticated = false;
   }
 
-  // 2. Tentukan rute publik (Pindahkan ke atas sebelum pengecekan if)
+  // Tentukan rute publik (Pindahkan ke atas sebelum pengecekan if)
   const isPublicRoute =
-    pathname.startsWith("/signin") || pathname.startsWith("/api");
+    pathname === "/" ||
+    pathname.startsWith("/signin") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/api/auth");
 
-  // 3. LOGIKA REDIRECT
+  // LOGIKA REDIRECT
 
-  // A. Jika sudah login tapi akses halaman login, lempar ke dashboard
+  // Jika sudah login tapi akses halaman login, lempar ke dashboard
   if (isAuthenticated && pathname.startsWith("/signin")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // B. Jika BELUM login dan mencoba akses rute yang BUKAN publik
+  // Jika BELUM login dan mencoba akses rute yang BUKAN publik
   if (!isAuthenticated && !isPublicRoute) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }

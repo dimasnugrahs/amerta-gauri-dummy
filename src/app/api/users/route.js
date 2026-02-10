@@ -49,7 +49,7 @@ export async function GET() {
   } catch (error) {
     console.error("Kesahalan saat mengambil data:", error);
 
-    // 5. Pengecekan Tipe Error (Database vs Code)
+    // Pengecekan Tipe Error (Database vs Code)
     if (error.code === "P2021") {
       return NextResponse.json(
         { success: false, message: "Tabel database tidak ditemukan." },

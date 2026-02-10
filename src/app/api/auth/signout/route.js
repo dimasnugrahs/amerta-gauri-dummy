@@ -4,22 +4,21 @@ export async function POST() {
   try {
     const response = NextResponse.json(
       { success: true, message: "Logout berhasil" },
-      { status: 200 }
+      { status: 200 },
     );
 
-    // Hapus cookie dengan mengatur maxAge ke 0
     response.cookies.set("authToken", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       path: "/",
-      maxAge: 0, // Langsung kadaluarsa
+      maxAge: 0,
     });
 
     return response;
   } catch (error) {
     return NextResponse.json(
       { message: "Terjadi kesalahan pada server" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
