@@ -7,7 +7,7 @@ function LayoutDashboard({ children }) {
     <>
       <main className="min-h-screen bg-company-50">
         <div className="grid grid-cols-6 h-screen">
-          <div className="lg:block hidden col-span-1 bg-company-50 shadow-lg">
+          <div className="col-span-1 bg-company-50 shadow-lg">
             <div className="text-company-950 h-full">
               <Sidebar />
             </div>
