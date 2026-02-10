@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import LogoutButton from "./LogoutButton";
 
 export default function Sidebar() {
   const pathname = usePathname(); // pathname sekarang adalah string, misal "/dashboard"
@@ -20,7 +21,9 @@ export default function Sidebar() {
 
   return (
     <div className=" text-amerta-950 h-full">
-      <h2 className="text-xl text-white font-normal px-4 py-4 text-center bg-amerta-700 mx-2 my-6 rounded">Amerta Gauri</h2>
+      <h2 className="text-xl text-white font-normal px-4 py-4 text-center bg-amerta-700 mx-2 my-6 rounded">
+        Amerta Gauri
+      </h2>
       <nav className="space-y-3 px-2 mt-10">
         <Link
           href="/dashboard"
@@ -147,6 +150,7 @@ export default function Sidebar() {
             Logout
           </div>
         </Link>
+        <LogoutButton />
       </nav>
     </div>
   );
