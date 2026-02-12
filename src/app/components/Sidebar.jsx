@@ -90,7 +90,7 @@ export default function Sidebar() {
     <>
       {/* DESKTOP SIDEBAR */}
       <aside className="hidden md:flex flex-col w-64 h-screen bg-white border-r border-gray-200 sticky top-0 p-4">
-        <h2 className="text-xl text-white font-semibold p-4 text-center bg-amerta-700 rounded-lg mb-8">
+        <h2 className="text-xl text-white font-semibold p-4 text-center bg-amerta-500 rounded-lg mb-8">
           Amerta Gauri
         </h2>
         <nav className="flex-1 space-y-1">
@@ -98,7 +98,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${pathname === item.href ? "bg-amerta-700 text-white" : "text-gray-600 hover:bg-amerta-50"}`}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${pathname === item.href ? "bg-amerta-500 text-white" : "text-gray-600 hover:bg-amerta-100"}`}
             >
               {item.icon("size-6")}
               <span className="font-medium">{item.name}</span>
@@ -125,7 +125,7 @@ export default function Sidebar() {
                   {item.name}
                 </span>
                 {active && (
-                  <div className="absolute bottom-0 w-8 h-1 bg-amerta-700 rounded-t-full" />
+                  <div className="absolute bottom-0 w-8 h-1 bg-amerta-500 rounded-t-full" />
                 )}
               </Link>
             );

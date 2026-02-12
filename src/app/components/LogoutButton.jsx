@@ -83,7 +83,7 @@ export default function LogoutButton({ isMobile }) {
   return (
     <button
       onClick={handleLogout}
-      className="flex items-center gap-3 w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors mt-auto"
+      className="flex items-center gap-3 w-full px-4 py-3 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors mt-auto"
     >
       {icon}
       <span className="font-medium">Logout</span>

@@ -5,7 +5,17 @@ export async function middleware(request) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("authToken")?.value;
 
-  // Verifikasi Token
+  // 1. Biarkan file statis dan internal Next.js lewat tanpa dicek
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
+    pathname.includes("favicon.ico") ||
+    pathname.includes(".") // Mengabaikan file dengan ekstensi (gambar, css, dll)
+  ) {
+    return NextResponse.next();
+  }
+
+  // 2. Verifikasi Token
   let isAuthenticated = false;
   try {
     if (token) {
@@ -17,29 +27,24 @@ export async function middleware(request) {
     isAuthenticated = false;
   }
 
-  // Tentukan rute publik (Pindahkan ke atas sebelum pengecekan if)
-  const isPublicRoute =
-    pathname === "/" ||
-    pathname.startsWith("/signin") ||
-    pathname.startsWith("/signup") ||
-    pathname.startsWith("/api/auth");
+  // 3. LOGIKA PROTEKSI RUTE
 
-  // LOGIKA REDIRECT
-
-  // Jika sudah login tapi akses halaman login, lempar ke dashboard
-  if (isAuthenticated && pathname.startsWith("/signin")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  // Jika BELUM login dan mencoba akses rute yang BUKAN publik
-  if (!isAuthenticated && !isPublicRoute) {
+  // A. Jika mencoba masuk ke Dashboard tapi BELUM login
+  if (pathname.startsWith("/dashboard") && !isAuthenticated) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
-  // Lanjutkan jika semua kondisi aman
+  // B. Jika SUDAH login tapi mencoba masuk ke Signin/Signup/Root
+  const isAuthPage =
+    pathname === "/signin" || pathname === "/signup" || pathname === "/";
+  if (isAuthPage && isAuthenticated) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
+  // Matcher ini membantu memfilter request awal
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

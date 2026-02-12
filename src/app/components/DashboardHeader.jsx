@@ -3,9 +3,24 @@
 import { usePathname } from "next/navigation";
 import UserProfile from "@/public/images/user-profile.jpg";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import axiosInstance from "@/src/lib/axios";
 
 export default function DashboardHeader() {
   const pathname = usePathname(); // Mengambil path (contoh: /dashboard/categories)
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axiosInstance.get("/auth/user");
+        setUser(response.data.user);
+      } catch (error) {
+        console.error("Gagal mengambil data user");
+      }
+    };
+    fetchUser();
+  }, []);
 
   const getDynamicTitle = () => {
     // 1. Jika path adalah root dashboard atau home
@@ -39,7 +54,15 @@ export default function DashboardHeader() {
         </div>
         <div className="md:block hidden">
           <div className="flex lg:justify-end items-center space-x-4 px-4 lg:px-10">
-            <div>Dimas Nugraha</div>
+            <div>
+              {user ? (
+                <>
+                  <span className="">{user.full_name}</span>
+                </>
+              ) : (
+                <div className="h-4 w-32 bg-gray-200 animate-pulse rounded"></div> // Skeleton loading
+              )}
+            </div>
             <div className="">
               <Image
                 src={UserProfile}
