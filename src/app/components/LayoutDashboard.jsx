@@ -14,9 +14,9 @@ function LayoutDashboard({ children }) {
         </div>
 
         {/* Konten Utama */}
-        <div className="flex-1 md:col-span-5 flex flex-col min-h-0 overflow-hidden">
+        <div className="lg:col-span-5 col-span-6 mx-4">
           <DashboardHeader />
-          <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-8">
+          <div className="flex-1 overflow-y-auto pt-2 md:pt-0 pb-24 md:pb-8">
             {children}
           </div>
         </div>

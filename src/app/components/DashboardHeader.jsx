@@ -48,7 +48,7 @@ export default function DashboardHeader() {
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 bg-company-50 mt-6 mb-2 md:mb-6 rounded py-4 shadow">
+      <div className="grid grid-cols-1 lg:grid-cols-2 bg-white mt-6 mb-2 md:mb-6 rounded py-4 shadow">
         <div className="flex items-center text-xl font-bold px-4">
           Welcome to Dashboard - {dynamicTitle}
         </div>
