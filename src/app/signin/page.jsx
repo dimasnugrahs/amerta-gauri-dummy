@@ -3,7 +3,6 @@
 import Image from "next/image";
 import LayoutDefault from "../components/LayoutDefault";
 import Background from "@/public/images/background.png";
-import Link from "next/link";
 import Form from "./_components/page";
 
 export default function SignInPage() {

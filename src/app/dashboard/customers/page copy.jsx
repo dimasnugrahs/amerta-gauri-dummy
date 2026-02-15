@@ -85,10 +85,7 @@ export default function DashboardCustomers() {
           </div>
 
           <div className="overflow-x-auto rounded-lg mt-5 shadow border border-gray-200">
-            <table
-              style={{ width: "100%", borderCollapse: "collapse" }}
-              className="w-full min-w-200 border-collapse bg-white"
-            >
+            <table className="w-full min-w-200 border-collapse bg-white">
               <thead>
                 <tr className="bg-amerta-600 text-white">
                   <th className="font-semibold w-[5%] p-3 border border-amerta-700 text-center">

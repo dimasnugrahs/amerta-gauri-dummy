@@ -110,7 +110,7 @@ export default function Sidebar() {
       </aside>
 
       {/* MOBILE BOTTOM NAV (SLIDEABLE) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 overflow-x-auto scrollbar-hide">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
         <div className="flex flex-nowrap items-center min-w-max px-2">
           {menuItems.map((item) => {
             const active = pathname === item.href;
@@ -118,7 +118,9 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center px-6 py-3 min-w-[100px] transition-colors ${active ? "text-amerta-700" : "text-gray-500"}`}
+                className={`flex flex-col items-center justify-center px-6 py-3 min-w-25 snap-center transition-colors relative ${
+                  active ? "text-amerta-700" : "text-gray-500"
+                }`}
               >
                 {item.icon("size-6")}
                 <span className="text-[10px] mt-1 font-medium">
@@ -130,8 +132,7 @@ export default function Sidebar() {
               </Link>
             );
           })}
-          {/* Logout button seragam dengan item lainnya */}
-          <div className="px-6 py-3 min-w-[100px]">
+          <div className="px-6 py-3 min-w-25 snap-center">
             <LogoutButton isMobile />
           </div>
         </div>

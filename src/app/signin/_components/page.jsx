@@ -5,27 +5,34 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axiosInstance from "@/src/lib/axios";
 import Swal from "sweetalert2";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function Form() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     loginId: "",
     password: "",
   });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await axiosInstance.post("/auth/signin", formData);
+      const { data } = await axiosInstance.post("/auth/signin", formData);
 
-      if (response.data.success) {
+      if (data.success) {
         Swal.fire({
           icon: "success",
-          title: "Berhasil Masuk",
-          text: response.data.message,
+          title: "Selamat Datang!",
+          text: data.message,
           showConfirmButton: false,
           timer: 1500,
         }).then(() => {
@@ -37,7 +44,9 @@ export default function Form() {
       Swal.fire({
         icon: "error",
         title: "Login Gagal",
-        text: error.response?.data?.message || "Terjadi kesalahan server",
+        text:
+          error.response?.data?.message ||
+          "Kredensial salah atau server bermasalah",
         confirmButtonColor: "#10b981",
       });
     } finally {
@@ -50,12 +59,11 @@ export default function Form() {
       <div className="mb-2 md:mb-3">
         <label className="font-light">Username / Email</label>
         <input
+          name="loginId"
           type="text"
           required
           value={formData.loginId}
-          onChange={(e) =>
-            setFormData({ ...formData, loginId: e.target.value })
-          }
+          onChange={handleChange}
           placeholder="Silahkan masukkan email atau username"
           className="block w-full pl-5 pr-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-amerta-600 focus:border-transparent outline-none transition-all"
         />
@@ -63,16 +71,28 @@ export default function Form() {
 
       <div className="mb-4">
         <label className="font-light">Password</label>
-        <input
-          type="password"
-          required
-          value={formData.password}
-          onChange={(e) =>
-            setFormData({ ...formData, password: e.target.value })
-          }
-          placeholder="Silahkan masukkan password"
-          className="block w-full pl-5 pr-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-amerta-600 focus:border-transparent outline-none transition-all"
-        />
+        <div className="relative">
+          <input
+            name="password"
+            type={showPassword ? "text" : "password"}
+            required
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="••••••••"
+            className="block w-full pl-5 pr-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-amerta-600 focus:border-transparent outline-none transition-all"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          >
+            {showPassword ? (
+              <EyeSlashIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-2">

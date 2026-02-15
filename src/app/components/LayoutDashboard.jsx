@@ -3,23 +3,30 @@ import Sidebar from "./Sidebar";
 
 function LayoutDashboard({ children }) {
   return (
-    // Menggunakan Fragment atau div sebagai container root
-    <>
-      <main className="min-h-screen bg-company-50">
-        <div className="grid grid-cols-6 h-screen">
-          <div className="col-span-1 bg-company-50 shadow-lg">
-            <div className="text-company-950 h-full">
-              <Sidebar />
-            </div>
+    <main className="min-h-screen bg-company-50">
+      {/* Grid hanya aktif di desktop (md ke atas) */}
+      <div className="flex flex-col md:grid md:grid-cols-6 h-screen">
+        {/* Sidebar Desktop: disembunyikan di mobile */}
+        <div className="hidden md:block md:col-span-1 bg-company-50 shadow-lg border-r border-gray-200">
+          <div className="text-company-950 h-full">
+            <Sidebar />
           </div>
-          <div className="lg:col-span-5 col-span-6 mx-4">
-            <DashboardHeader />
-            {/* Di sini konten halaman (LandingPage, dll.) akan dirender */}
+        </div>
+
+        {/* Konten Utama */}
+        <div className="flex-1 md:col-span-5 flex flex-col min-h-0 overflow-hidden">
+          <DashboardHeader />
+          <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-8">
             {children}
           </div>
         </div>
-      </main>
-    </>
+
+        {/* Sidebar Mobile: hanya muncul di mobile (hidden di md) */}
+        <div className="md:hidden">
+          <Sidebar />
+        </div>
+      </div>
+    </main>
   );
 }
 
