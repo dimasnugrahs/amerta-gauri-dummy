@@ -52,7 +52,7 @@ export async function POST(request) {
       job,
     } = body;
 
-    // --- OTOMATISASI USER ID DARI COOKIES ---
+    // id user -- user yg login (verifikasi user)
     const cookieStore = await cookies();
     const token = cookieStore.get("authToken")?.value;
 
@@ -63,7 +63,7 @@ export async function POST(request) {
       );
     }
 
-    // Decode token untuk ambil ID
+    // ambil token
     const secret = new TextEncoder().encode(process.env.JWT_ACCESS_KEY);
     const { payload } = await jwtVerify(token, secret);
     const userIdFromToken = payload.id;
@@ -79,15 +79,15 @@ export async function POST(request) {
     // Simpan ke Database
     const newCustomer = await prisma.customer.create({
       data: {
-        user_id: userIdFromToken, // Gunakan ID dari token
+        user_id: userIdFromToken,
         full_name,
-        phone_number: phone_number || "Belum ada data",
+        ...(address && { address }),
+        ...(phone_number && { phone_number }),
+        ...(regency && { regency }),
+        ...(province && { province }),
+        ...(zip_code && { zip_code }),
+        ...(job && { job }),
         isActive: typeof isActive === "boolean" ? isActive : true,
-        address: address || null,
-        regency: regency || null,
-        province: province || null,
-        zip_code: zip_code || null,
-        job: job || null,
       },
     });
 
@@ -99,15 +99,22 @@ export async function POST(request) {
     console.error("POST_CUSTOMER_ERROR:", error);
 
     // Penanganan error Prisma yang spesifik
+    if (error.code === "P2002") {
+      return NextResponse.json(
+        { success: false, message: "Data sudah terdaftar di sistem." },
+        { status: 400 },
+      );
+    }
+
     if (error.code === "P2003") {
       return NextResponse.json(
-        { success: false, message: "Relasi User tidak ditemukan di database." },
+        { success: false, message: "Relasi User tidak valid." },
         { status: 400 },
       );
     }
 
     return NextResponse.json(
-      { success: false, message: "Gagal menyimpan data ke server." },
+      { success: false, message: "Terjadi kesalahan server." },
       { status: 500 },
     );
   }

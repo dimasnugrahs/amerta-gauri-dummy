@@ -16,9 +16,8 @@ function LayoutDashboard({ children }) {
         {/* Konten Utama */}
         <div className="lg:col-span-5 col-span-6 mx-4">
           <DashboardHeader />
-          <div className="flex-1 overflow-y-auto pt-2 md:pt-0 pb-24 md:pb-8">
-            {children}
-          </div>
+          {/* Di sini konten halaman (LandingPage, dll.) akan dirender */}
+          {children}
         </div>
 
         {/* Sidebar Mobile: hanya muncul di mobile (hidden di md) */}

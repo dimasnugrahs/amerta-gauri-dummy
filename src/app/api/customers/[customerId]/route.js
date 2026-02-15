@@ -84,11 +84,11 @@ export async function PATCH(request, { params }) {
     if (full_name) updateData.full_name = full_name;
     if (phone_number) updateData.phone_number = phone_number;
     if (isActive !== undefined) updateData.isActive = Boolean(isActive);
-    if (address !== undefined) updateData.address = address;
-    if (regency !== undefined) updateData.regency = regency;
-    if (province !== undefined) updateData.province = province;
-    if (zip_code !== undefined) updateData.zip_code = zip_code;
-    if (job !== undefined) updateData.job = job;
+    if (address) updateData.address = address;
+    if (regency) updateData.regency = regency;
+    if (province) updateData.province = province;
+    if (zip_code) updateData.zip_code = zip_code;
+    if (job) updateData.job = job;
     if (user_id) updateData.user_id = user_id;
 
     if (Object.keys(updateData).length === 0) {

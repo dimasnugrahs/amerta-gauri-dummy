@@ -3109,7 +3109,7 @@ export namespace Prisma {
     user_id: string
     full_name: string
     phone_number: string | null
-    address: string
+    address: string | null
     regency: string | null
     province: string | null
     zip_code: string | null
@@ -3230,7 +3230,7 @@ export namespace Prisma {
       user_id: string
       full_name: string
       phone_number: string | null
-      address: string
+      address: string | null
       regency: string | null
       province: string | null
       zip_code: string | null
@@ -9464,7 +9464,7 @@ export namespace Prisma {
     user_id?: StringFilter<"Customer"> | string
     full_name?: StringFilter<"Customer"> | string
     phone_number?: StringNullableFilter<"Customer"> | string | null
-    address?: StringFilter<"Customer"> | string
+    address?: StringNullableFilter<"Customer"> | string | null
     regency?: StringNullableFilter<"Customer"> | string | null
     province?: StringNullableFilter<"Customer"> | string | null
     zip_code?: StringNullableFilter<"Customer"> | string | null
@@ -9482,7 +9482,7 @@ export namespace Prisma {
     user_id?: SortOrder
     full_name?: SortOrder
     phone_number?: SortOrderInput | SortOrder
-    address?: SortOrder
+    address?: SortOrderInput | SortOrder
     regency?: SortOrderInput | SortOrder
     province?: SortOrderInput | SortOrder
     zip_code?: SortOrderInput | SortOrder
@@ -9503,7 +9503,7 @@ export namespace Prisma {
     user_id?: StringFilter<"Customer"> | string
     full_name?: StringFilter<"Customer"> | string
     phone_number?: StringNullableFilter<"Customer"> | string | null
-    address?: StringFilter<"Customer"> | string
+    address?: StringNullableFilter<"Customer"> | string | null
     regency?: StringNullableFilter<"Customer"> | string | null
     province?: StringNullableFilter<"Customer"> | string | null
     zip_code?: StringNullableFilter<"Customer"> | string | null
@@ -9521,7 +9521,7 @@ export namespace Prisma {
     user_id?: SortOrder
     full_name?: SortOrder
     phone_number?: SortOrderInput | SortOrder
-    address?: SortOrder
+    address?: SortOrderInput | SortOrder
     regency?: SortOrderInput | SortOrder
     province?: SortOrderInput | SortOrder
     zip_code?: SortOrderInput | SortOrder
@@ -9543,7 +9543,7 @@ export namespace Prisma {
     user_id?: StringWithAggregatesFilter<"Customer"> | string
     full_name?: StringWithAggregatesFilter<"Customer"> | string
     phone_number?: StringNullableWithAggregatesFilter<"Customer"> | string | null
-    address?: StringWithAggregatesFilter<"Customer"> | string
+    address?: StringNullableWithAggregatesFilter<"Customer"> | string | null
     regency?: StringNullableWithAggregatesFilter<"Customer"> | string | null
     province?: StringNullableWithAggregatesFilter<"Customer"> | string | null
     zip_code?: StringNullableWithAggregatesFilter<"Customer"> | string | null
@@ -10140,7 +10140,7 @@ export namespace Prisma {
     id?: string
     full_name: string
     phone_number?: string | null
-    address: string
+    address?: string | null
     regency?: string | null
     province?: string | null
     zip_code?: string | null
@@ -10158,7 +10158,7 @@ export namespace Prisma {
     user_id: string
     full_name: string
     phone_number?: string | null
-    address: string
+    address?: string | null
     regency?: string | null
     province?: string | null
     zip_code?: string | null
@@ -10174,7 +10174,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     full_name?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     regency?: NullableStringFieldUpdateOperationsInput | string | null
     province?: NullableStringFieldUpdateOperationsInput | string | null
     zip_code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10192,7 +10192,7 @@ export namespace Prisma {
     user_id?: StringFieldUpdateOperationsInput | string
     full_name?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     regency?: NullableStringFieldUpdateOperationsInput | string | null
     province?: NullableStringFieldUpdateOperationsInput | string | null
     zip_code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10209,7 +10209,7 @@ export namespace Prisma {
     user_id: string
     full_name: string
     phone_number?: string | null
-    address: string
+    address?: string | null
     regency?: string | null
     province?: string | null
     zip_code?: string | null
@@ -10224,7 +10224,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     full_name?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     regency?: NullableStringFieldUpdateOperationsInput | string | null
     province?: NullableStringFieldUpdateOperationsInput | string | null
     zip_code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -10240,7 +10240,7 @@ export namespace Prisma {
     user_id?: StringFieldUpdateOperationsInput | string
     full_name?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     regency?: NullableStringFieldUpdateOperationsInput | string | null
     province?: NullableStringFieldUpdateOperationsInput | string | null
     zip_code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12153,7 +12153,7 @@ export namespace Prisma {
     id?: string
     full_name: string
     phone_number?: string | null
-    address: string
+    address?: string | null
     regency?: string | null
     province?: string | null
     zip_code?: string | null
@@ -12169,7 +12169,7 @@ export namespace Prisma {
     id?: string
     full_name: string
     phone_number?: string | null
-    address: string
+    address?: string | null
     regency?: string | null
     province?: string | null
     zip_code?: string | null
@@ -12429,7 +12429,7 @@ export namespace Prisma {
     user_id?: StringFilter<"Customer"> | string
     full_name?: StringFilter<"Customer"> | string
     phone_number?: StringNullableFilter<"Customer"> | string | null
-    address?: StringFilter<"Customer"> | string
+    address?: StringNullableFilter<"Customer"> | string | null
     regency?: StringNullableFilter<"Customer"> | string | null
     province?: StringNullableFilter<"Customer"> | string | null
     zip_code?: StringNullableFilter<"Customer"> | string | null
@@ -13194,7 +13194,7 @@ export namespace Prisma {
     id?: string
     full_name: string
     phone_number?: string | null
-    address: string
+    address?: string | null
     regency?: string | null
     province?: string | null
     zip_code?: string | null
@@ -13211,7 +13211,7 @@ export namespace Prisma {
     user_id: string
     full_name: string
     phone_number?: string | null
-    address: string
+    address?: string | null
     regency?: string | null
     province?: string | null
     zip_code?: string | null
@@ -13352,7 +13352,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     full_name?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     regency?: NullableStringFieldUpdateOperationsInput | string | null
     province?: NullableStringFieldUpdateOperationsInput | string | null
     zip_code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13369,7 +13369,7 @@ export namespace Prisma {
     user_id?: StringFieldUpdateOperationsInput | string
     full_name?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     regency?: NullableStringFieldUpdateOperationsInput | string | null
     province?: NullableStringFieldUpdateOperationsInput | string | null
     zip_code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13753,7 +13753,7 @@ export namespace Prisma {
     id?: string
     full_name: string
     phone_number?: string | null
-    address: string
+    address?: string | null
     regency?: string | null
     province?: string | null
     zip_code?: string | null
@@ -13848,7 +13848,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     full_name?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     regency?: NullableStringFieldUpdateOperationsInput | string | null
     province?: NullableStringFieldUpdateOperationsInput | string | null
     zip_code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13864,7 +13864,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     full_name?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     regency?: NullableStringFieldUpdateOperationsInput | string | null
     province?: NullableStringFieldUpdateOperationsInput | string | null
     zip_code?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13880,7 +13880,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     full_name?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
     regency?: NullableStringFieldUpdateOperationsInput | string | null
     province?: NullableStringFieldUpdateOperationsInput | string | null
     zip_code?: NullableStringFieldUpdateOperationsInput | string | null

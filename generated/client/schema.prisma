@@ -74,8 +74,8 @@ model Customer {
   id           String  @id @default(uuid())
   user_id      String
   full_name    String
-  phone_number String? @default("082100000000")
-  address      String
+  phone_number String? @default("Data masih kosong")
+  address      String? @default("Data masih kosong")
   regency      String? @default("Data masih kosong")
   province     String? @default("Data masih kosong")
   zip_code     String? @default("Data masih kosong")

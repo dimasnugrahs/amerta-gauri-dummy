@@ -56,12 +56,12 @@ export default function CreateCustomerPage() {
 
   return (
     <LayoutDashboard>
-      <div className="px-4 py-6 rounded-xl bg-white shadow-sm border border-gray-100 mb-30 md:mb-10">
-        <div className="flex items-center gap-4 mb-8">
+      <div className="px-4 py-6 rounded bg-white shadow-sm border border-gray-100 mb-30 md:mb-10">
+        <div className="flex items-center gap-4 mb-8 mx-2">
           <button
             type="button"
             onClick={() => router.back()}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors bg-amerta-100"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -78,22 +78,22 @@ export default function CreateCustomerPage() {
               />
             </svg>
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-xl font-bold text-gray-800">
             Tambah Customer Baru
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 mx-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
             <div className="md:col-span-2">
               <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Nama Lengkap *
+                Nama Lengkap <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 required
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none transition-all"
-                placeholder="Contoh: Budi Santoso"
+                placeholder="Contoh: Benn White"
                 value={formData.full_name}
                 onChange={(e) =>
                   setFormData({ ...formData, full_name: e.target.value })
@@ -103,11 +103,10 @@ export default function CreateCustomerPage() {
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Nomor Telepon *
+                Nomor Telepon
               </label>
               <input
                 type="text"
-                required
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none transition-all"
                 placeholder="08123456789"
                 value={formData.phone_number}
@@ -134,7 +133,7 @@ export default function CreateCustomerPage() {
           </div>
 
           <div className="pt-2 border-t border-gray-100">
-            <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">
+            <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">
               Informasi Alamat
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
