@@ -138,14 +138,14 @@ model LoanAccount {
   marketing_id      String
   customer_id       String
   product_id        String
-  principal_amount  Decimal
-  rate_percent      Decimal
-  rate_amount       Decimal
+  principal_amount  Decimal  @db.Decimal(15, 2)
+  rate_percent      Decimal  @db.Decimal(5, 2)
+  rate_amount       Decimal  @db.Decimal(15, 2)
   start_date        DateTime
   period_start      DateTime
 
-  current_debt_principal  Decimal
-  current_debt_interest   Decimal
+  current_debt_principal  Decimal @db.Decimal(15, 2)
+  current_debt_interest   Decimal @db.Decimal(15, 2)
   
   status          StatusLoan    @default(ACTIVE)
   
