@@ -114,16 +114,27 @@ export default function Sidebar() {
           Amerta Gauri
         </h2>
         <nav className="flex-1 space-y-1">
-          {menuItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${pathname === item.href ? "bg-amerta-500 text-white" : "text-gray-600 hover:bg-amerta-100"}`}
-            >
-              {item.icon("size-6")}
-              <span className="font-medium">{item.name}</span>
-            </Link>
-          ))}
+          {menuItems.map((item) => {
+            const isActive =
+              item.href === "/dashboard"
+                ? pathname === "/dashboard"
+                : pathname.startsWith(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  isActive
+                    ? "bg-amerta-500 text-white"
+                    : "text-gray-600 hover:bg-amerta-100"
+                }`}
+              >
+                {item.icon("size-6")}
+                <span className="font-medium">{item.name}</span>
+              </Link>
+            );
+          })}
           <div className="border-t border-gray-100 my-4"></div>
           <LogoutButton />
         </nav>
@@ -133,20 +144,25 @@ export default function Sidebar() {
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
         <div className="flex flex-nowrap items-center min-w-max px-2">
           {menuItems.map((item) => {
-            const active = pathname === item.href;
+            // Logika Active yang sama untuk Mobile
+            const isActive =
+              item.href === "/dashboard"
+                ? pathname === "/dashboard"
+                : pathname.startsWith(item.href);
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`flex flex-col items-center justify-center px-6 py-3 min-w-25 snap-center transition-colors relative ${
-                  active ? "text-amerta-700" : "text-gray-500"
+                  isActive ? "text-amerta-700" : "text-gray-500"
                 }`}
               >
                 {item.icon("size-6")}
                 <span className="text-[10px] mt-1 font-medium">
                   {item.name}
                 </span>
-                {active && (
+                {isActive && (
                   <div className="absolute bottom-0 w-8 h-1 bg-amerta-500 rounded-t-full" />
                 )}
               </Link>

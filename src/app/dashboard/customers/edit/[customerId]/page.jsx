@@ -255,18 +255,18 @@ export default function EditCustomerPage() {
             </div>
           </div>
 
-          <div className="pt-6 flex gap-3">
+          <div className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4 ">
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex-1 py-3 bg-white border border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-all"
+              className="flex-1 py-3 bg-white border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-50 transition-all"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`flex-2 py-3 rounded-xl text-white font-bold shadow-lg shadow-amerta-200 transition-all ${
+              className={`flex-2 py-3 rounded-lg text-white font-bold shadow-lg shadow-amerta-200 transition-all ${
                 loading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-amerta-600 hover:bg-amerta-700 active:scale-95"

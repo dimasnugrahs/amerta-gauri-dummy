@@ -64,7 +64,6 @@ export async function PATCH(request, { params }) {
       province,
       zip_code,
       job,
-      user_id,
     } = body;
 
     // customer kondisional
@@ -89,7 +88,6 @@ export async function PATCH(request, { params }) {
     if (province) updateData.province = province;
     if (zip_code) updateData.zip_code = zip_code;
     if (job) updateData.job = job;
-    if (user_id) updateData.user_id = user_id;
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
