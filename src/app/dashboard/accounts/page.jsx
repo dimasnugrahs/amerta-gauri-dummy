@@ -194,6 +194,9 @@ export default function DashboardLoanAccounts() {
                 <th className="font-semibold w-[20%] p-3 border border-amerta-700 text-left">
                   Sisa Hutang
                 </th>
+                <th className="font-semibold w-[20%] p-3 border border-amerta-700 text-left">
+                  Tunggakan Bunga
+                </th>
                 <th className="font-semibold w-[15%] p-3 border border-amerta-700 text-left">
                   Produk
                 </th>
@@ -237,6 +240,9 @@ export default function DashboardLoanAccounts() {
                     </td>
                     <td className="p-3 border border-gray-200 text-gray-700 font-semibold">
                       {formatCurrency(loan.current_debt_principal)}
+                    </td>
+                    <td className="p-3 border border-gray-200 text-gray-700 font-semibold">
+                      {formatCurrency(loan.current_debt_interest)}
                     </td>
                     <td className="p-3 border border-gray-200 text-sm text-gray-600">
                       {loan.product?.product_name || "-"}

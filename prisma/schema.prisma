@@ -169,11 +169,11 @@ model Transaction {
   loan_account_id   String
   processed_by_id   String
   approved_by_id     String
-  amount_paid       Decimal
-  principal_cut     Decimal
-  interest_cut      Decimal
-  remaining_principal Decimal
-  remaining_interest  Decimal
+  amount_paid       Decimal @db.Decimal(15, 2)
+  principal_cut     Decimal @db.Decimal(15, 2)
+  interest_cut      Decimal @db.Decimal(15, 2)
+  remaining_principal Decimal @db.Decimal(15, 2)
+  remaining_interest  Decimal @db.Decimal(15, 2)
   payment_method      String  @default("Tunai")
   payment_attachment  String?  @default("Tidak ada attachment")
   payment_status      StatusTransaction @default(SUCCESS)

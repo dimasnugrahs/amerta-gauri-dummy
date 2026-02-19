@@ -58,7 +58,7 @@ export async function POST(request) {
       status,
     } = body;
 
-    // 1. Verifikasi Sesi
+    // Verifikasi Sesi
     const cookieStore = await cookies();
     const token = cookieStore.get("authToken")?.value;
 
@@ -72,7 +72,7 @@ export async function POST(request) {
     const secret = new TextEncoder().encode(process.env.JWT_ACCESS_KEY);
     await jwtVerify(token, secret);
 
-    // 2. Validasi Input Wajib
+    // Validasi Input Wajib
     if (!marketing_id || !customer_id || !product_id || !principal_amount) {
       return NextResponse.json(
         {
@@ -118,7 +118,7 @@ export async function POST(request) {
       );
     }
 
-    // 4. Simpan ke Database
+    // Simpan ke Database
     const newLoan = await prisma.loanAccount.create({
       data: {
         no_rekening: newNoRekening,
@@ -131,7 +131,7 @@ export async function POST(request) {
         rate_amount: Number(rate_amount || 0),
 
         current_debt_principal: Number(principal_amount),
-        current_debt_interest: Number(rate_amount || 0),
+        current_debt_interest: Number(0),
 
         start_date: start_date ? new Date(start_date) : new Date(),
         period_start: period_start ? new Date(period_start) : new Date(),
