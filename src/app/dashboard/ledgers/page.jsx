@@ -9,7 +9,7 @@ export default function DashboardLedgers() {
       <LayoutDashboard>
         <div className="px-4 py-5 rounded bg-amerta-50 shadow mb-30">
           <div className="md:flex justify-between items-center">
-            <div>Dashboard Users</div>
+            <div>Dashboard UsersS</div>
             <div className="mt-2 md:mt-0">
               <Link
                 href={"/users/create"}

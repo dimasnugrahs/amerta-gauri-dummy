@@ -238,7 +238,8 @@ exports.Prisma.NullsOrder = {
 };
 exports.UserRole = exports.$Enums.UserRole = {
   SUPERADMIN: 'SUPERADMIN',
-  ADMIN: 'ADMIN'
+  ADMIN: 'ADMIN',
+  USER: 'USER'
 };
 
 exports.TypeCapitalLedger = exports.$Enums.TypeCapitalLedger = {

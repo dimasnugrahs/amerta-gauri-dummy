@@ -13,6 +13,11 @@ export async function GET() {
       where: {
         deleted_at: null,
       },
+      include: {
+        loan_account: {
+          include: { customer: true },
+        },
+      },
     });
 
     if (!transactions || transactions.length === 0) {
@@ -26,11 +31,20 @@ export async function GET() {
       );
     }
 
+    const serializedData = transactions.map((tx) => ({
+      ...tx,
+      amount_paid: Number(tx.amount_paid),
+      principal_cut: Number(tx.principal_cut),
+      interest_cut: Number(tx.interest_cut),
+      remaining_principal: Number(tx.remaining_principal),
+      remaining_interest: Number(tx.remaining_interest),
+    }));
+
     return NextResponse.json(
       {
         success: true,
-        count: transactions.length,
-        data: transactions,
+        count: serializedData.length,
+        data: serializedData,
       },
       { status: 200 },
     );
