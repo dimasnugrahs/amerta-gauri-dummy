@@ -1,318 +1,135 @@
 "use client";
 
-import Link from "next/link";
 import LayoutDashboard from "../components/LayoutDashboard";
+import { useMemo, useState, useEffect, useCallback } from "react";
+import axiosInstance from "@/src/lib/axios";
+import Swal from "sweetalert2";
 
-export default function DashboardUsers() {
-  return (
-    <>
+export default function DashboardFinancial() {
+  const [ledgers, setLedgers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 1. Ambil data dari API Capital Ledger
+  const fetchLedgers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get("/ledgers");
+      setLedgers(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      Swal.fire("Gagal", "Tidak dapat memuat ringkasan keuangan.", "error");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchLedgers();
+  }, [fetchLedgers]);
+
+  // 2. Hitung Statistik Finansial
+  const financialStats = useMemo(() => {
+    // Sisa Kas (Running Balance)
+    const sisaKas = ledgers.reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+    // Total Keuntungan (Bunga)
+    const totalBunga = ledgers
+      .filter((l) => l.type === "REPAYMENT_INTEREST")
+      .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+    // Biaya Operasional (Listrik, Gaji, dll)
+    const pengeluaranOps = ledgers
+      .filter((l) => l.type === "EXPENSE_OPS")
+      .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+    // Total Pencairan Modal (Uang yang sedang dipinjam nasabah)
+    const totalDisbursed = ledgers
+      .filter((l) => l.type === "DISBURSEMENT")
+      .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+    return {
+      sisaKas,
+      totalLaba: totalBunga,
+      labaBersih: totalBunga + pengeluaranOps, // Bunga (pos) + Ops (neg)
+      totalKeluar: Math.abs(pengeluaranOps + totalDisbursed),
+    };
+  }, [ledgers]);
+
+  if (loading) {
+    return (
       <LayoutDashboard>
-        <div className="px-4 py-5 rounded bg-amerta-50 shadow mb-30">
-          <div className="md:flex justify-between items-center">
-            <div>Dashboard Users</div>
-            <div className="mt-2 md:mt-0">
-              <Link
-                href={"/users/create"}
-                className="px-4 py-2  rounded text-amerta-50 bg-amerta-600 hover:bg-amerta-700 transition"
-              >
-                Create New Data User
-              </Link>
+        <div className="p-10 text-center">Memuat Ringkasan Keuangan...</div>
+      </LayoutDashboard>
+    );
+  }
+
+  return (
+    <LayoutDashboard>
+      <div className="px-4 py-5 rounded bg-white shadow mb-30">
+        <div className="mb-6 mx-2">
+          <h1 className="text-xl font-bold text-gray-800 uppercase tracking-tighter">
+            Financial <span className="text-amerta-600">Overview</span>
+          </h1>
+          <p className="text-xs text-gray-400">
+            Ringkasan kondisi modal dan keuntungan real-time.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4 ">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 relative overflow-hidden border-t-4 border-t-black">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              Kas Tersedia (Liquidity)
+            </p>
+            <h2 className="text-2xl font-black text-gray-800 mt-2">
+              Rp {financialStats.sisaKas.toLocaleString()}
+            </h2>
+            <p className="text-[10px] text-amerta-600 mt-1 font-medium italic">
+              *Modal siap salur
+            </p>
+          </div>
+
+          {/* Laba Kotor */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-t-4 border-t-green-500">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              Total Keuntungan (Bunga)
+            </p>
+            <h2 className="text-2xl font-black text-green-600 mt-2">
+              Rp {financialStats.totalLaba.toLocaleString()}
+            </h2>
+            <div className="flex items-center gap-1 mt-1">
+              <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">
+                Laba Kotor
+              </span>
             </div>
           </div>
-          <div className="overflow-x-auto rounded-lg mt-5 shadow">
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr className="bg-amerta-600 text-white font-display">
-                  <th
-                    className="font-normal md:w-[5%]"
-                    style={{ padding: "8px", border: "1px solid #ddd" }}
-                  >
-                    No
-                  </th>
-                  <th
-                    className="font-normal md:w-[25%]"
-                    style={{ padding: "8px", border: "1px solid #ddd" }}
-                  >
-                    Name
-                  </th>
-                  <th
-                    className="font-normal md:w-[25%]"
-                    style={{ padding: "8px", border: "1px solid #ddd" }}
-                  >
-                    Contact Person
-                  </th>
-                  <th
-                    className="font-normal md:w-[25%]"
-                    style={{ padding: "8px", border: "1px solid #ddd" }}
-                  >
-                    Status
-                  </th>
-                  <th
-                    className="font-normal md:w-[20%]"
-                    style={{ padding: "8px", border: "1px solid #ddd" }}
-                  >
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  style={{ borderBottom: "1px solid #ddd" }}
-                  className="bg-amerta-50"
-                >
-                  <td
-                    className="text-center"
-                    style={{ padding: "8px", border: "1px solid #ddd" }}
-                  >
-                    1
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td
-                    style={{
-                      padding: "8px",
-                      border: "1px solid #ddd",
-                    }}
-                    className="text-center"
-                  >
-                    <button
-                      style={{
-                        padding: "5px 10px",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      className="bg-indigo-600 hover:bg-indigo-700 rounded mx-1"
-                    >
-                      Detail
-                    </button>
-                    <Link href={"/users/update"}>
-                      <button
-                        style={{
-                          padding: "5px 10px",
-                          color: "white",
-                          border: "none",
-                          cursor: "pointer",
-                        }}
-                        className="bg-amerta-600 hover:bg-amerta-700 rounded mx-1"
-                      >
-                        Edit
-                      </button>
-                    </Link>
-                    <button
-                      style={{
-                        padding: "5px 10px",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      className="bg-red-600 hover:bg-red-700 rounded  mx-1"
-                    >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-                <tr
-                  style={{ borderBottom: "1px solid #ddd" }}
-                  className="bg-amerta-50"
-                >
-                  <td
-                    className="text-center"
-                    style={{ padding: "8px", border: "1px solid #ddd" }}
-                  >
-                    2
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td
-                    style={{
-                      padding: "8px",
-                      border: "1px solid #ddd",
-                    }}
-                    className="text-center"
-                  >
-                    <button
-                      style={{
-                        padding: "5px 10px",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      className="bg-indigo-600 hover:bg-indigo-700 rounded mx-1"
-                    >
-                      Detail
-                    </button>
-                    <Link href={"/users/update"}>
-                      <button
-                        style={{
-                          padding: "5px 10px",
-                          color: "white",
-                          border: "none",
-                          cursor: "pointer",
-                        }}
-                        className="bg-amerta-600 hover:bg-amerta-700 rounded mx-1"
-                      >
-                        Edit
-                      </button>
-                    </Link>
-                    <button
-                      style={{
-                        padding: "5px 10px",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      className="bg-red-600 hover:bg-red-700 rounded  mx-1"
-                    >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-                <tr
-                  style={{ borderBottom: "1px solid #ddd" }}
-                  className="bg-amerta-50"
-                >
-                  <td
-                    className="text-center"
-                    style={{ padding: "8px", border: "1px solid #ddd" }}
-                  >
-                    3
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td
-                    style={{
-                      padding: "8px",
-                      border: "1px solid #ddd",
-                    }}
-                    className="text-center"
-                  >
-                    <button
-                      style={{
-                        padding: "5px 10px",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      className="bg-indigo-600 hover:bg-indigo-700 rounded mx-1"
-                    >
-                      Detail
-                    </button>
-                    <Link href={"/users/update"}>
-                      <button
-                        style={{
-                          padding: "5px 10px",
-                          color: "white",
-                          border: "none",
-                          cursor: "pointer",
-                        }}
-                        className="bg-amerta-600 hover:bg-amerta-700 rounded mx-1"
-                      >
-                        Edit
-                      </button>
-                    </Link>
-                    <button
-                      style={{
-                        padding: "5px 10px",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      className="bg-red-600 hover:bg-red-700 rounded  mx-1"
-                    >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-                <tr
-                  style={{ borderBottom: "1px solid #ddd" }}
-                  className="bg-amerta-50"
-                >
-                  <td
-                    className="text-center"
-                    style={{ padding: "8px", border: "1px solid #ddd" }}
-                  >
-                    4
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td style={{ padding: "8px", border: "1px solid #ddd" }}>
-                    Lorem Ipsum
-                  </td>
-                  <td
-                    style={{
-                      padding: "8px",
-                      border: "1px solid #ddd",
-                    }}
-                    className="text-center"
-                  >
-                    <button
-                      style={{
-                        padding: "5px 10px",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      className="bg-indigo-600 hover:bg-indigo-700 rounded mx-1"
-                    >
-                      Detail
-                    </button>
-                    <Link href={"/users/update"}>
-                      <button
-                        style={{
-                          padding: "5px 10px",
-                          color: "white",
-                          border: "none",
-                          cursor: "pointer",
-                        }}
-                        className="bg-amerta-600 hover:bg-amerta-700 rounded mx-1"
-                      >
-                        Edit
-                      </button>
-                    </Link>
-                    <button
-                      style={{
-                        padding: "5px 10px",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      className="bg-red-600 hover:bg-red-700 rounded  mx-1"
-                    >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+
+          {/* Laba Bersih */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-t-4 border-t-purple-500">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              Laba Bersih (Real)
+            </p>
+            <h2 className="text-2xl font-black text-purple-600 mt-2">
+              Rp {financialStats.labaBersih.toLocaleString()}
+            </h2>
+            <p className="text-[10px] text-gray-400 mt-1">
+              Setelah dipotong biaya operasional
+            </p>
+          </div>
+
+          {/* Total Cash Out */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-t-4 border-t-red-500">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              Total Cash Out
+            </p>
+            <h2 className="text-2xl font-black text-red-600 mt-2">
+              Rp {financialStats.totalKeluar.toLocaleString()}
+            </h2>
+            <p className="text-[10px] text-red-400 mt-1 font-medium italic">
+              Ops + Pencairan Pinjaman
+            </p>
           </div>
         </div>
-      </LayoutDashboard>
-    </>
+      </div>
+    </LayoutDashboard>
   );
 }
