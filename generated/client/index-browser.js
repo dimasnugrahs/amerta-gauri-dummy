@@ -173,6 +173,8 @@ exports.Prisma.ProductScalarFieldEnum = {
 exports.Prisma.CapitalLedgerScalarFieldEnum = {
   id: 'id',
   created_by_id: 'created_by_id',
+  loan_account_id: 'loan_account_id',
+  transaction_id: 'transaction_id',
   amount: 'amount',
   type: 'type',
   description: 'description',
@@ -245,8 +247,11 @@ exports.UserRole = exports.$Enums.UserRole = {
 exports.TypeCapitalLedger = exports.$Enums.TypeCapitalLedger = {
   INJECTION: 'INJECTION',
   WITHDRAWAL: 'WITHDRAWAL',
-  LOAN: 'LOAN',
-  OPS: 'OPS'
+  DISBURSEMENT: 'DISBURSEMENT',
+  REPAYMENT_PRINCIPAL: 'REPAYMENT_PRINCIPAL',
+  REPAYMENT_INTEREST: 'REPAYMENT_INTEREST',
+  EXPENSE_OPS: 'EXPENSE_OPS',
+  ADJUSTMENT: 'ADJUSTMENT'
 };
 
 exports.StatusLoan = exports.$Enums.StatusLoan = {

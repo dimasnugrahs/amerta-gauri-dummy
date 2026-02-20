@@ -84,7 +84,7 @@ export async function POST(request) {
       paid_date,
     } = body;
 
-    // 1. Verifikasi Sesi User Input
+    // 1. Verifikasi Sesi User
     const cookieStore = await cookies();
     const token = cookieStore.get("authToken")?.value;
     if (!token) {
@@ -103,12 +103,12 @@ export async function POST(request) {
       !loan_account_id ||
       !approved_by_id ||
       !amount_paid ||
-      amount_paid <= 0
+      Number(amount_paid) <= 0
     ) {
       return NextResponse.json(
         {
           success: false,
-          message: "Data transaksi tidak lengkap atau nominal tidak valid.",
+          message: "Data tidak lengkap atau nominal tidak valid.",
         },
         { status: 400 },
       );
@@ -142,24 +142,15 @@ export async function POST(request) {
       59,
     );
 
-    // Cek apakah bulan ini sudah ada transaksi sukses
     const everHadTransactionThisMonth = await prisma.transaction.findFirst({
       where: {
         loan_account_id: loan.id,
-        paid_date: {
-          gte: startOfMonth,
-          lte: endOfMonth,
-        },
-        payment_status: {
-          in: ["SUCCESS", "REFUNDED"], // Jika sudah ada salah satu ini, jangan tambah bunga lagi
-        },
+        paid_date: { gte: startOfMonth, lte: endOfMonth },
+        payment_status: "SUCCESS",
       },
     });
 
-    // Kewajiban bunga awal diambil dari tunggakan di database
     let total_interest_due = Number(loan.current_debt_interest);
-
-    // Jika transaksi pertama di bulan ini & masih ada sisa pokok, tambahkan bunga flat bulan berjalan
     if (
       !everHadTransactionThisMonth &&
       Number(loan.current_debt_principal) > 0
@@ -177,49 +168,38 @@ export async function POST(request) {
     // 4. Logika Perhitungan (Interest First)
     if (total_interest_due > 0) {
       if (total_paid >= total_interest_due) {
-        // Bayar lunas semua bunga (tunggakan + bulan berjalan jika ada)
         interest_cut = total_interest_due;
         principal_cut = total_paid - total_interest_due;
       } else {
-        // Uang hanya cukup/kurang untuk bayar bunga
         interest_cut = total_paid;
         principal_cut = 0;
       }
     } else {
-      // Tidak ada kewajiban bunga, semua masuk ke pokok
       interest_cut = 0;
       principal_cut = total_paid;
     }
 
-    // 5. Hitung Sisa Akhir
+    // Limit principal_cut agar tidak melebihi sisa pokok
+    if (principal_cut > current_debt_principal) {
+      principal_cut = current_debt_principal;
+    }
+
     const remaining_interest = total_interest_due - interest_cut;
     const remaining_principal = current_debt_principal - principal_cut;
 
-    // Validasi agar tidak overpayment pada pokok
-    if (remaining_principal < 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Jumlah pembayaran pokok melebihi sisa hutang.",
-        },
-        { status: 400 },
-      );
-    }
-
-    // 6. Generate Invoice Number
+    // 5. Generate Invoice Number
     const lastTx = await prisma.transaction.findFirst({
       orderBy: { invoice_number: "desc" },
     });
-
     let newInvoiceNumber = "TRX-000001";
     if (lastTx) {
       const lastNumber = parseInt(lastTx.invoice_number.split("-")[1]);
       newInvoiceNumber = `TRX-${String(lastNumber + 1).padStart(6, "0")}`;
     }
 
-    // 7. Jalankan DB Transaction
+    // 6. Jalankan DB Transaction
     const result = await prisma.$transaction(async (tx) => {
-      // Simpan data transaksi
+      // A. Simpan data transaksi angsuran
       const transaction = await tx.transaction.create({
         data: {
           invoice_number: newInvoiceNumber,
@@ -227,18 +207,18 @@ export async function POST(request) {
           processed_by_id,
           approved_by_id,
           amount_paid: total_paid,
-          principal_cut: principal_cut,
-          interest_cut: interest_cut,
-          remaining_principal: remaining_principal,
-          remaining_interest: remaining_interest,
+          principal_cut,
+          interest_cut,
+          remaining_principal,
+          remaining_interest,
           payment_method: payment_method || "Tunai",
-          payment_attachment: payment_attachment || "Tidak ada attachment",
+          payment_attachment: payment_attachment || "",
           payment_status: "SUCCESS",
           paid_date: targetDate,
         },
       });
 
-      // Update Saldo di LoanAccount
+      // B. Update Saldo di LoanAccount
       await tx.loanAccount.update({
         where: { id: loan_account_id },
         data: {
@@ -248,13 +228,43 @@ export async function POST(request) {
         },
       });
 
+      // C. Ledger 1: Pencatatan Pokok (Modal Kembali)
+      if (principal_cut > 0) {
+        await tx.capitalLedger.create({
+          data: {
+            amount: principal_cut,
+            type: "REPAYMENT_PRINCIPAL", // Enum baru
+            description: `Angsuran Pokok: ${loan.no_rekening} (${newInvoiceNumber})`,
+            refrence_number: newInvoiceNumber,
+            loan_account_id: loan.id,
+            transaction_id: transaction.id, // Relasi ke transaksi
+            created_by_id: processed_by_id,
+          },
+        });
+      }
+
+      // D. Ledger 2: Pencatatan Bunga (Keuntungan/Revenue)
+      if (interest_cut > 0) {
+        await tx.capitalLedger.create({
+          data: {
+            amount: interest_cut,
+            type: "REPAYMENT_INTEREST", // Enum baru
+            description: `Pendapatan Bunga: ${loan.no_rekening} (${newInvoiceNumber})`,
+            refrence_number: newInvoiceNumber,
+            loan_account_id: loan.id,
+            transaction_id: transaction.id, // Relasi ke transaksi
+            created_by_id: processed_by_id,
+          },
+        });
+      }
+
       return transaction;
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: `Transaksi ${newInvoiceNumber} berhasil diproses.`,
+        message: `Transaksi ${newInvoiceNumber} berhasil.`,
         data: result,
       },
       { status: 201 },

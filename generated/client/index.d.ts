@@ -80,8 +80,11 @@ export type StatusLoan = (typeof StatusLoan)[keyof typeof StatusLoan]
 export const TypeCapitalLedger: {
   INJECTION: 'INJECTION',
   WITHDRAWAL: 'WITHDRAWAL',
-  LOAN: 'LOAN',
-  OPS: 'OPS'
+  DISBURSEMENT: 'DISBURSEMENT',
+  REPAYMENT_PRINCIPAL: 'REPAYMENT_PRINCIPAL',
+  REPAYMENT_INTEREST: 'REPAYMENT_INTEREST',
+  EXPENSE_OPS: 'EXPENSE_OPS',
+  ADJUSTMENT: 'ADJUSTMENT'
 };
 
 export type TypeCapitalLedger = (typeof TypeCapitalLedger)[keyof typeof TypeCapitalLedger]
@@ -1516,10 +1519,12 @@ export namespace Prisma {
 
   export type LoanAccountCountOutputType = {
     transactions: number
+    capital_ledgers: number
   }
 
   export type LoanAccountCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transactions?: boolean | LoanAccountCountOutputTypeCountTransactionsArgs
+    capital_ledgers?: boolean | LoanAccountCountOutputTypeCountCapital_ledgersArgs
   }
 
   // Custom InputTypes
@@ -1538,6 +1543,44 @@ export namespace Prisma {
    */
   export type LoanAccountCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransactionWhereInput
+  }
+
+  /**
+   * LoanAccountCountOutputType without action
+   */
+  export type LoanAccountCountOutputTypeCountCapital_ledgersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CapitalLedgerWhereInput
+  }
+
+
+  /**
+   * Count Type TransactionCountOutputType
+   */
+
+  export type TransactionCountOutputType = {
+    capital_ledgers: number
+  }
+
+  export type TransactionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    capital_ledgers?: boolean | TransactionCountOutputTypeCountCapital_ledgersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TransactionCountOutputType without action
+   */
+  export type TransactionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransactionCountOutputType
+     */
+    select?: TransactionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TransactionCountOutputType without action
+   */
+  export type TransactionCountOutputTypeCountCapital_ledgersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CapitalLedgerWhereInput
   }
 
 
@@ -5326,6 +5369,8 @@ export namespace Prisma {
   export type CapitalLedgerMinAggregateOutputType = {
     id: string | null
     created_by_id: string | null
+    loan_account_id: string | null
+    transaction_id: string | null
     amount: Decimal | null
     type: $Enums.TypeCapitalLedger | null
     description: string | null
@@ -5339,6 +5384,8 @@ export namespace Prisma {
   export type CapitalLedgerMaxAggregateOutputType = {
     id: string | null
     created_by_id: string | null
+    loan_account_id: string | null
+    transaction_id: string | null
     amount: Decimal | null
     type: $Enums.TypeCapitalLedger | null
     description: string | null
@@ -5352,6 +5399,8 @@ export namespace Prisma {
   export type CapitalLedgerCountAggregateOutputType = {
     id: number
     created_by_id: number
+    loan_account_id: number
+    transaction_id: number
     amount: number
     type: number
     description: number
@@ -5375,6 +5424,8 @@ export namespace Prisma {
   export type CapitalLedgerMinAggregateInputType = {
     id?: true
     created_by_id?: true
+    loan_account_id?: true
+    transaction_id?: true
     amount?: true
     type?: true
     description?: true
@@ -5388,6 +5439,8 @@ export namespace Prisma {
   export type CapitalLedgerMaxAggregateInputType = {
     id?: true
     created_by_id?: true
+    loan_account_id?: true
+    transaction_id?: true
     amount?: true
     type?: true
     description?: true
@@ -5401,6 +5454,8 @@ export namespace Prisma {
   export type CapitalLedgerCountAggregateInputType = {
     id?: true
     created_by_id?: true
+    loan_account_id?: true
+    transaction_id?: true
     amount?: true
     type?: true
     description?: true
@@ -5501,6 +5556,8 @@ export namespace Prisma {
   export type CapitalLedgerGroupByOutputType = {
     id: string
     created_by_id: string
+    loan_account_id: string | null
+    transaction_id: string | null
     amount: Decimal
     type: $Enums.TypeCapitalLedger
     description: string
@@ -5533,6 +5590,8 @@ export namespace Prisma {
   export type CapitalLedgerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     created_by_id?: boolean
+    loan_account_id?: boolean
+    transaction_id?: boolean
     amount?: boolean
     type?: boolean
     description?: boolean
@@ -5542,11 +5601,15 @@ export namespace Prisma {
     updated_at?: boolean
     deleted_at?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    loan_account?: boolean | CapitalLedger$loan_accountArgs<ExtArgs>
+    transaction?: boolean | CapitalLedger$transactionArgs<ExtArgs>
   }, ExtArgs["result"]["capitalLedger"]>
 
   export type CapitalLedgerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     created_by_id?: boolean
+    loan_account_id?: boolean
+    transaction_id?: boolean
     amount?: boolean
     type?: boolean
     description?: boolean
@@ -5556,11 +5619,15 @@ export namespace Prisma {
     updated_at?: boolean
     deleted_at?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    loan_account?: boolean | CapitalLedger$loan_accountArgs<ExtArgs>
+    transaction?: boolean | CapitalLedger$transactionArgs<ExtArgs>
   }, ExtArgs["result"]["capitalLedger"]>
 
   export type CapitalLedgerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     created_by_id?: boolean
+    loan_account_id?: boolean
+    transaction_id?: boolean
     amount?: boolean
     type?: boolean
     description?: boolean
@@ -5570,11 +5637,15 @@ export namespace Prisma {
     updated_at?: boolean
     deleted_at?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    loan_account?: boolean | CapitalLedger$loan_accountArgs<ExtArgs>
+    transaction?: boolean | CapitalLedger$transactionArgs<ExtArgs>
   }, ExtArgs["result"]["capitalLedger"]>
 
   export type CapitalLedgerSelectScalar = {
     id?: boolean
     created_by_id?: boolean
+    loan_account_id?: boolean
+    transaction_id?: boolean
     amount?: boolean
     type?: boolean
     description?: boolean
@@ -5585,25 +5656,35 @@ export namespace Prisma {
     deleted_at?: boolean
   }
 
-  export type CapitalLedgerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "created_by_id" | "amount" | "type" | "description" | "refrence_number" | "notes" | "created_at" | "updated_at" | "deleted_at", ExtArgs["result"]["capitalLedger"]>
+  export type CapitalLedgerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "created_by_id" | "loan_account_id" | "transaction_id" | "amount" | "type" | "description" | "refrence_number" | "notes" | "created_at" | "updated_at" | "deleted_at", ExtArgs["result"]["capitalLedger"]>
   export type CapitalLedgerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    loan_account?: boolean | CapitalLedger$loan_accountArgs<ExtArgs>
+    transaction?: boolean | CapitalLedger$transactionArgs<ExtArgs>
   }
   export type CapitalLedgerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    loan_account?: boolean | CapitalLedger$loan_accountArgs<ExtArgs>
+    transaction?: boolean | CapitalLedger$transactionArgs<ExtArgs>
   }
   export type CapitalLedgerIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    loan_account?: boolean | CapitalLedger$loan_accountArgs<ExtArgs>
+    transaction?: boolean | CapitalLedger$transactionArgs<ExtArgs>
   }
 
   export type $CapitalLedgerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "CapitalLedger"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      loan_account: Prisma.$LoanAccountPayload<ExtArgs> | null
+      transaction: Prisma.$TransactionPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       created_by_id: string
+      loan_account_id: string | null
+      transaction_id: string | null
       amount: Prisma.Decimal
       type: $Enums.TypeCapitalLedger
       description: string
@@ -6007,6 +6088,8 @@ export namespace Prisma {
   export interface Prisma__CapitalLedgerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    loan_account<T extends CapitalLedger$loan_accountArgs<ExtArgs> = {}>(args?: Subset<T, CapitalLedger$loan_accountArgs<ExtArgs>>): Prisma__LoanAccountClient<$Result.GetResult<Prisma.$LoanAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    transaction<T extends CapitalLedger$transactionArgs<ExtArgs> = {}>(args?: Subset<T, CapitalLedger$transactionArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6038,6 +6121,8 @@ export namespace Prisma {
   interface CapitalLedgerFieldRefs {
     readonly id: FieldRef<"CapitalLedger", 'String'>
     readonly created_by_id: FieldRef<"CapitalLedger", 'String'>
+    readonly loan_account_id: FieldRef<"CapitalLedger", 'String'>
+    readonly transaction_id: FieldRef<"CapitalLedger", 'String'>
     readonly amount: FieldRef<"CapitalLedger", 'Decimal'>
     readonly type: FieldRef<"CapitalLedger", 'TypeCapitalLedger'>
     readonly description: FieldRef<"CapitalLedger", 'String'>
@@ -6442,6 +6527,44 @@ export namespace Prisma {
   }
 
   /**
+   * CapitalLedger.loan_account
+   */
+  export type CapitalLedger$loan_accountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LoanAccount
+     */
+    select?: LoanAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LoanAccount
+     */
+    omit?: LoanAccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LoanAccountInclude<ExtArgs> | null
+    where?: LoanAccountWhereInput
+  }
+
+  /**
+   * CapitalLedger.transaction
+   */
+  export type CapitalLedger$transactionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    where?: TransactionWhereInput
+  }
+
+  /**
    * CapitalLedger without action
    */
   export type CapitalLedgerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6763,6 +6886,7 @@ export namespace Prisma {
     updated_at?: boolean
     deleted_at?: boolean
     transactions?: boolean | LoanAccount$transactionsArgs<ExtArgs>
+    capital_ledgers?: boolean | LoanAccount$capital_ledgersArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     customer?: boolean | CustomerDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6835,6 +6959,7 @@ export namespace Prisma {
   export type LoanAccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "no_rekening" | "marketing_id" | "customer_id" | "product_id" | "principal_amount" | "rate_percent" | "rate_amount" | "start_date" | "period_start" | "current_debt_principal" | "current_debt_interest" | "status" | "created_at" | "updated_at" | "deleted_at", ExtArgs["result"]["loanAccount"]>
   export type LoanAccountInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transactions?: boolean | LoanAccount$transactionsArgs<ExtArgs>
+    capital_ledgers?: boolean | LoanAccount$capital_ledgersArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     customer?: boolean | CustomerDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6855,6 +6980,7 @@ export namespace Prisma {
     name: "LoanAccount"
     objects: {
       transactions: Prisma.$TransactionPayload<ExtArgs>[]
+      capital_ledgers: Prisma.$CapitalLedgerPayload<ExtArgs>[]
       user: Prisma.$UserPayload<ExtArgs>
       customer: Prisma.$CustomerPayload<ExtArgs>
       product: Prisma.$ProductPayload<ExtArgs>
@@ -7271,6 +7397,7 @@ export namespace Prisma {
   export interface Prisma__LoanAccountClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     transactions<T extends LoanAccount$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, LoanAccount$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    capital_ledgers<T extends LoanAccount$capital_ledgersArgs<ExtArgs> = {}>(args?: Subset<T, LoanAccount$capital_ledgersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CapitalLedgerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     customer<T extends CustomerDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CustomerDefaultArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
@@ -7739,6 +7866,30 @@ export namespace Prisma {
   }
 
   /**
+   * LoanAccount.capital_ledgers
+   */
+  export type LoanAccount$capital_ledgersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CapitalLedger
+     */
+    select?: CapitalLedgerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CapitalLedger
+     */
+    omit?: CapitalLedgerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CapitalLedgerInclude<ExtArgs> | null
+    where?: CapitalLedgerWhereInput
+    orderBy?: CapitalLedgerOrderByWithRelationInput | CapitalLedgerOrderByWithRelationInput[]
+    cursor?: CapitalLedgerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CapitalLedgerScalarFieldEnum | CapitalLedgerScalarFieldEnum[]
+  }
+
+  /**
    * LoanAccount without action
    */
   export type LoanAccountDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8067,9 +8218,11 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     deleted_at?: boolean
+    capital_ledgers?: boolean | Transaction$capital_ledgersArgs<ExtArgs>
     loan_account?: boolean | LoanAccountDefaultArgs<ExtArgs>
     processed?: boolean | UserDefaultArgs<ExtArgs>
     approved?: boolean | UserDefaultArgs<ExtArgs>
+    _count?: boolean | TransactionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8140,9 +8293,11 @@ export namespace Prisma {
 
   export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "invoice_number" | "loan_account_id" | "processed_by_id" | "approved_by_id" | "amount_paid" | "principal_cut" | "interest_cut" | "remaining_principal" | "remaining_interest" | "payment_method" | "payment_attachment" | "payment_status" | "paid_date" | "created_at" | "updated_at" | "deleted_at", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    capital_ledgers?: boolean | Transaction$capital_ledgersArgs<ExtArgs>
     loan_account?: boolean | LoanAccountDefaultArgs<ExtArgs>
     processed?: boolean | UserDefaultArgs<ExtArgs>
     approved?: boolean | UserDefaultArgs<ExtArgs>
+    _count?: boolean | TransactionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     loan_account?: boolean | LoanAccountDefaultArgs<ExtArgs>
@@ -8158,6 +8313,7 @@ export namespace Prisma {
   export type $TransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Transaction"
     objects: {
+      capital_ledgers: Prisma.$CapitalLedgerPayload<ExtArgs>[]
       loan_account: Prisma.$LoanAccountPayload<ExtArgs>
       processed: Prisma.$UserPayload<ExtArgs>
       approved: Prisma.$UserPayload<ExtArgs>
@@ -8574,6 +8730,7 @@ export namespace Prisma {
    */
   export interface Prisma__TransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    capital_ledgers<T extends Transaction$capital_ledgersArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$capital_ledgersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CapitalLedgerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     loan_account<T extends LoanAccountDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LoanAccountDefaultArgs<ExtArgs>>): Prisma__LoanAccountClient<$Result.GetResult<Prisma.$LoanAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     processed<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     approved<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
@@ -9019,6 +9176,30 @@ export namespace Prisma {
   }
 
   /**
+   * Transaction.capital_ledgers
+   */
+  export type Transaction$capital_ledgersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CapitalLedger
+     */
+    select?: CapitalLedgerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CapitalLedger
+     */
+    omit?: CapitalLedgerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CapitalLedgerInclude<ExtArgs> | null
+    where?: CapitalLedgerWhereInput
+    orderBy?: CapitalLedgerOrderByWithRelationInput | CapitalLedgerOrderByWithRelationInput[]
+    cursor?: CapitalLedgerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CapitalLedgerScalarFieldEnum | CapitalLedgerScalarFieldEnum[]
+  }
+
+  /**
    * Transaction without action
    */
   export type TransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9113,6 +9294,8 @@ export namespace Prisma {
   export const CapitalLedgerScalarFieldEnum: {
     id: 'id',
     created_by_id: 'created_by_id',
+    loan_account_id: 'loan_account_id',
+    transaction_id: 'transaction_id',
     amount: 'amount',
     type: 'type',
     description: 'description',
@@ -9646,6 +9829,8 @@ export namespace Prisma {
     NOT?: CapitalLedgerWhereInput | CapitalLedgerWhereInput[]
     id?: StringFilter<"CapitalLedger"> | string
     created_by_id?: StringFilter<"CapitalLedger"> | string
+    loan_account_id?: StringNullableFilter<"CapitalLedger"> | string | null
+    transaction_id?: StringNullableFilter<"CapitalLedger"> | string | null
     amount?: DecimalFilter<"CapitalLedger"> | Decimal | DecimalJsLike | number | string
     type?: EnumTypeCapitalLedgerFilter<"CapitalLedger"> | $Enums.TypeCapitalLedger
     description?: StringFilter<"CapitalLedger"> | string
@@ -9655,11 +9840,15 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"CapitalLedger"> | Date | string
     deleted_at?: DateTimeNullableFilter<"CapitalLedger"> | Date | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    loan_account?: XOR<LoanAccountNullableScalarRelationFilter, LoanAccountWhereInput> | null
+    transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
   }
 
   export type CapitalLedgerOrderByWithRelationInput = {
     id?: SortOrder
     created_by_id?: SortOrder
+    loan_account_id?: SortOrderInput | SortOrder
+    transaction_id?: SortOrderInput | SortOrder
     amount?: SortOrder
     type?: SortOrder
     description?: SortOrder
@@ -9669,6 +9858,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     deleted_at?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
+    loan_account?: LoanAccountOrderByWithRelationInput
+    transaction?: TransactionOrderByWithRelationInput
   }
 
   export type CapitalLedgerWhereUniqueInput = Prisma.AtLeast<{
@@ -9677,6 +9868,8 @@ export namespace Prisma {
     OR?: CapitalLedgerWhereInput[]
     NOT?: CapitalLedgerWhereInput | CapitalLedgerWhereInput[]
     created_by_id?: StringFilter<"CapitalLedger"> | string
+    loan_account_id?: StringNullableFilter<"CapitalLedger"> | string | null
+    transaction_id?: StringNullableFilter<"CapitalLedger"> | string | null
     amount?: DecimalFilter<"CapitalLedger"> | Decimal | DecimalJsLike | number | string
     type?: EnumTypeCapitalLedgerFilter<"CapitalLedger"> | $Enums.TypeCapitalLedger
     description?: StringFilter<"CapitalLedger"> | string
@@ -9686,11 +9879,15 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"CapitalLedger"> | Date | string
     deleted_at?: DateTimeNullableFilter<"CapitalLedger"> | Date | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    loan_account?: XOR<LoanAccountNullableScalarRelationFilter, LoanAccountWhereInput> | null
+    transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
   }, "id">
 
   export type CapitalLedgerOrderByWithAggregationInput = {
     id?: SortOrder
     created_by_id?: SortOrder
+    loan_account_id?: SortOrderInput | SortOrder
+    transaction_id?: SortOrderInput | SortOrder
     amount?: SortOrder
     type?: SortOrder
     description?: SortOrder
@@ -9712,6 +9909,8 @@ export namespace Prisma {
     NOT?: CapitalLedgerScalarWhereWithAggregatesInput | CapitalLedgerScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"CapitalLedger"> | string
     created_by_id?: StringWithAggregatesFilter<"CapitalLedger"> | string
+    loan_account_id?: StringNullableWithAggregatesFilter<"CapitalLedger"> | string | null
+    transaction_id?: StringNullableWithAggregatesFilter<"CapitalLedger"> | string | null
     amount?: DecimalWithAggregatesFilter<"CapitalLedger"> | Decimal | DecimalJsLike | number | string
     type?: EnumTypeCapitalLedgerWithAggregatesFilter<"CapitalLedger"> | $Enums.TypeCapitalLedger
     description?: StringWithAggregatesFilter<"CapitalLedger"> | string
@@ -9743,6 +9942,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"LoanAccount"> | Date | string
     deleted_at?: DateTimeNullableFilter<"LoanAccount"> | Date | string | null
     transactions?: TransactionListRelationFilter
+    capital_ledgers?: CapitalLedgerListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     customer?: XOR<CustomerScalarRelationFilter, CustomerWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
@@ -9766,6 +9966,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     deleted_at?: SortOrderInput | SortOrder
     transactions?: TransactionOrderByRelationAggregateInput
+    capital_ledgers?: CapitalLedgerOrderByRelationAggregateInput
     user?: UserOrderByWithRelationInput
     customer?: CustomerOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
@@ -9792,6 +9993,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"LoanAccount"> | Date | string
     deleted_at?: DateTimeNullableFilter<"LoanAccount"> | Date | string | null
     transactions?: TransactionListRelationFilter
+    capital_ledgers?: CapitalLedgerListRelationFilter
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     customer?: XOR<CustomerScalarRelationFilter, CustomerWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
@@ -9864,6 +10066,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Transaction"> | Date | string
     updated_at?: DateTimeFilter<"Transaction"> | Date | string
     deleted_at?: DateTimeNullableFilter<"Transaction"> | Date | string | null
+    capital_ledgers?: CapitalLedgerListRelationFilter
     loan_account?: XOR<LoanAccountScalarRelationFilter, LoanAccountWhereInput>
     processed?: XOR<UserScalarRelationFilter, UserWhereInput>
     approved?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -9887,6 +10090,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     deleted_at?: SortOrderInput | SortOrder
+    capital_ledgers?: CapitalLedgerOrderByRelationAggregateInput
     loan_account?: LoanAccountOrderByWithRelationInput
     processed?: UserOrderByWithRelationInput
     approved?: UserOrderByWithRelationInput
@@ -9913,6 +10117,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Transaction"> | Date | string
     updated_at?: DateTimeFilter<"Transaction"> | Date | string
     deleted_at?: DateTimeNullableFilter<"Transaction"> | Date | string | null
+    capital_ledgers?: CapitalLedgerListRelationFilter
     loan_account?: XOR<LoanAccountScalarRelationFilter, LoanAccountWhereInput>
     processed?: XOR<UserScalarRelationFilter, UserWhereInput>
     approved?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -10357,11 +10562,15 @@ export namespace Prisma {
     updated_at?: Date | string
     deleted_at?: Date | string | null
     user: UserCreateNestedOneWithoutCapital_ledgersInput
+    loan_account?: LoanAccountCreateNestedOneWithoutCapital_ledgersInput
+    transaction?: TransactionCreateNestedOneWithoutCapital_ledgersInput
   }
 
   export type CapitalLedgerUncheckedCreateInput = {
     id?: string
     created_by_id: string
+    loan_account_id?: string | null
+    transaction_id?: string | null
     amount: Decimal | DecimalJsLike | number | string
     type?: $Enums.TypeCapitalLedger
     description: string
@@ -10383,11 +10592,15 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     user?: UserUpdateOneRequiredWithoutCapital_ledgersNestedInput
+    loan_account?: LoanAccountUpdateOneWithoutCapital_ledgersNestedInput
+    transaction?: TransactionUpdateOneWithoutCapital_ledgersNestedInput
   }
 
   export type CapitalLedgerUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     created_by_id?: StringFieldUpdateOperationsInput | string
+    loan_account_id?: NullableStringFieldUpdateOperationsInput | string | null
+    transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumTypeCapitalLedgerFieldUpdateOperationsInput | $Enums.TypeCapitalLedger
     description?: StringFieldUpdateOperationsInput | string
@@ -10401,6 +10614,8 @@ export namespace Prisma {
   export type CapitalLedgerCreateManyInput = {
     id?: string
     created_by_id: string
+    loan_account_id?: string | null
+    transaction_id?: string | null
     amount: Decimal | DecimalJsLike | number | string
     type?: $Enums.TypeCapitalLedger
     description: string
@@ -10426,6 +10641,8 @@ export namespace Prisma {
   export type CapitalLedgerUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     created_by_id?: StringFieldUpdateOperationsInput | string
+    loan_account_id?: NullableStringFieldUpdateOperationsInput | string | null
+    transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumTypeCapitalLedgerFieldUpdateOperationsInput | $Enums.TypeCapitalLedger
     description?: StringFieldUpdateOperationsInput | string
@@ -10451,6 +10668,7 @@ export namespace Prisma {
     updated_at?: Date | string
     deleted_at?: Date | string | null
     transactions?: TransactionCreateNestedManyWithoutLoan_accountInput
+    capital_ledgers?: CapitalLedgerCreateNestedManyWithoutLoan_accountInput
     user: UserCreateNestedOneWithoutLoan_accountsInput
     customer: CustomerCreateNestedOneWithoutLoan_accountsInput
     product: ProductCreateNestedOneWithoutLoan_accountsInput
@@ -10474,6 +10692,7 @@ export namespace Prisma {
     updated_at?: Date | string
     deleted_at?: Date | string | null
     transactions?: TransactionUncheckedCreateNestedManyWithoutLoan_accountInput
+    capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutLoan_accountInput
   }
 
   export type LoanAccountUpdateInput = {
@@ -10491,6 +10710,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactions?: TransactionUpdateManyWithoutLoan_accountNestedInput
+    capital_ledgers?: CapitalLedgerUpdateManyWithoutLoan_accountNestedInput
     user?: UserUpdateOneRequiredWithoutLoan_accountsNestedInput
     customer?: CustomerUpdateOneRequiredWithoutLoan_accountsNestedInput
     product?: ProductUpdateOneRequiredWithoutLoan_accountsNestedInput
@@ -10514,6 +10734,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactions?: TransactionUncheckedUpdateManyWithoutLoan_accountNestedInput
+    capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutLoan_accountNestedInput
   }
 
   export type LoanAccountCreateManyInput = {
@@ -10585,6 +10806,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    capital_ledgers?: CapitalLedgerCreateNestedManyWithoutTransactionInput
     loan_account: LoanAccountCreateNestedOneWithoutTransactionsInput
     processed: UserCreateNestedOneWithoutTransactions_processedInput
     approved: UserCreateNestedOneWithoutTransactions_approvedInput
@@ -10608,6 +10830,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionUpdateInput = {
@@ -10625,6 +10848,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    capital_ledgers?: CapitalLedgerUpdateManyWithoutTransactionNestedInput
     loan_account?: LoanAccountUpdateOneRequiredWithoutTransactionsNestedInput
     processed?: UserUpdateOneRequiredWithoutTransactions_processedNestedInput
     approved?: UserUpdateOneRequiredWithoutTransactions_approvedNestedInput
@@ -10648,6 +10872,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionCreateManyInput = {
@@ -11105,9 +11330,21 @@ export namespace Prisma {
     not?: NestedEnumTypeCapitalLedgerFilter<$PrismaModel> | $Enums.TypeCapitalLedger
   }
 
+  export type LoanAccountNullableScalarRelationFilter = {
+    is?: LoanAccountWhereInput | null
+    isNot?: LoanAccountWhereInput | null
+  }
+
+  export type TransactionNullableScalarRelationFilter = {
+    is?: TransactionWhereInput | null
+    isNot?: TransactionWhereInput | null
+  }
+
   export type CapitalLedgerCountOrderByAggregateInput = {
     id?: SortOrder
     created_by_id?: SortOrder
+    loan_account_id?: SortOrder
+    transaction_id?: SortOrder
     amount?: SortOrder
     type?: SortOrder
     description?: SortOrder
@@ -11125,6 +11362,8 @@ export namespace Prisma {
   export type CapitalLedgerMaxOrderByAggregateInput = {
     id?: SortOrder
     created_by_id?: SortOrder
+    loan_account_id?: SortOrder
+    transaction_id?: SortOrder
     amount?: SortOrder
     type?: SortOrder
     description?: SortOrder
@@ -11138,6 +11377,8 @@ export namespace Prisma {
   export type CapitalLedgerMinOrderByAggregateInput = {
     id?: SortOrder
     created_by_id?: SortOrder
+    loan_account_id?: SortOrder
+    transaction_id?: SortOrder
     amount?: SortOrder
     type?: SortOrder
     description?: SortOrder
@@ -11762,6 +12003,18 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type LoanAccountCreateNestedOneWithoutCapital_ledgersInput = {
+    create?: XOR<LoanAccountCreateWithoutCapital_ledgersInput, LoanAccountUncheckedCreateWithoutCapital_ledgersInput>
+    connectOrCreate?: LoanAccountCreateOrConnectWithoutCapital_ledgersInput
+    connect?: LoanAccountWhereUniqueInput
+  }
+
+  export type TransactionCreateNestedOneWithoutCapital_ledgersInput = {
+    create?: XOR<TransactionCreateWithoutCapital_ledgersInput, TransactionUncheckedCreateWithoutCapital_ledgersInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutCapital_ledgersInput
+    connect?: TransactionWhereUniqueInput
+  }
+
   export type EnumTypeCapitalLedgerFieldUpdateOperationsInput = {
     set?: $Enums.TypeCapitalLedger
   }
@@ -11774,11 +12027,38 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCapital_ledgersInput, UserUpdateWithoutCapital_ledgersInput>, UserUncheckedUpdateWithoutCapital_ledgersInput>
   }
 
+  export type LoanAccountUpdateOneWithoutCapital_ledgersNestedInput = {
+    create?: XOR<LoanAccountCreateWithoutCapital_ledgersInput, LoanAccountUncheckedCreateWithoutCapital_ledgersInput>
+    connectOrCreate?: LoanAccountCreateOrConnectWithoutCapital_ledgersInput
+    upsert?: LoanAccountUpsertWithoutCapital_ledgersInput
+    disconnect?: LoanAccountWhereInput | boolean
+    delete?: LoanAccountWhereInput | boolean
+    connect?: LoanAccountWhereUniqueInput
+    update?: XOR<XOR<LoanAccountUpdateToOneWithWhereWithoutCapital_ledgersInput, LoanAccountUpdateWithoutCapital_ledgersInput>, LoanAccountUncheckedUpdateWithoutCapital_ledgersInput>
+  }
+
+  export type TransactionUpdateOneWithoutCapital_ledgersNestedInput = {
+    create?: XOR<TransactionCreateWithoutCapital_ledgersInput, TransactionUncheckedCreateWithoutCapital_ledgersInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutCapital_ledgersInput
+    upsert?: TransactionUpsertWithoutCapital_ledgersInput
+    disconnect?: TransactionWhereInput | boolean
+    delete?: TransactionWhereInput | boolean
+    connect?: TransactionWhereUniqueInput
+    update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutCapital_ledgersInput, TransactionUpdateWithoutCapital_ledgersInput>, TransactionUncheckedUpdateWithoutCapital_ledgersInput>
+  }
+
   export type TransactionCreateNestedManyWithoutLoan_accountInput = {
     create?: XOR<TransactionCreateWithoutLoan_accountInput, TransactionUncheckedCreateWithoutLoan_accountInput> | TransactionCreateWithoutLoan_accountInput[] | TransactionUncheckedCreateWithoutLoan_accountInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutLoan_accountInput | TransactionCreateOrConnectWithoutLoan_accountInput[]
     createMany?: TransactionCreateManyLoan_accountInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type CapitalLedgerCreateNestedManyWithoutLoan_accountInput = {
+    create?: XOR<CapitalLedgerCreateWithoutLoan_accountInput, CapitalLedgerUncheckedCreateWithoutLoan_accountInput> | CapitalLedgerCreateWithoutLoan_accountInput[] | CapitalLedgerUncheckedCreateWithoutLoan_accountInput[]
+    connectOrCreate?: CapitalLedgerCreateOrConnectWithoutLoan_accountInput | CapitalLedgerCreateOrConnectWithoutLoan_accountInput[]
+    createMany?: CapitalLedgerCreateManyLoan_accountInputEnvelope
+    connect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
   }
 
   export type UserCreateNestedOneWithoutLoan_accountsInput = {
@@ -11806,6 +12086,13 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
+  export type CapitalLedgerUncheckedCreateNestedManyWithoutLoan_accountInput = {
+    create?: XOR<CapitalLedgerCreateWithoutLoan_accountInput, CapitalLedgerUncheckedCreateWithoutLoan_accountInput> | CapitalLedgerCreateWithoutLoan_accountInput[] | CapitalLedgerUncheckedCreateWithoutLoan_accountInput[]
+    connectOrCreate?: CapitalLedgerCreateOrConnectWithoutLoan_accountInput | CapitalLedgerCreateOrConnectWithoutLoan_accountInput[]
+    createMany?: CapitalLedgerCreateManyLoan_accountInputEnvelope
+    connect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+  }
+
   export type EnumStatusLoanFieldUpdateOperationsInput = {
     set?: $Enums.StatusLoan
   }
@@ -11822,6 +12109,20 @@ export namespace Prisma {
     update?: TransactionUpdateWithWhereUniqueWithoutLoan_accountInput | TransactionUpdateWithWhereUniqueWithoutLoan_accountInput[]
     updateMany?: TransactionUpdateManyWithWhereWithoutLoan_accountInput | TransactionUpdateManyWithWhereWithoutLoan_accountInput[]
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type CapitalLedgerUpdateManyWithoutLoan_accountNestedInput = {
+    create?: XOR<CapitalLedgerCreateWithoutLoan_accountInput, CapitalLedgerUncheckedCreateWithoutLoan_accountInput> | CapitalLedgerCreateWithoutLoan_accountInput[] | CapitalLedgerUncheckedCreateWithoutLoan_accountInput[]
+    connectOrCreate?: CapitalLedgerCreateOrConnectWithoutLoan_accountInput | CapitalLedgerCreateOrConnectWithoutLoan_accountInput[]
+    upsert?: CapitalLedgerUpsertWithWhereUniqueWithoutLoan_accountInput | CapitalLedgerUpsertWithWhereUniqueWithoutLoan_accountInput[]
+    createMany?: CapitalLedgerCreateManyLoan_accountInputEnvelope
+    set?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    disconnect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    delete?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    connect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    update?: CapitalLedgerUpdateWithWhereUniqueWithoutLoan_accountInput | CapitalLedgerUpdateWithWhereUniqueWithoutLoan_accountInput[]
+    updateMany?: CapitalLedgerUpdateManyWithWhereWithoutLoan_accountInput | CapitalLedgerUpdateManyWithWhereWithoutLoan_accountInput[]
+    deleteMany?: CapitalLedgerScalarWhereInput | CapitalLedgerScalarWhereInput[]
   }
 
   export type UserUpdateOneRequiredWithoutLoan_accountsNestedInput = {
@@ -11862,6 +12163,27 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
+  export type CapitalLedgerUncheckedUpdateManyWithoutLoan_accountNestedInput = {
+    create?: XOR<CapitalLedgerCreateWithoutLoan_accountInput, CapitalLedgerUncheckedCreateWithoutLoan_accountInput> | CapitalLedgerCreateWithoutLoan_accountInput[] | CapitalLedgerUncheckedCreateWithoutLoan_accountInput[]
+    connectOrCreate?: CapitalLedgerCreateOrConnectWithoutLoan_accountInput | CapitalLedgerCreateOrConnectWithoutLoan_accountInput[]
+    upsert?: CapitalLedgerUpsertWithWhereUniqueWithoutLoan_accountInput | CapitalLedgerUpsertWithWhereUniqueWithoutLoan_accountInput[]
+    createMany?: CapitalLedgerCreateManyLoan_accountInputEnvelope
+    set?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    disconnect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    delete?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    connect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    update?: CapitalLedgerUpdateWithWhereUniqueWithoutLoan_accountInput | CapitalLedgerUpdateWithWhereUniqueWithoutLoan_accountInput[]
+    updateMany?: CapitalLedgerUpdateManyWithWhereWithoutLoan_accountInput | CapitalLedgerUpdateManyWithWhereWithoutLoan_accountInput[]
+    deleteMany?: CapitalLedgerScalarWhereInput | CapitalLedgerScalarWhereInput[]
+  }
+
+  export type CapitalLedgerCreateNestedManyWithoutTransactionInput = {
+    create?: XOR<CapitalLedgerCreateWithoutTransactionInput, CapitalLedgerUncheckedCreateWithoutTransactionInput> | CapitalLedgerCreateWithoutTransactionInput[] | CapitalLedgerUncheckedCreateWithoutTransactionInput[]
+    connectOrCreate?: CapitalLedgerCreateOrConnectWithoutTransactionInput | CapitalLedgerCreateOrConnectWithoutTransactionInput[]
+    createMany?: CapitalLedgerCreateManyTransactionInputEnvelope
+    connect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+  }
+
   export type LoanAccountCreateNestedOneWithoutTransactionsInput = {
     create?: XOR<LoanAccountCreateWithoutTransactionsInput, LoanAccountUncheckedCreateWithoutTransactionsInput>
     connectOrCreate?: LoanAccountCreateOrConnectWithoutTransactionsInput
@@ -11880,8 +12202,29 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type CapitalLedgerUncheckedCreateNestedManyWithoutTransactionInput = {
+    create?: XOR<CapitalLedgerCreateWithoutTransactionInput, CapitalLedgerUncheckedCreateWithoutTransactionInput> | CapitalLedgerCreateWithoutTransactionInput[] | CapitalLedgerUncheckedCreateWithoutTransactionInput[]
+    connectOrCreate?: CapitalLedgerCreateOrConnectWithoutTransactionInput | CapitalLedgerCreateOrConnectWithoutTransactionInput[]
+    createMany?: CapitalLedgerCreateManyTransactionInputEnvelope
+    connect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+  }
+
   export type EnumStatusTransactionFieldUpdateOperationsInput = {
     set?: $Enums.StatusTransaction
+  }
+
+  export type CapitalLedgerUpdateManyWithoutTransactionNestedInput = {
+    create?: XOR<CapitalLedgerCreateWithoutTransactionInput, CapitalLedgerUncheckedCreateWithoutTransactionInput> | CapitalLedgerCreateWithoutTransactionInput[] | CapitalLedgerUncheckedCreateWithoutTransactionInput[]
+    connectOrCreate?: CapitalLedgerCreateOrConnectWithoutTransactionInput | CapitalLedgerCreateOrConnectWithoutTransactionInput[]
+    upsert?: CapitalLedgerUpsertWithWhereUniqueWithoutTransactionInput | CapitalLedgerUpsertWithWhereUniqueWithoutTransactionInput[]
+    createMany?: CapitalLedgerCreateManyTransactionInputEnvelope
+    set?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    disconnect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    delete?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    connect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    update?: CapitalLedgerUpdateWithWhereUniqueWithoutTransactionInput | CapitalLedgerUpdateWithWhereUniqueWithoutTransactionInput[]
+    updateMany?: CapitalLedgerUpdateManyWithWhereWithoutTransactionInput | CapitalLedgerUpdateManyWithWhereWithoutTransactionInput[]
+    deleteMany?: CapitalLedgerScalarWhereInput | CapitalLedgerScalarWhereInput[]
   }
 
   export type LoanAccountUpdateOneRequiredWithoutTransactionsNestedInput = {
@@ -11906,6 +12249,20 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutTransactions_approvedInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactions_approvedInput, UserUpdateWithoutTransactions_approvedInput>, UserUncheckedUpdateWithoutTransactions_approvedInput>
+  }
+
+  export type CapitalLedgerUncheckedUpdateManyWithoutTransactionNestedInput = {
+    create?: XOR<CapitalLedgerCreateWithoutTransactionInput, CapitalLedgerUncheckedCreateWithoutTransactionInput> | CapitalLedgerCreateWithoutTransactionInput[] | CapitalLedgerUncheckedCreateWithoutTransactionInput[]
+    connectOrCreate?: CapitalLedgerCreateOrConnectWithoutTransactionInput | CapitalLedgerCreateOrConnectWithoutTransactionInput[]
+    upsert?: CapitalLedgerUpsertWithWhereUniqueWithoutTransactionInput | CapitalLedgerUpsertWithWhereUniqueWithoutTransactionInput[]
+    createMany?: CapitalLedgerCreateManyTransactionInputEnvelope
+    set?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    disconnect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    delete?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    connect?: CapitalLedgerWhereUniqueInput | CapitalLedgerWhereUniqueInput[]
+    update?: CapitalLedgerUpdateWithWhereUniqueWithoutTransactionInput | CapitalLedgerUpdateWithWhereUniqueWithoutTransactionInput[]
+    updateMany?: CapitalLedgerUpdateManyWithWhereWithoutTransactionInput | CapitalLedgerUpdateManyWithWhereWithoutTransactionInput[]
+    deleteMany?: CapitalLedgerScalarWhereInput | CapitalLedgerScalarWhereInput[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -12238,10 +12595,14 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    loan_account?: LoanAccountCreateNestedOneWithoutCapital_ledgersInput
+    transaction?: TransactionCreateNestedOneWithoutCapital_ledgersInput
   }
 
   export type CapitalLedgerUncheckedCreateWithoutUserInput = {
     id?: string
+    loan_account_id?: string | null
+    transaction_id?: string | null
     amount: Decimal | DecimalJsLike | number | string
     type?: $Enums.TypeCapitalLedger
     description: string
@@ -12277,6 +12638,7 @@ export namespace Prisma {
     updated_at?: Date | string
     deleted_at?: Date | string | null
     transactions?: TransactionCreateNestedManyWithoutLoan_accountInput
+    capital_ledgers?: CapitalLedgerCreateNestedManyWithoutLoan_accountInput
     customer: CustomerCreateNestedOneWithoutLoan_accountsInput
     product: ProductCreateNestedOneWithoutLoan_accountsInput
   }
@@ -12298,6 +12660,7 @@ export namespace Prisma {
     updated_at?: Date | string
     deleted_at?: Date | string | null
     transactions?: TransactionUncheckedCreateNestedManyWithoutLoan_accountInput
+    capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutLoan_accountInput
   }
 
   export type LoanAccountCreateOrConnectWithoutUserInput = {
@@ -12325,6 +12688,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    capital_ledgers?: CapitalLedgerCreateNestedManyWithoutTransactionInput
     loan_account: LoanAccountCreateNestedOneWithoutTransactionsInput
     approved: UserCreateNestedOneWithoutTransactions_approvedInput
   }
@@ -12346,6 +12710,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutProcessedInput = {
@@ -12373,6 +12738,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    capital_ledgers?: CapitalLedgerCreateNestedManyWithoutTransactionInput
     loan_account: LoanAccountCreateNestedOneWithoutTransactionsInput
     processed: UserCreateNestedOneWithoutTransactions_processedInput
   }
@@ -12394,6 +12760,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutApprovedInput = {
@@ -12495,6 +12862,8 @@ export namespace Prisma {
     NOT?: CapitalLedgerScalarWhereInput | CapitalLedgerScalarWhereInput[]
     id?: StringFilter<"CapitalLedger"> | string
     created_by_id?: StringFilter<"CapitalLedger"> | string
+    loan_account_id?: StringNullableFilter<"CapitalLedger"> | string | null
+    transaction_id?: StringNullableFilter<"CapitalLedger"> | string | null
     amount?: DecimalFilter<"CapitalLedger"> | Decimal | DecimalJsLike | number | string
     type?: EnumTypeCapitalLedgerFilter<"CapitalLedger"> | $Enums.TypeCapitalLedger
     description?: StringFilter<"CapitalLedger"> | string
@@ -12613,6 +12982,7 @@ export namespace Prisma {
     updated_at?: Date | string
     deleted_at?: Date | string | null
     transactions?: TransactionCreateNestedManyWithoutLoan_accountInput
+    capital_ledgers?: CapitalLedgerCreateNestedManyWithoutLoan_accountInput
     user: UserCreateNestedOneWithoutLoan_accountsInput
     product: ProductCreateNestedOneWithoutLoan_accountsInput
   }
@@ -12634,6 +13004,7 @@ export namespace Prisma {
     updated_at?: Date | string
     deleted_at?: Date | string | null
     transactions?: TransactionUncheckedCreateNestedManyWithoutLoan_accountInput
+    capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutLoan_accountInput
   }
 
   export type LoanAccountCreateOrConnectWithoutCustomerInput = {
@@ -12797,6 +13168,7 @@ export namespace Prisma {
     updated_at?: Date | string
     deleted_at?: Date | string | null
     transactions?: TransactionCreateNestedManyWithoutLoan_accountInput
+    capital_ledgers?: CapitalLedgerCreateNestedManyWithoutLoan_accountInput
     user: UserCreateNestedOneWithoutLoan_accountsInput
     customer: CustomerCreateNestedOneWithoutLoan_accountsInput
   }
@@ -12818,6 +13190,7 @@ export namespace Prisma {
     updated_at?: Date | string
     deleted_at?: Date | string | null
     transactions?: TransactionUncheckedCreateNestedManyWithoutLoan_accountInput
+    capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutLoan_accountInput
   }
 
   export type LoanAccountCreateOrConnectWithoutProductInput = {
@@ -13023,6 +13396,96 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutCapital_ledgersInput, UserUncheckedCreateWithoutCapital_ledgersInput>
   }
 
+  export type LoanAccountCreateWithoutCapital_ledgersInput = {
+    id?: string
+    no_rekening: string
+    principal_amount: Decimal | DecimalJsLike | number | string
+    rate_percent: Decimal | DecimalJsLike | number | string
+    rate_amount: Decimal | DecimalJsLike | number | string
+    start_date: Date | string
+    period_start: Date | string
+    current_debt_principal: Decimal | DecimalJsLike | number | string
+    current_debt_interest: Decimal | DecimalJsLike | number | string
+    status?: $Enums.StatusLoan
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+    transactions?: TransactionCreateNestedManyWithoutLoan_accountInput
+    user: UserCreateNestedOneWithoutLoan_accountsInput
+    customer: CustomerCreateNestedOneWithoutLoan_accountsInput
+    product: ProductCreateNestedOneWithoutLoan_accountsInput
+  }
+
+  export type LoanAccountUncheckedCreateWithoutCapital_ledgersInput = {
+    id?: string
+    no_rekening: string
+    marketing_id: string
+    customer_id: string
+    product_id: string
+    principal_amount: Decimal | DecimalJsLike | number | string
+    rate_percent: Decimal | DecimalJsLike | number | string
+    rate_amount: Decimal | DecimalJsLike | number | string
+    start_date: Date | string
+    period_start: Date | string
+    current_debt_principal: Decimal | DecimalJsLike | number | string
+    current_debt_interest: Decimal | DecimalJsLike | number | string
+    status?: $Enums.StatusLoan
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+    transactions?: TransactionUncheckedCreateNestedManyWithoutLoan_accountInput
+  }
+
+  export type LoanAccountCreateOrConnectWithoutCapital_ledgersInput = {
+    where: LoanAccountWhereUniqueInput
+    create: XOR<LoanAccountCreateWithoutCapital_ledgersInput, LoanAccountUncheckedCreateWithoutCapital_ledgersInput>
+  }
+
+  export type TransactionCreateWithoutCapital_ledgersInput = {
+    id?: string
+    invoice_number: string
+    amount_paid: Decimal | DecimalJsLike | number | string
+    principal_cut: Decimal | DecimalJsLike | number | string
+    interest_cut: Decimal | DecimalJsLike | number | string
+    remaining_principal: Decimal | DecimalJsLike | number | string
+    remaining_interest: Decimal | DecimalJsLike | number | string
+    payment_method?: string
+    payment_attachment?: string | null
+    payment_status?: $Enums.StatusTransaction
+    paid_date: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+    loan_account: LoanAccountCreateNestedOneWithoutTransactionsInput
+    processed: UserCreateNestedOneWithoutTransactions_processedInput
+    approved: UserCreateNestedOneWithoutTransactions_approvedInput
+  }
+
+  export type TransactionUncheckedCreateWithoutCapital_ledgersInput = {
+    id?: string
+    invoice_number: string
+    loan_account_id: string
+    processed_by_id: string
+    approved_by_id: string
+    amount_paid: Decimal | DecimalJsLike | number | string
+    principal_cut: Decimal | DecimalJsLike | number | string
+    interest_cut: Decimal | DecimalJsLike | number | string
+    remaining_principal: Decimal | DecimalJsLike | number | string
+    remaining_interest: Decimal | DecimalJsLike | number | string
+    payment_method?: string
+    payment_attachment?: string | null
+    payment_status?: $Enums.StatusTransaction
+    paid_date: Date | string
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+  }
+
+  export type TransactionCreateOrConnectWithoutCapital_ledgersInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutCapital_ledgersInput, TransactionUncheckedCreateWithoutCapital_ledgersInput>
+  }
+
   export type UserUpsertWithoutCapital_ledgersInput = {
     update: XOR<UserUpdateWithoutCapital_ledgersInput, UserUncheckedUpdateWithoutCapital_ledgersInput>
     create: XOR<UserCreateWithoutCapital_ledgersInput, UserUncheckedCreateWithoutCapital_ledgersInput>
@@ -13086,6 +13549,108 @@ export namespace Prisma {
     transactions_approved?: TransactionUncheckedUpdateManyWithoutApprovedNestedInput
   }
 
+  export type LoanAccountUpsertWithoutCapital_ledgersInput = {
+    update: XOR<LoanAccountUpdateWithoutCapital_ledgersInput, LoanAccountUncheckedUpdateWithoutCapital_ledgersInput>
+    create: XOR<LoanAccountCreateWithoutCapital_ledgersInput, LoanAccountUncheckedCreateWithoutCapital_ledgersInput>
+    where?: LoanAccountWhereInput
+  }
+
+  export type LoanAccountUpdateToOneWithWhereWithoutCapital_ledgersInput = {
+    where?: LoanAccountWhereInput
+    data: XOR<LoanAccountUpdateWithoutCapital_ledgersInput, LoanAccountUncheckedUpdateWithoutCapital_ledgersInput>
+  }
+
+  export type LoanAccountUpdateWithoutCapital_ledgersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    no_rekening?: StringFieldUpdateOperationsInput | string
+    principal_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    rate_percent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactions?: TransactionUpdateManyWithoutLoan_accountNestedInput
+    user?: UserUpdateOneRequiredWithoutLoan_accountsNestedInput
+    customer?: CustomerUpdateOneRequiredWithoutLoan_accountsNestedInput
+    product?: ProductUpdateOneRequiredWithoutLoan_accountsNestedInput
+  }
+
+  export type LoanAccountUncheckedUpdateWithoutCapital_ledgersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    no_rekening?: StringFieldUpdateOperationsInput | string
+    marketing_id?: StringFieldUpdateOperationsInput | string
+    customer_id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    principal_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    rate_percent?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    start_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    transactions?: TransactionUncheckedUpdateManyWithoutLoan_accountNestedInput
+  }
+
+  export type TransactionUpsertWithoutCapital_ledgersInput = {
+    update: XOR<TransactionUpdateWithoutCapital_ledgersInput, TransactionUncheckedUpdateWithoutCapital_ledgersInput>
+    create: XOR<TransactionCreateWithoutCapital_ledgersInput, TransactionUncheckedCreateWithoutCapital_ledgersInput>
+    where?: TransactionWhereInput
+  }
+
+  export type TransactionUpdateToOneWithWhereWithoutCapital_ledgersInput = {
+    where?: TransactionWhereInput
+    data: XOR<TransactionUpdateWithoutCapital_ledgersInput, TransactionUncheckedUpdateWithoutCapital_ledgersInput>
+  }
+
+  export type TransactionUpdateWithoutCapital_ledgersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invoice_number?: StringFieldUpdateOperationsInput | string
+    amount_paid?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    principal_cut?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    interest_cut?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    remaining_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    remaining_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    payment_method?: StringFieldUpdateOperationsInput | string
+    payment_attachment?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_status?: EnumStatusTransactionFieldUpdateOperationsInput | $Enums.StatusTransaction
+    paid_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    loan_account?: LoanAccountUpdateOneRequiredWithoutTransactionsNestedInput
+    processed?: UserUpdateOneRequiredWithoutTransactions_processedNestedInput
+    approved?: UserUpdateOneRequiredWithoutTransactions_approvedNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutCapital_ledgersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invoice_number?: StringFieldUpdateOperationsInput | string
+    loan_account_id?: StringFieldUpdateOperationsInput | string
+    processed_by_id?: StringFieldUpdateOperationsInput | string
+    approved_by_id?: StringFieldUpdateOperationsInput | string
+    amount_paid?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    principal_cut?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    interest_cut?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    remaining_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    remaining_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    payment_method?: StringFieldUpdateOperationsInput | string
+    payment_attachment?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_status?: EnumStatusTransactionFieldUpdateOperationsInput | $Enums.StatusTransaction
+    paid_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type TransactionCreateWithoutLoan_accountInput = {
     id?: string
     invoice_number: string
@@ -13101,6 +13666,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    capital_ledgers?: CapitalLedgerCreateNestedManyWithoutTransactionInput
     processed: UserCreateNestedOneWithoutTransactions_processedInput
     approved: UserCreateNestedOneWithoutTransactions_approvedInput
   }
@@ -13122,6 +13688,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutLoan_accountInput = {
@@ -13131,6 +13698,44 @@ export namespace Prisma {
 
   export type TransactionCreateManyLoan_accountInputEnvelope = {
     data: TransactionCreateManyLoan_accountInput | TransactionCreateManyLoan_accountInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CapitalLedgerCreateWithoutLoan_accountInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    type?: $Enums.TypeCapitalLedger
+    description: string
+    refrence_number?: string | null
+    notes?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+    user: UserCreateNestedOneWithoutCapital_ledgersInput
+    transaction?: TransactionCreateNestedOneWithoutCapital_ledgersInput
+  }
+
+  export type CapitalLedgerUncheckedCreateWithoutLoan_accountInput = {
+    id?: string
+    created_by_id: string
+    transaction_id?: string | null
+    amount: Decimal | DecimalJsLike | number | string
+    type?: $Enums.TypeCapitalLedger
+    description: string
+    refrence_number?: string | null
+    notes?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+  }
+
+  export type CapitalLedgerCreateOrConnectWithoutLoan_accountInput = {
+    where: CapitalLedgerWhereUniqueInput
+    create: XOR<CapitalLedgerCreateWithoutLoan_accountInput, CapitalLedgerUncheckedCreateWithoutLoan_accountInput>
+  }
+
+  export type CapitalLedgerCreateManyLoan_accountInputEnvelope = {
+    data: CapitalLedgerCreateManyLoan_accountInput | CapitalLedgerCreateManyLoan_accountInput[]
     skipDuplicates?: boolean
   }
 
@@ -13273,6 +13878,22 @@ export namespace Prisma {
   export type TransactionUpdateManyWithWhereWithoutLoan_accountInput = {
     where: TransactionScalarWhereInput
     data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutLoan_accountInput>
+  }
+
+  export type CapitalLedgerUpsertWithWhereUniqueWithoutLoan_accountInput = {
+    where: CapitalLedgerWhereUniqueInput
+    update: XOR<CapitalLedgerUpdateWithoutLoan_accountInput, CapitalLedgerUncheckedUpdateWithoutLoan_accountInput>
+    create: XOR<CapitalLedgerCreateWithoutLoan_accountInput, CapitalLedgerUncheckedCreateWithoutLoan_accountInput>
+  }
+
+  export type CapitalLedgerUpdateWithWhereUniqueWithoutLoan_accountInput = {
+    where: CapitalLedgerWhereUniqueInput
+    data: XOR<CapitalLedgerUpdateWithoutLoan_accountInput, CapitalLedgerUncheckedUpdateWithoutLoan_accountInput>
+  }
+
+  export type CapitalLedgerUpdateManyWithWhereWithoutLoan_accountInput = {
+    where: CapitalLedgerScalarWhereInput
+    data: XOR<CapitalLedgerUpdateManyMutationInput, CapitalLedgerUncheckedUpdateManyWithoutLoan_accountInput>
   }
 
   export type UserUpsertWithoutLoan_accountsInput = {
@@ -13418,6 +14039,44 @@ export namespace Prisma {
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type CapitalLedgerCreateWithoutTransactionInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    type?: $Enums.TypeCapitalLedger
+    description: string
+    refrence_number?: string | null
+    notes?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+    user: UserCreateNestedOneWithoutCapital_ledgersInput
+    loan_account?: LoanAccountCreateNestedOneWithoutCapital_ledgersInput
+  }
+
+  export type CapitalLedgerUncheckedCreateWithoutTransactionInput = {
+    id?: string
+    created_by_id: string
+    loan_account_id?: string | null
+    amount: Decimal | DecimalJsLike | number | string
+    type?: $Enums.TypeCapitalLedger
+    description: string
+    refrence_number?: string | null
+    notes?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+  }
+
+  export type CapitalLedgerCreateOrConnectWithoutTransactionInput = {
+    where: CapitalLedgerWhereUniqueInput
+    create: XOR<CapitalLedgerCreateWithoutTransactionInput, CapitalLedgerUncheckedCreateWithoutTransactionInput>
+  }
+
+  export type CapitalLedgerCreateManyTransactionInputEnvelope = {
+    data: CapitalLedgerCreateManyTransactionInput | CapitalLedgerCreateManyTransactionInput[]
+    skipDuplicates?: boolean
+  }
+
   export type LoanAccountCreateWithoutTransactionsInput = {
     id?: string
     no_rekening: string
@@ -13432,6 +14091,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    capital_ledgers?: CapitalLedgerCreateNestedManyWithoutLoan_accountInput
     user: UserCreateNestedOneWithoutLoan_accountsInput
     customer: CustomerCreateNestedOneWithoutLoan_accountsInput
     product: ProductCreateNestedOneWithoutLoan_accountsInput
@@ -13454,6 +14114,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+    capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutLoan_accountInput
   }
 
   export type LoanAccountCreateOrConnectWithoutTransactionsInput = {
@@ -13575,6 +14236,22 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutTransactions_approvedInput, UserUncheckedCreateWithoutTransactions_approvedInput>
   }
 
+  export type CapitalLedgerUpsertWithWhereUniqueWithoutTransactionInput = {
+    where: CapitalLedgerWhereUniqueInput
+    update: XOR<CapitalLedgerUpdateWithoutTransactionInput, CapitalLedgerUncheckedUpdateWithoutTransactionInput>
+    create: XOR<CapitalLedgerCreateWithoutTransactionInput, CapitalLedgerUncheckedCreateWithoutTransactionInput>
+  }
+
+  export type CapitalLedgerUpdateWithWhereUniqueWithoutTransactionInput = {
+    where: CapitalLedgerWhereUniqueInput
+    data: XOR<CapitalLedgerUpdateWithoutTransactionInput, CapitalLedgerUncheckedUpdateWithoutTransactionInput>
+  }
+
+  export type CapitalLedgerUpdateManyWithWhereWithoutTransactionInput = {
+    where: CapitalLedgerScalarWhereInput
+    data: XOR<CapitalLedgerUpdateManyMutationInput, CapitalLedgerUncheckedUpdateManyWithoutTransactionInput>
+  }
+
   export type LoanAccountUpsertWithoutTransactionsInput = {
     update: XOR<LoanAccountUpdateWithoutTransactionsInput, LoanAccountUncheckedUpdateWithoutTransactionsInput>
     create: XOR<LoanAccountCreateWithoutTransactionsInput, LoanAccountUncheckedCreateWithoutTransactionsInput>
@@ -13600,6 +14277,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    capital_ledgers?: CapitalLedgerUpdateManyWithoutLoan_accountNestedInput
     user?: UserUpdateOneRequiredWithoutLoan_accountsNestedInput
     customer?: CustomerUpdateOneRequiredWithoutLoan_accountsNestedInput
     product?: ProductUpdateOneRequiredWithoutLoan_accountsNestedInput
@@ -13622,6 +14300,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutLoan_accountNestedInput
   }
 
   export type UserUpsertWithoutTransactions_processedInput = {
@@ -13779,6 +14458,8 @@ export namespace Prisma {
 
   export type CapitalLedgerCreateManyUserInput = {
     id?: string
+    loan_account_id?: string | null
+    transaction_id?: string | null
     amount: Decimal | DecimalJsLike | number | string
     type?: $Enums.TypeCapitalLedger
     description: string
@@ -13940,10 +14621,14 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    loan_account?: LoanAccountUpdateOneWithoutCapital_ledgersNestedInput
+    transaction?: TransactionUpdateOneWithoutCapital_ledgersNestedInput
   }
 
   export type CapitalLedgerUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    loan_account_id?: NullableStringFieldUpdateOperationsInput | string | null
+    transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumTypeCapitalLedgerFieldUpdateOperationsInput | $Enums.TypeCapitalLedger
     description?: StringFieldUpdateOperationsInput | string
@@ -13956,6 +14641,8 @@ export namespace Prisma {
 
   export type CapitalLedgerUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    loan_account_id?: NullableStringFieldUpdateOperationsInput | string | null
+    transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     type?: EnumTypeCapitalLedgerFieldUpdateOperationsInput | $Enums.TypeCapitalLedger
     description?: StringFieldUpdateOperationsInput | string
@@ -13981,6 +14668,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactions?: TransactionUpdateManyWithoutLoan_accountNestedInput
+    capital_ledgers?: CapitalLedgerUpdateManyWithoutLoan_accountNestedInput
     customer?: CustomerUpdateOneRequiredWithoutLoan_accountsNestedInput
     product?: ProductUpdateOneRequiredWithoutLoan_accountsNestedInput
   }
@@ -14002,6 +14690,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactions?: TransactionUncheckedUpdateManyWithoutLoan_accountNestedInput
+    capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutLoan_accountNestedInput
   }
 
   export type LoanAccountUncheckedUpdateManyWithoutUserInput = {
@@ -14037,6 +14726,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    capital_ledgers?: CapitalLedgerUpdateManyWithoutTransactionNestedInput
     loan_account?: LoanAccountUpdateOneRequiredWithoutTransactionsNestedInput
     approved?: UserUpdateOneRequiredWithoutTransactions_approvedNestedInput
   }
@@ -14058,6 +14748,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateManyWithoutProcessedInput = {
@@ -14094,6 +14785,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    capital_ledgers?: CapitalLedgerUpdateManyWithoutTransactionNestedInput
     loan_account?: LoanAccountUpdateOneRequiredWithoutTransactionsNestedInput
     processed?: UserUpdateOneRequiredWithoutTransactions_processedNestedInput
   }
@@ -14115,6 +14807,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateManyWithoutApprovedInput = {
@@ -14169,6 +14862,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactions?: TransactionUpdateManyWithoutLoan_accountNestedInput
+    capital_ledgers?: CapitalLedgerUpdateManyWithoutLoan_accountNestedInput
     user?: UserUpdateOneRequiredWithoutLoan_accountsNestedInput
     product?: ProductUpdateOneRequiredWithoutLoan_accountsNestedInput
   }
@@ -14190,6 +14884,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactions?: TransactionUncheckedUpdateManyWithoutLoan_accountNestedInput
+    capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutLoan_accountNestedInput
   }
 
   export type LoanAccountUncheckedUpdateManyWithoutCustomerInput = {
@@ -14243,6 +14938,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactions?: TransactionUpdateManyWithoutLoan_accountNestedInput
+    capital_ledgers?: CapitalLedgerUpdateManyWithoutLoan_accountNestedInput
     user?: UserUpdateOneRequiredWithoutLoan_accountsNestedInput
     customer?: CustomerUpdateOneRequiredWithoutLoan_accountsNestedInput
   }
@@ -14264,6 +14960,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     transactions?: TransactionUncheckedUpdateManyWithoutLoan_accountNestedInput
+    capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutLoan_accountNestedInput
   }
 
   export type LoanAccountUncheckedUpdateManyWithoutProductInput = {
@@ -14303,6 +15000,20 @@ export namespace Prisma {
     deleted_at?: Date | string | null
   }
 
+  export type CapitalLedgerCreateManyLoan_accountInput = {
+    id?: string
+    created_by_id: string
+    transaction_id?: string | null
+    amount: Decimal | DecimalJsLike | number | string
+    type?: $Enums.TypeCapitalLedger
+    description: string
+    refrence_number?: string | null
+    notes?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+  }
+
   export type TransactionUpdateWithoutLoan_accountInput = {
     id?: StringFieldUpdateOperationsInput | string
     invoice_number?: StringFieldUpdateOperationsInput | string
@@ -14318,6 +15029,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    capital_ledgers?: CapitalLedgerUpdateManyWithoutTransactionNestedInput
     processed?: UserUpdateOneRequiredWithoutTransactions_processedNestedInput
     approved?: UserUpdateOneRequiredWithoutTransactions_approvedNestedInput
   }
@@ -14339,6 +15051,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateManyWithoutLoan_accountInput = {
@@ -14355,6 +15068,104 @@ export namespace Prisma {
     payment_attachment?: NullableStringFieldUpdateOperationsInput | string | null
     payment_status?: EnumStatusTransactionFieldUpdateOperationsInput | $Enums.StatusTransaction
     paid_date?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CapitalLedgerUpdateWithoutLoan_accountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTypeCapitalLedgerFieldUpdateOperationsInput | $Enums.TypeCapitalLedger
+    description?: StringFieldUpdateOperationsInput | string
+    refrence_number?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    user?: UserUpdateOneRequiredWithoutCapital_ledgersNestedInput
+    transaction?: TransactionUpdateOneWithoutCapital_ledgersNestedInput
+  }
+
+  export type CapitalLedgerUncheckedUpdateWithoutLoan_accountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_by_id?: StringFieldUpdateOperationsInput | string
+    transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTypeCapitalLedgerFieldUpdateOperationsInput | $Enums.TypeCapitalLedger
+    description?: StringFieldUpdateOperationsInput | string
+    refrence_number?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CapitalLedgerUncheckedUpdateManyWithoutLoan_accountInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_by_id?: StringFieldUpdateOperationsInput | string
+    transaction_id?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTypeCapitalLedgerFieldUpdateOperationsInput | $Enums.TypeCapitalLedger
+    description?: StringFieldUpdateOperationsInput | string
+    refrence_number?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CapitalLedgerCreateManyTransactionInput = {
+    id?: string
+    created_by_id: string
+    loan_account_id?: string | null
+    amount: Decimal | DecimalJsLike | number | string
+    type?: $Enums.TypeCapitalLedger
+    description: string
+    refrence_number?: string | null
+    notes?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+  }
+
+  export type CapitalLedgerUpdateWithoutTransactionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTypeCapitalLedgerFieldUpdateOperationsInput | $Enums.TypeCapitalLedger
+    description?: StringFieldUpdateOperationsInput | string
+    refrence_number?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    user?: UserUpdateOneRequiredWithoutCapital_ledgersNestedInput
+    loan_account?: LoanAccountUpdateOneWithoutCapital_ledgersNestedInput
+  }
+
+  export type CapitalLedgerUncheckedUpdateWithoutTransactionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_by_id?: StringFieldUpdateOperationsInput | string
+    loan_account_id?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTypeCapitalLedgerFieldUpdateOperationsInput | $Enums.TypeCapitalLedger
+    description?: StringFieldUpdateOperationsInput | string
+    refrence_number?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type CapitalLedgerUncheckedUpdateManyWithoutTransactionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_by_id?: StringFieldUpdateOperationsInput | string
+    loan_account_id?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    type?: EnumTypeCapitalLedgerFieldUpdateOperationsInput | $Enums.TypeCapitalLedger
+    description?: StringFieldUpdateOperationsInput | string
+    refrence_number?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

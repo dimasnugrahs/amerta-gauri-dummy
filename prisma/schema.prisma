@@ -34,10 +34,13 @@ enum StatusLoan {
 }
 
 enum TypeCapitalLedger {
-  INJECTION
-  WITHDRAWAL
-  LOAN
-  OPS
+  INJECTION       // Setoran modal dari Owner/Investor (+)
+  WITHDRAWAL      // Penarikan modal oleh Owner (-)
+  DISBURSEMENT    // Pencairan pinjaman ke Nasabah (-)
+  REPAYMENT_PRINCIPAL // Pengembalian pokok pinjaman dari Nasabah (+)
+  REPAYMENT_INTEREST  // Pendapatan bunga (Keuntungan) (+)
+  EXPENSE_OPS     // Biaya operasional: Listrik, gaji, sewa, dll (-)
+  ADJUSTMENT      // Koreksi saldo jika ada kesalahan input (+/-)
 }
 
 
@@ -109,6 +112,7 @@ model Product {
   deleted_at      DateTime?
 
   loan_accounts   LoanAccount[]
+  
 
   user            User          @relation(fields: [user_id], references: [id])
 
@@ -118,7 +122,9 @@ model Product {
 model CapitalLedger {
   id              String   @id @default(uuid())
   created_by_id   String
-  amount          Decimal
+  loan_account_id String?           
+  transaction_id  String?
+  amount          Decimal @db.Decimal(20, 2)
   type            TypeCapitalLedger    @default(INJECTION)
   description     String    @db.Text
   refrence_number String?
@@ -128,9 +134,12 @@ model CapitalLedger {
   updated_at      DateTime       @updatedAt
   deleted_at      DateTime?
 
-  user            User          @relation(fields: [created_by_id], references: [id])
+  user            User              @relation(fields: [created_by_id], references: [id])
+  loan_account    LoanAccount?      @relation(fields: [loan_account_id], references: [id])
+  transaction     Transaction?      @relation(fields: [transaction_id], references: [id])
 
   @@map("capital_ledgers")
+  
 }
 
 model LoanAccount {
@@ -155,6 +164,7 @@ model LoanAccount {
   deleted_at      DateTime?
 
   transactions Transaction[]
+  capital_ledgers   CapitalLedger[]
 
   user            User          @relation(fields: [marketing_id], references: [id])
   customer        Customer      @relation(fields: [customer_id], references: [id])
@@ -183,6 +193,8 @@ model Transaction {
   created_at      DateTime       @default(now())
   updated_at      DateTime       @updatedAt
   deleted_at      DateTime?
+
+  capital_ledgers   CapitalLedger[]
 
   loan_account  LoanAccount @relation(fields: [loan_account_id], references: [id])
   processed            User              @relation("processed", fields: [processed_by_id], references: [id])

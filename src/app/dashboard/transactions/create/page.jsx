@@ -225,16 +225,21 @@ export default function CreateTransactionPage() {
         {/* Search Section */}
         <div className="mx-2 mb-6 bg-amerta-50 p-4 rounded-lg border border-amerta-100 relative">
           <label className="block text-sm font-bold text-amerta-700 mb-2 uppercase tracking-wide">
-            Cari Rekening
+            Cari Rekening{" "}
+            {isSearching && (
+              <span className="ml-2 animate-pulse text-xs font-normal text-gray-400">
+                Mencari...
+              </span>
+            )}
           </label>
           <input
             type="text"
             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none transition-all"
-            placeholder="Cari Nasabah..."
+            placeholder="Cari Nasabah (Min. 3 Karakter)..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              if (loanData) setLoanData(null); // Reset loan data jika user mengetik ulang
+              if (loanData) setLoanData(null);
             }}
           />
           {showDropdown && searchResults.length > 0 && (
@@ -334,7 +339,6 @@ export default function CreateTransactionPage() {
                     />
                   </div>
                 </div>
-                {/* Sisanya tetap sama... */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">
                     Metode
@@ -366,6 +370,24 @@ export default function CreateTransactionPage() {
                     }
                   />
                 </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    Attachment / Keterangan Transfer
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: bukti transfer BCA no ref : 0823547123"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none"
+                    value={formData.payment_attachment}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        payment_attachment: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
                 <div className="md:col-span-2">
                   <label className="block text-sm font-semibold text-gray-700 mb-1">
                     Disetujui Oleh

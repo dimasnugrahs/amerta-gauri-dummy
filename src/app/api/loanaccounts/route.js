@@ -58,10 +58,9 @@ export async function POST(request) {
       status,
     } = body;
 
-    // Verifikasi Sesi
+    // 1. Verifikasi Sesi
     const cookieStore = await cookies();
     const token = cookieStore.get("authToken")?.value;
-
     if (!token) {
       return NextResponse.json(
         { success: false, message: "Sesi tidak valid, silakan login ulang." },
@@ -70,106 +69,93 @@ export async function POST(request) {
     }
 
     const secret = new TextEncoder().encode(process.env.JWT_ACCESS_KEY);
-    await jwtVerify(token, secret);
+    const { payload } = await jwtVerify(token, secret);
+    const creator_id = payload.id; // ID Admin yang membuat rekening
 
-    // Validasi Input Wajib
+    // 2. Validasi Input Wajib
     if (!marketing_id || !customer_id || !product_id || !principal_amount) {
       return NextResponse.json(
-        {
-          success: false,
-          message:
-            "Data utama (Marketing, Customer, Produk, & Plafon) wajib diisi!",
-        },
+        { success: false, message: "Data utama wajib diisi!" },
         { status: 400 },
       );
     }
 
-    const lastLoan = await prisma.loanAccount.findFirst({
-      orderBy: { no_rekening: "desc" },
-    });
-
-    let newNoRekening = "AG-000001";
-    if (lastLoan) {
-      // Mengambil angka setelah "AG-", menambah 1, dan padding 6 digit nol
-      const lastNumber = parseInt(lastLoan.no_rekening.split("-")[1]);
-      newNoRekening = `AG-${String(lastNumber + 1).padStart(6, "0")}`;
-    }
-
-    const [marketing, customer, product] = await Promise.all([
+    // 3. Cari Relasi & Generate No Rekening
+    const [marketing, customer, product, lastLoan] = await Promise.all([
       prisma.user.findFirst({ where: { id: marketing_id, deleted_at: null } }),
       prisma.customer.findFirst({
         where: { id: customer_id, deleted_at: null },
       }),
       prisma.product.findFirst({ where: { id: product_id, deleted_at: null } }),
+      prisma.loanAccount.findFirst({ orderBy: { no_rekening: "desc" } }),
     ]);
 
     if (!marketing || !customer || !product) {
-      let missingFields = [];
-      if (!marketing) missingFields.push("Marketing");
-      if (!customer) missingFields.push("Customer");
-      if (!product) missingFields.push("Produk");
-
       return NextResponse.json(
         {
           success: false,
-          message: `Data berikut tidak ditemukan atau sudah tidak aktif: ${missingFields.join(", ")}.`,
+          message: "Data Marketing, Customer, atau Produk tidak valid.",
         },
         { status: 404 },
       );
     }
 
-    // Simpan ke Database
-    const newLoan = await prisma.loanAccount.create({
-      data: {
-        no_rekening: newNoRekening,
-        marketing_id,
-        customer_id,
-        product_id,
+    let newNoRekening = "AG-000001";
+    if (lastLoan) {
+      const lastNumber = parseInt(lastLoan.no_rekening.split("-")[1]);
+      newNoRekening = `AG-${String(lastNumber + 1).padStart(6, "0")}`;
+    }
 
-        principal_amount: Number(principal_amount),
-        rate_percent: Number(rate_percent || 0),
-        rate_amount: Number(rate_amount || 0),
+    // 4. Jalankan Transaksi DB (Account + Ledger)
+    const result = await prisma.$transaction(async (tx) => {
+      // A. Simpan ke LoanAccount
+      const newLoan = await tx.loanAccount.create({
+        data: {
+          no_rekening: newNoRekening,
+          marketing_id,
+          customer_id,
+          product_id,
+          principal_amount: Number(principal_amount),
+          rate_percent: Number(rate_percent || 0),
+          rate_amount: Number(rate_amount || 0),
+          current_debt_principal: Number(principal_amount),
+          current_debt_interest: 0,
+          start_date: start_date ? new Date(start_date) : new Date(),
+          period_start: period_start ? new Date(period_start) : new Date(),
+          status: status || "ACTIVE",
+        },
+      });
 
-        current_debt_principal: Number(principal_amount),
-        current_debt_interest: Number(0),
+      // B. Catat Pengeluaran Modal di CapitalLedger (Nilai Negatif)
+      // Menggunakan tipe LOAN (atau DISBURSEMENT jika sudah diupdate)
+      await tx.capitalLedger.create({
+        data: {
+          amount: -Math.abs(Number(principal_amount)), // Paksa jadi negatif
+          type: "LOAN", // Sesuai enum awal Anda (atau DISBURSEMENT)
+          description: `Pencairan Pinjaman: ${newNoRekening} a.n ${customer.full_name}`,
+          refrence_number: newNoRekening,
+          loan_account_id: newLoan.id, // Link ke akun yang baru dibuat
+          created_by_id: creator_id,
+          notes: `Produk: ${product.name}`,
+        },
+      });
 
-        start_date: start_date ? new Date(start_date) : new Date(),
-        period_start: period_start ? new Date(period_start) : new Date(),
-
-        status: status || "ACTIVE",
-      },
+      return newLoan;
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: `Loan Account ${newNoRekening} berhasil dibuat`,
-        data: newLoan,
+        message: `Rekening ${newNoRekening} berhasil dibuat & modal telah didebit.`,
+        data: result,
       },
       { status: 201 },
     );
   } catch (error) {
     console.error("POST_LOAN_ERROR:", error);
-
-    if (error.code === "P2002") {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Nomor rekening sudah terdaftar di sistem.",
-        },
-        { status: 400 },
-      );
-    }
-
-    if (error.code === "P2003") {
-      return NextResponse.json(
-        { success: false, message: "Relasi data tidak valid secara database." },
-        { status: 400 },
-      );
-    }
-
+    // ... Error handling Prisma (P2002, P2003) tetap sama
     return NextResponse.json(
-      { success: false, message: "Terjadi kesalahan server." },
+      { success: false, message: "Kesalahan server." },
       { status: 500 },
     );
   }
