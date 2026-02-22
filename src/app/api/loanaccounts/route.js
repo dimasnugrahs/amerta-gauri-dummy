@@ -58,67 +58,55 @@ export async function POST(request) {
       status,
     } = body;
 
-    // 1. Verifikasi Sesi
+    // 1. Verifikasi Sesi (Tetap sama)
     const cookieStore = await cookies();
     const token = cookieStore.get("authToken")?.value;
-    if (!token) {
+    if (!token)
       return NextResponse.json(
-        { success: false, message: "Sesi tidak valid, silakan login ulang." },
+        { success: false, message: "Sesi habis" },
         { status: 401 },
       );
-    }
 
     const secret = new TextEncoder().encode(process.env.JWT_ACCESS_KEY);
     const { payload } = await jwtVerify(token, secret);
-    const creator_id = payload.id; // ID Admin yang membuat rekening
+    const creator_id = payload.id;
 
-    // 2. Validasi Input Wajib
-    if (!marketing_id || !customer_id || !product_id || !principal_amount) {
-      return NextResponse.json(
-        { success: false, message: "Data utama wajib diisi!" },
-        { status: 400 },
-      );
-    }
-
-    // 3. Cari Relasi & Generate No Rekening
+    // 2. Validasi Relasi
     const [marketing, customer, product, lastLoan] = await Promise.all([
-      prisma.user.findFirst({ where: { id: marketing_id, deleted_at: null } }),
-      prisma.customer.findFirst({
-        where: { id: customer_id, deleted_at: null },
-      }),
-      prisma.product.findFirst({ where: { id: product_id, deleted_at: null } }),
+      prisma.user.findUnique({ where: { id: marketing_id } }),
+      prisma.customer.findUnique({ where: { id: customer_id } }),
+      prisma.product.findUnique({ where: { id: product_id } }),
       prisma.loanAccount.findFirst({ orderBy: { no_rekening: "desc" } }),
     ]);
 
     if (!marketing || !customer || !product) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Data Marketing, Customer, atau Produk tidak valid.",
-        },
+        { success: false, message: "Data referensi tidak ditemukan." },
         { status: 404 },
       );
     }
 
+    // 3. Generate No Rekening
     let newNoRekening = "AG-000001";
-    if (lastLoan) {
+    if (lastLoan && lastLoan.no_rekening.includes("-")) {
       const lastNumber = parseInt(lastLoan.no_rekening.split("-")[1]);
       newNoRekening = `AG-${String(lastNumber + 1).padStart(6, "0")}`;
     }
 
-    // 4. Jalankan Transaksi DB (Account + Ledger)
+    // 4. Transaksi Database
     const result = await prisma.$transaction(async (tx) => {
-      // A. Simpan ke LoanAccount
+      // A. Create Loan Account
+      // Gunakan penamaan field sesuai schema.prisma (customer_id, marketing_id, dll)
       const newLoan = await tx.loanAccount.create({
         data: {
           no_rekening: newNoRekening,
-          marketing_id,
-          customer_id,
-          product_id,
-          principal_amount: Number(principal_amount),
-          rate_percent: Number(rate_percent || 0),
-          rate_amount: Number(rate_amount || 0),
-          current_debt_principal: Number(principal_amount),
+          marketing_id: marketing.id,
+          customer_id: customer.id,
+          product_id: product.id,
+          principal_amount: parseFloat(principal_amount),
+          rate_percent: parseFloat(rate_percent || 0),
+          rate_amount: parseFloat(rate_amount || 0),
+          current_debt_principal: parseFloat(principal_amount),
           current_debt_interest: 0,
           start_date: start_date ? new Date(start_date) : new Date(),
           period_start: period_start ? new Date(period_start) : new Date(),
@@ -126,36 +114,26 @@ export async function POST(request) {
         },
       });
 
-      // B. Catat Pengeluaran Modal di CapitalLedger (Nilai Negatif)
-      // Menggunakan tipe LOAN (atau DISBURSEMENT jika sudah diupdate)
+      // B. Create Capital Ledger
       await tx.capitalLedger.create({
         data: {
-          amount: -Math.abs(Number(principal_amount)), // Paksa jadi negatif
-          type: "LOAN", // Sesuai enum awal Anda (atau DISBURSEMENT)
-          description: `Pencairan Pinjaman: ${newNoRekening} a.n ${customer.full_name}`,
+          amount: -Math.abs(parseFloat(principal_amount)),
+          type: "DISBURSEMENT", // Pastikan ENUM ini ada di schema.prisma Anda
+          description: `Pencairan: ${newNoRekening} | ${customer.full_name || "Customer"}`,
           refrence_number: newNoRekening,
-          loan_account_id: newLoan.id, // Link ke akun yang baru dibuat
+          loan_account_id: newLoan.id,
           created_by_id: creator_id,
-          notes: `Produk: ${product.name}`,
         },
       });
 
       return newLoan;
     });
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: `Rekening ${newNoRekening} berhasil dibuat & modal telah didebit.`,
-        data: result,
-      },
-      { status: 201 },
-    );
+    return NextResponse.json({ success: true, data: result }, { status: 201 });
   } catch (error) {
-    console.error("POST_LOAN_ERROR:", error);
-    // ... Error handling Prisma (P2002, P2003) tetap sama
+    console.error("POST_LOAN_ERROR:", error); // CEK TERMINAL UNTUK MELIHAT ERROR INI
     return NextResponse.json(
-      { success: false, message: "Kesalahan server." },
+      { success: false, message: error.message || "Kesalahan server." },
       { status: 500 },
     );
   }

@@ -38,7 +38,6 @@ export async function PATCH(request, { params }) {
     const { userId } = await params;
     const body = await request.json();
 
-    // 1. Cek apakah user ada di database
     const existingUser = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -50,43 +49,54 @@ export async function PATCH(request, { params }) {
       );
     }
 
-    // 2. Persiapan Data Update
-    const updateData = { ...body };
+    // KRUCIAL: Buat objek update hanya dengan field yang ada di skema Prisma
+    // Kita pisahkan manual untuk menghindari field "sampah" masuk ke Prisma
+    const updateData = {
+      full_name: body.full_name,
+      username: body.username,
+      email: body.email,
+      phone_number: body.phone_number,
+      role: body.role,
+      isActive: Boolean(body.isActive), // Pastikan boolean
+      address: body.address,
+      regency: body.regency,
+      province: body.province,
+      zip_code: body.zip_code,
+    };
 
-    // 3. Logika Khusus jika Password ikut diupdate
-    if (body.password) {
+    // Logika Password
+    if (body.password && body.password.trim() !== "") {
       const salt = await bcrypt.genSalt(10);
-      updateData.password = await bcrypt.hash(body.password, salt);
+      updateData.password_hash = await bcrypt.hash(body.password, salt);
     }
 
-    // 4. Logika Khusus jika Birthday ikut diupdate
+    // Logika Birthday
     if (body.birthday) {
       updateData.birthday = new Date(body.birthday);
     }
 
-    // 5. Eksekusi Update ke Database
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: updateData,
     });
 
+    const { password_hash, ...userWithoutPassword } = updatedUser;
+
     return NextResponse.json({
       success: true,
       message: "Data user berhasil diperbarui!",
-      data: updatedUser,
+      data: userWithoutPassword,
     });
   } catch (error) {
-    // Tangani jika username atau email baru ternyata sudah dipakai orang lain
+    console.error("UPDATE_USER_ERROR:", error); // Lihat error spesifik di terminal console Anda
     if (error.code === "P2002") {
       return NextResponse.json(
         { success: false, message: "Email atau Username sudah digunakan!" },
         { status: 409 },
       );
     }
-
-    console.error("UPDATE_USER_ERROR:", error);
     return NextResponse.json(
-      { success: false, message: "Gagal memperbarui data." },
+      { success: false, message: "Server Error: " + error.message },
       { status: 500 },
     );
   }

@@ -168,9 +168,9 @@ export default function DashboardUsers() {
               onChange={(e) => setRoleFilter(e.target.value)}
             >
               <option value="all">Semua Role</option>
+              <option value="USER">Staff Lapangan</option>
               <option value="ADMIN">Admin</option>
-              <option value="STAFF">Staff Lapangan</option>
-              <option value="MANAGER">Manager</option>
+              <option value="SUPERADMIN">Super Admin</option>
             </select>
           </div>
         </div>
