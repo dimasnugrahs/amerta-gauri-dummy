@@ -3,58 +3,72 @@ import prisma from "@/src/lib/prisma";
 
 export async function GET() {
   try {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    startOfMonth.setHours(0, 0, 0, 0);
+    const today = new Date();
+    // Tentukan awal bulan ini (Tanggal 1, jam 00:00:00)
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    // Tentukan akhir bulan ini (Opsional, untuk membatasi range)
+    const endOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+    );
 
-    const endOfToday = new Date(now);
-    endOfToday.setHours(23, 59, 59, 999);
-
-    const dueLoans = await prisma.loanAccount.findMany({
+    /**
+     * LOGIKA: Ambil semua rekening aktif yang TIDAK PUNYA transaksi
+     * sukses di bulan ini.
+     */
+    const arrearsAccounts = await prisma.loanAccount.findMany({
       where: {
         status: "ACTIVE",
-        deleted_at: null, // WAJIB: Agar yang sudah dihapus tidak ikut muncul
-        period_start: {
-          gte: startOfMonth, // Ditambahkan: Ambil dari awal bulan
-          lte: endOfToday, // Sampai akhir hari ini
-        },
+        // Syarat utama: Tidak ada transaksi pada rentang bulan ini
         transactions: {
           none: {
-            interest_cut: { gt: 0 },
-            created_at: {
+            paid_date: {
               gte: startOfMonth,
-              lte: endOfToday,
+              lte: endOfMonth,
             },
-            payment_status: "SUCCESS",
+            payment_status: "SUCCESS", // Hanya transaksi berhasil yang dihitung
           },
         },
-        current_debt_interest: { gt: 0 },
+        // Opsional: Pastikan akun ini sudah cair sebelum atau pada bulan ini
+        start_date: {
+          lte: endOfMonth,
+        },
       },
       include: {
         customer: true,
-      },
-      orderBy: {
-        period_start: "asc",
+        product: true,
       },
     });
 
-    const formattedData = dueLoans.map((loan) => ({
-      id: loan.id,
-      loan_number: loan.no_rekening,
-      customer_name: loan.customer?.full_name || "Tanpa Nama",
-      phone_number: loan.customer?.phone_number || "",
-      interest_due: Number(loan.current_debt_interest || 0),
-      due_date: loan.period_start,
-    }));
+    /**
+     * Karena Anda ingin 2 list fitur di dashboard,
+     * kita bisa membagi arrearsAccounts ini menjadi dua kategori di backend:
+     * 1. principalDue: Mereka yang sudah lewat tanggal jatuh temponya di bulan ini.
+     * 2. interestDue: Semua yang belum bayar bunga bulan ini (termasuk yang belum jatuh tempo).
+     */
+
+    const principalDue = arrearsAccounts.filter((acc) => {
+      // Misal: Jatuh tempo dianggap lewat jika hari ini > tanggal start_date bulan ini
+      return new Date(acc.start_date).getDate() <= today.getDate();
+    });
+
+    const interestDue = arrearsAccounts; // Semua yang belum bayar bulan ini
 
     return NextResponse.json({
       success: true,
-      data: formattedData,
+      data: {
+        principalDue, // List yang sudah lewat tanggal bayarnya bulan ini
+        interestDue, // Semua yang belum bayar di bulan ini
+      },
     });
   } catch (error) {
-    console.error("DUE_INTEREST_API_ERROR:", error);
+    console.error("API Error:", error);
     return NextResponse.json(
-      { success: false, message: "Server Error: " + error.message },
+      { success: false, error: error.message },
       { status: 500 },
     );
   }

@@ -142,21 +142,25 @@ export async function POST(request) {
       59,
     );
 
+    // Cek apakah bulan ini sudah pernah ada aktivitas (SUCCESS atau REFUNDED)
     const everHadTransactionThisMonth = await prisma.transaction.findFirst({
       where: {
         loan_account_id: loan.id,
         paid_date: { gte: startOfMonth, lte: endOfMonth },
-        payment_status: "SUCCESS",
+        payment_status: { in: ["SUCCESS", "REFUNDED"] },
       },
     });
 
     let total_interest_due = Number(loan.current_debt_interest);
+
     if (
       !everHadTransactionThisMonth &&
+      total_interest_due === 0 &&
       Number(loan.current_debt_principal) > 0
     ) {
       total_interest_due += Number(loan.rate_amount);
     }
+
     // --- END LOGIKA BUNGA ---
 
     const total_paid = Number(amount_paid);

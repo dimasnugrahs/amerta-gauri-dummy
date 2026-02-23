@@ -243,12 +243,14 @@ export default function DashboardLoanAccounts() {
     <LayoutDashboard>
       <div className="px-4 py-5 rounded bg-white shadow mb-30">
         <div className="md:flex justify-between items-center mb-6 mx-2">
-          <h1 className="text-xl font-bold text-gray-800">
-            Dashboard Loan Accounts
-          </h1>
+          <div>
+            <h1 className="text-xl font-bold text-gray-800">
+              Dashboard Loan Accounts
+            </h1>
+          </div>
           <Link
             href="/dashboard/accounts/create"
-            className="px-4 py-2 rounded text-white bg-amerta-600 hover:bg-amerta-700 font-semibold shadow-sm"
+            className="mt-2 md:mt-0 px-4 py-2 rounded text-white bg-amerta-600 hover:bg-amerta-700 transition font-semibold shadow-sm inline-block"
           >
             + Tambah Rekening
           </Link>
@@ -301,7 +303,7 @@ export default function DashboardLoanAccounts() {
                   Sisa Hutang
                 </th>
                 <th className="p-3 border border-amerta-700 text-left">
-                  Produk
+                  Tunggakan Bunga
                 </th>
                 <th className="p-3 border border-amerta-700 text-center">
                   Status
@@ -342,7 +344,7 @@ export default function DashboardLoanAccounts() {
                       {formatCurrency(loan.current_debt_principal)}
                     </td>
                     <td className="p-3 border border-gray-200 text-sm">
-                      {loan.product?.product_name || "-"}
+                      {formatCurrency(loan.current_debt_interest)}
                     </td>
                     <td className="p-3 border border-gray-200 text-center">
                       <span

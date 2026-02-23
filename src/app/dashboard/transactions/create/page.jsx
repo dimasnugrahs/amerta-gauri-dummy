@@ -42,14 +42,13 @@ export default function CreateTransactionPage() {
 
   // --- LOGIKA PERHITUNGAN PREVIEW (Sinkron dengan API POST) ---
   const preview = useMemo(() => {
-    if (!loanData) {
+    if (!loanData)
       return {
         interest_cut: 0,
         principal_cut: 0,
         monthly_interest: 0,
         total_interest_due: 0,
       };
-    }
 
     const transactionDate = new Date(formData.paid_date);
     const selectedMonth = transactionDate.getMonth();
@@ -60,48 +59,31 @@ export default function CreateTransactionPage() {
     const rateAmount = Number(loanData.rate_amount);
     const sisaPokok = Number(loanData.current_debt_principal);
 
-    // --- LOGIKA PENGECEKAN TRANSAKSI ---
-    // 1. Cek flag 'has_transaction_this_month' dari API
-    // 2. ATAU Cek apakah ada history transaksi sukses di bulan ini pada array transactions (jika ada)
-    const sudahAdaTransaksiBulanIni =
-      loanData.has_transaction_this_month === true ||
-      (loanData.transactions &&
-        loanData.transactions.some((t) => {
-          const tDate = new Date(t.paid_date);
-          return (
-            tDate.getMonth() === selectedMonth &&
-            tDate.getFullYear() === selectedYear &&
-            t.payment_status === "SUCCESS"
-          );
-        }));
+    // Cek history transaksi di bulan yang dipilih
+    const sudahAdaAktivitasBulanIni = loanData.transactions?.some((t) => {
+      const tDate = new Date(t.paid_date);
+      return (
+        tDate.getMonth() === selectedMonth &&
+        tDate.getFullYear() === selectedYear &&
+        ["SUCCESS", "REFUNDED"].includes(t.payment_status) // Termasuk mengecek history refund
+      );
+    });
 
     let bungaBulanIni = 0;
 
-    // BUNGA HANYA DITAMBAHKAN JIKA:
-    // - Belum ada transaksi bulan ini
-    // - Sisa pokok masih ada
-    if (!sudahAdaTransaksiBulanIni && sisaPokok > 0) {
+    // SAMA DENGAN BACKEND:
+    // Tambah rate_amount HANYA jika belum ada transaksi DAN saldo bunga di DB kosong
+    if (!sudahAdaAktivitasBulanIni && tunggakanBungaDB === 0 && sisaPokok > 0) {
       bungaBulanIni = rateAmount;
     }
 
     const totalKewajibanBunga = tunggakanBungaDB + bungaBulanIni;
 
-    // ... (Logika interestCut dan principalCut tetap sama)
-    let interestCut = 0;
-    let principalCut = 0;
-
-    if (totalKewajibanBunga > 0) {
-      if (amountPaid >= totalKewajibanBunga) {
-        interestCut = totalKewajibanBunga;
-        principalCut = amountPaid - totalKewajibanBunga;
-      } else {
-        interestCut = amountPaid;
-        principalCut = 0;
-      }
-    } else {
-      interestCut = 0;
-      principalCut = amountPaid;
-    }
+    // Logika potong bunga & pokok
+    let interestCut =
+      amountPaid >= totalKewajibanBunga ? totalKewajibanBunga : amountPaid;
+    let principalCut =
+      amountPaid > totalKewajibanBunga ? amountPaid - totalKewajibanBunga : 0;
 
     if (principalCut > sisaPokok) principalCut = sisaPokok;
 
@@ -111,7 +93,7 @@ export default function CreateTransactionPage() {
       monthly_interest: bungaBulanIni,
       total_interest_due: totalKewajibanBunga,
     };
-  }, [loanData, formData.amount_paid]);
+  }, [loanData, formData.amount_paid, formData.paid_date]);
 
   // --- SEARCH REKENING ---
   useEffect(() => {

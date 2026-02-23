@@ -136,12 +136,12 @@ export default function DashboardUsers() {
               Kelola hak akses admin dan staff lapangan
             </p>
           </div>
-          <Link
+          {/* <Link
             href="/dashboard/users/create"
             className="mt-2 md:mt-0 px-4 py-2 rounded text-white bg-amerta-600 hover:bg-amerta-700 transition font-semibold shadow-sm inline-block"
           >
             + Tambah User Baru
-          </Link>
+          </Link> */}
         </div>
 
         {/* Filter Section */}
