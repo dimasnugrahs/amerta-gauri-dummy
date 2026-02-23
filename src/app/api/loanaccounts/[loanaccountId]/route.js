@@ -155,42 +155,59 @@ export async function PATCH(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const { loanaccountId } = await params;
+    const { loanaccountId } = await params; // loanaccountId ini adalah no_rekening
 
-    // cek account
-    const existingLoanAccount = await prisma.loanAccount.findFirst({
-      where: { no_rekening: loanaccountId, deleted_at: null },
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Cek account
+      const existingLoanAccount = await tx.loanAccount.findFirst({
+        where: { no_rekening: loanaccountId, deleted_at: null },
+      });
+
+      if (!existingLoanAccount) {
+        throw new Error("ACCOUNT_NOT_FOUND");
+      }
+
+      // 2. Update LoanAccount (Soft Delete)
+      const updatedLoan = await tx.loanAccount.update({
+        where: { no_rekening: loanaccountId },
+        data: { deleted_at: new Date() },
+      });
+
+      // 3. Sinkronisasi Modal (CapitalLedger)
+      // Opsi A: Jika CapitalLedger juga pakai soft delete
+      await tx.capitalLedger.updateMany({
+        where: { loan_account_id: existingLoanAccount.id },
+        data: { deleted_at: new Date() },
+      });
+
+      /* Opsi B: Jika CapitalLedger TIDAK pakai soft delete, gunakan:
+         await tx.capitalLedger.deleteMany({
+           where: { loan_account_id: existingLoanAccount.id }
+         });
+      */
+
+      return updatedLoan;
     });
 
-    if (!existingLoanAccount) {
+    return NextResponse.json(
+      { success: true, message: "Account dan riwayat modal berhasil dihapus." },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("DELETE_LOAN_ACCOUNT_ERROR:", error);
+
+    if (error.message === "ACCOUNT_NOT_FOUND") {
       return NextResponse.json(
         {
           success: false,
-          message: "Account tidak ditemukan atau sudah dihapus sebelumnya!",
+          message: "Account tidak ditemukan atau sudah dihapus!",
         },
         { status: 404 },
       );
     }
 
-    // Soft Delete
-    await prisma.loanAccount.update({
-      where: { no_rekening: loanaccountId },
-      data: {
-        deleted_at: new Date(),
-      },
-    });
-
     return NextResponse.json(
-      { success: true, message: "Account berhasil dihapus (soft delete)." },
-      { status: 200 },
-    );
-  } catch (error) {
-    console.error("DELETE_LOAN_ACCOUNT_ERROR:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Terjadi kesalahan server saat menghapus account.",
-      },
+      { success: false, message: "Terjadi kesalahan server." },
       { status: 500 },
     );
   }

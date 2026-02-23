@@ -13,25 +13,22 @@ export async function GET() {
     const dueLoans = await prisma.loanAccount.findMany({
       where: {
         status: "ACTIVE",
+        deleted_at: null, // WAJIB: Agar yang sudah dihapus tidak ikut muncul
         period_start: {
-          lte: endOfToday,
+          gte: startOfMonth, // Ditambahkan: Ambil dari awal bulan
+          lte: endOfToday, // Sampai akhir hari ini
         },
-        // Logika Baru: Cari yang tidak punya transaksi dengan potongan bunga bulan ini
         transactions: {
           none: {
-            interest_cut: {
-              gt: 0, // Transaksi yang ada bayar bunganya
-            },
+            interest_cut: { gt: 0 },
             created_at: {
               gte: startOfMonth,
               lte: endOfToday,
             },
-            payment_status: "SUCCESS", // Pastikan transaksinya berhasil
+            payment_status: "SUCCESS",
           },
         },
-        current_debt_interest: {
-          gt: 0,
-        },
+        current_debt_interest: { gt: 0 },
       },
       include: {
         customer: true,

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
+import { cookies } from "next/headers";
+import { jwtVerify } from "jose";
 
 export async function GET() {
   try {
@@ -67,69 +69,81 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    // get data from body request
-    const body = await request.json();
-    const { user_id, product_name, description, price } = body;
+    // 1. Verifikasi Sesi User (Mengambil user_id dari Token)
+    const cookieStore = await cookies();
+    const token = cookieStore.get("authToken")?.value;
 
-    // Validasi Input Wajib
-    if (!user_id || !product_name || !price) {
+    if (!token) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "User ID, Nama Produk, dan Harga wajib diisi!",
-        },
+        { success: false, message: "Sesi tidak valid atau telah berakhir." },
+        { status: 401 },
+      );
+    }
+
+    const secret = new TextEncoder().encode(process.env.JWT_ACCESS_KEY);
+    const { payload } = await jwtVerify(token, secret);
+
+    // Inilah ID user yang sedang login/menginput data
+    const creator_id = payload.id;
+
+    // 2. Ambil data dari Body
+    const body = await request.json();
+    const { product_name, description, price } = body;
+
+    // 3. Validasi Input (user_id tidak perlu lagi ada di body)
+    if (!product_name || price === undefined) {
+      return NextResponse.json(
+        { success: false, message: "Nama produk dan harga wajib diisi." },
         { status: 400 },
       );
     }
 
-    // slug convert
+    // 4. Generate Slug
     const generatedSlug = product_name
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
+    // 5. Simpan ke Database
     const newProduct = await prisma.product.create({
       data: {
-        user_id: user_id,
-        product_name: product_name,
+        user_id: creator_id, // Menggunakan ID dari Token JWT
+        product_name: product_name.trim(),
         slug: generatedSlug,
-        description: description,
-        price: parseFloat(price) || 0,
+        description: description || "",
+        price: parseFloat(price),
+        isActive: true,
       },
     });
 
     return NextResponse.json(
-      { success: true, message: "Product berhasil dibuat", data: newProduct },
+      { success: true, message: "Produk berhasil dibuat", data: newProduct },
       { status: 201 },
     );
   } catch (error) {
-    if (error.code === "P2002") {
+    console.error("CREATE_PRODUCT_ERROR:", error);
+
+    // Error JWT (Token Kadaluarsa/Salah)
+    if (error.code === "ERR_JWT_EXPIRED" || error.code === "ERR_JWS_INVALID") {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Slug atau Nama Produk sudah ada, gunakan nama lain.",
-        },
-        { status: 409 },
+        { success: false, message: "Sesi tidak valid, silakan login kembali." },
+        { status: 401 },
       );
     }
 
-    // Error jika User ID tidak ditemukan
+    // Error Prisma: Foreign Key (User tidak ada di DB)
     if (error.code === "P2003") {
       return NextResponse.json(
-        {
-          success: false,
-          message: "User ID tidak valid atau tidak ditemukan di sistem.",
-        },
+        { success: false, message: "User pembuat tidak valid di sistem." },
         { status: 400 },
       );
     }
 
-    console.error("CREATE_PRODUCT_ERROR:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Terjadi kesalahan server.",
+        message: "Terjadi kesalahan pada server",
         error:
           process.env.NODE_ENV === "development" ? error.message : undefined,
       },

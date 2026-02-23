@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axiosInstance from "@/src/lib/axios";
 import Swal from "sweetalert2";
 import LayoutDashboard from "@/src/app/components/LayoutDashboard";
+import SearchableSelect from "@/src/app/components/SearchableSelect";
 
 export default function CreateLoanAccountPage() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function CreateLoanAccountPage() {
     product_id: "",
     principal_amount: "",
     rate_percent: "",
-    rate_amount: "0",
+    rate_amount: "",
     start_date: new Date().toISOString().split("T")[0],
     period_start: new Date().toISOString().split("T")[0],
     status: "ACTIVE",
@@ -117,46 +118,26 @@ export default function CreateLoanAccountPage() {
           {/* Section 1: Relasi Data */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4 p-4 bg-gray-50 rounded-xl border border-gray-100 mb-4">
             <div className="md:col-span-2">
-              <label className="block text-sm font-bold text-gray-600 mb-1 uppercase tracking-tight">
-                Pilih Marketing <span className="text-red-500">*</span>
-              </label>
-              <select
-                required
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none bg-white transition-all"
+              <SearchableSelect
+                label="Pilih Marketing"
+                placeholder="Cari nama marketing..."
+                options={marketings}
                 value={formData.marketing_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, marketing_id: e.target.value })
+                displayField="full_name"
+                onChange={(id) =>
+                  setFormData({ ...formData, marketing_id: id })
                 }
-              >
-                <option value="">-- Cari Nama Marketing --</option>
-                {marketings.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.full_name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
-            <div>
-              <label className="block text-sm font-bold text-gray-600 mb-1 uppercase tracking-tight">
-                Pilih Nasabah <span className="text-red-500">*</span>
-              </label>
-              <select
-                required
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none bg-white transition-all"
-                value={formData.customer_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, customer_id: e.target.value })
-                }
-              >
-                <option value="">-- Cari Nama Nasabah --</option>
-                {customers.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.full_name} - {c.address}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SearchableSelect
+              label="Pilih Nasabah"
+              placeholder="Cari nama nasabah..."
+              options={customers}
+              value={formData.customer_id}
+              displayField="full_name"
+              onChange={(id) => setFormData({ ...formData, customer_id: id })}
+            />
 
             <div>
               <label className="block text-sm font-bold text-gray-600 mb-1 uppercase tracking-tight">
@@ -221,7 +202,7 @@ export default function CreateLoanAccountPage() {
                 <input
                   type="number"
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none"
-                  placeholder="0"
+                  placeholder="Rp 0"
                   value={formData.rate_amount}
                   onChange={(e) =>
                     setFormData({ ...formData, rate_amount: e.target.value })

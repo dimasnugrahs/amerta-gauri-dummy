@@ -85,7 +85,7 @@ export default function DashboardFinancial() {
             title="Kas Tersedia"
             value={financialStats.sisaKas}
             color="black"
-            subtitle="*Liquidity"
+            subtitle="*Modal Tersedia"
           />
           <StatCard
             title="Total Bunga"
@@ -116,7 +116,7 @@ export default function DashboardFinancial() {
       </div>
 
       {/* Bagian 2: Pengingat Jatuh Tempo */}
-      <div className="px-4 py-6 rounded-xl bg-white shadow-sm border border-gray-100 mb-30">
+      <div className="px-4 py-6 rounded-xl bg-white shadow-sm border border-gray-100 mb-20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 mx-2">
           <div>
             <h2 className="text-lg font-bold text-gray-800 tracking-tighter uppercase">
@@ -153,12 +153,13 @@ export default function DashboardFinancial() {
                   className="hover:bg-red-50/30 transition-colors group"
                 >
                   <td className="px-4 py-4">
-                    {/* Tampilkan tanggal tempo untuk membedakan mana yang sudah lewat hari */}
                     <span
                       className={`text-[11px] font-bold px-2 py-1 rounded ${
-                        new Date(item.due_date).getDate() < new Date().getDate()
-                          ? "bg-red-100 text-red-600" // Lewat hari ini (Menunggak)
-                          : "bg-orange-100 text-orange-600" // Jatuh tempo hari ini
+                        // Bandingkan waktu murni (tanpa jam)
+                        new Date(item.due_date).setHours(0, 0, 0, 0) <
+                        new Date().setHours(0, 0, 0, 0)
+                          ? "bg-red-100 text-red-600" // Menunggak (Lewat hari ini)
+                          : "bg-orange-100 text-orange-600" // Jatuh tempo hari ini atau mendatang
                       }`}
                     >
                       {new Date(item.due_date).toLocaleDateString("id-ID", {
@@ -211,24 +212,60 @@ export default function DashboardFinancial() {
 
 // Sub-komponen kecil untuk Card agar kode utama bersih
 function StatCard({ title, value, color, subtitle, isLabel = false }) {
+  const colorStyles = {
+    black: {
+      border: "border-t-black",
+      bg: "bg-gray-50",
+      text: "text-gray-900",
+    },
+    "green-500": {
+      border: "border-t-green-500",
+      bg: "bg-green-50/50",
+      text: "text-green-700",
+    },
+    "purple-500": {
+      border: "border-t-purple-500",
+      bg: "bg-purple-50/50",
+      text: "text-purple-700",
+    },
+    "orange-500": {
+      border: "border-t-orange-500",
+      bg: "bg-orange-50/50",
+      text: "text-orange-700",
+    },
+    "red-500": {
+      border: "border-t-red-500",
+      bg: "bg-red-50/50",
+      text: "text-red-700",
+    },
+  };
+
+  const currentStyle = colorStyles[color] || {
+    border: "border-t-gray-500",
+    bg: "bg-gray-50",
+    text: "text-gray-600",
+  };
+
   return (
     <div
-      className={`bg-white p-5 rounded-xl shadow-sm border border-gray-100 border-t-4 border-t-${color}`}
+      className={`p-5 rounded-xl shadow-sm border border-gray-100 border-t-4 transition-all hover:shadow-md ${currentStyle.border} ${currentStyle.bg}`}
     >
-      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+      <p className="text-[12px] font-bold text-gray-400 uppercase tracking-wider">
         {title}
       </p>
       <h2 className="text-xl font-black text-gray-800 mt-2">
-        Rp {value.toLocaleString()}
+        Rp {(value || 0).toLocaleString()}
       </h2>
       {isLabel ? (
         <p
-          className={`text-[9px] text-green-700 bg-green-50 w-fit px-2 py-0.5 rounded mt-1 font-bold italic`}
+          className={`text-[10px] text-green-700 bg-green-50 w-fit px-2 py-0.5 rounded mt-1 font-bold`}
         >
           {subtitle}
         </p>
       ) : (
-        <p className="text-[9px] text-gray-400 mt-1 italic">{subtitle}</p>
+        <p className={`text-[10px] ${currentStyle.text} mt-1`}>
+          {subtitle}
+        </p>
       )}
     </div>
   );
