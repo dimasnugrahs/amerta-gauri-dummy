@@ -6,6 +6,25 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/src/lib/axios";
 import Swal from "sweetalert2";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+const PrintIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-4 w-4"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+    />
+  </svg>
+);
 
 // Icon Reverse (Mengganti Trash karena ini sistem keuangan)
 const ReverseIcon = () => (
@@ -111,6 +130,89 @@ export default function DashboardTransactions() {
         }
       }
     });
+  };
+
+  const handlePrintReceipt = (tx) => {
+    const doc = new jsPDF({
+      orientation: "p",
+      unit: "mm",
+      format: "a5", // Ukuran setengah A4, ideal untuk kwitansi
+    });
+
+    const formatIDR = (amount) =>
+      new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+      }).format(amount);
+
+    // --- Header ---
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("BUKTI PEMBAYARAN (KWITANSI)", 74, 15, { align: "center" });
+
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.text("AMERTA GAURI", 74, 20, { align: "center" });
+
+    doc.setLineWidth(0.5);
+    doc.line(10, 25, 138, 25);
+
+    // --- Info Transaksi ---
+    doc.setFontSize(10);
+    doc.text(`No. Invoice`, 15, 35);
+    doc.text(`:`, 45, 35);
+    doc.text(`${tx.invoice_number}`, 50, 35);
+
+    doc.text(`Tanggal`, 15, 40);
+    doc.text(`:`, 45, 40);
+    doc.text(`${new Date(tx.paid_date).toLocaleString("id-ID")}`, 50, 40);
+
+    doc.text(`Nasabah`, 15, 45);
+    doc.text(`:`, 45, 45);
+    doc.text(`${tx.loan_account?.customer?.full_name}`, 50, 45);
+
+    doc.text(`No. Rekening`, 15, 50);
+    doc.text(`:`, 45, 50);
+    doc.text(`${tx.loan_account?.no_rekening}`, 50, 50);
+
+    // --- Tabel Rincian ---
+    autoTable(doc, {
+      startY: 55,
+      margin: { left: 15, right: 15 },
+      head: [["Deskripsi", "Jumlah"]],
+      body: [
+        ["Angsuran Pokok", formatIDR(tx.principal_cut)],
+        ["Angsuran Bunga", formatIDR(tx.interest_cut)],
+        [
+          { content: "TOTAL BAYAR", styles: { fontStyle: "bold" } },
+          { content: formatIDR(tx.amount_paid), styles: { fontStyle: "bold" } },
+        ],
+      ],
+      theme: "plain",
+      styles: { fontSize: 10, cellPadding: 2 },
+      columnStyles: { 1: { halign: "right" } },
+    });
+
+    const finalY = doc.lastAutoTable.finalY + 10;
+
+    // --- Info Sisa ---
+    doc.setFontSize(9);
+    doc.text(
+      `Sisa Hutang Pokok : ${formatIDR(tx.remaining_principal)}`,
+      15,
+      finalY,
+    );
+    doc.text(`Metode Bayar      : ${tx.payment_method}`, 15, finalY + 5);
+
+    // --- Tanda Tangan ---
+    const namaAdmin = tx.processed?.full_name || "ADMIN";
+
+    doc.text("Petugas,", 100, finalY + 15);
+    doc.text("________________", 100, finalY + 35);
+    doc.text(namaAdmin.toUpperCase(), 100, finalY + 40);
+
+    doc.save(`Kwitansi_${tx.invoice_number}.pdf`);
   };
 
   return (
@@ -249,7 +351,14 @@ export default function DashboardTransactions() {
                         {tx.payment_status === "SUCCESS" ? "Sukses" : "Reverse"}
                       </span>
                     </td>
-                    <td className="p-3 border border-gray-200 text-center">
+                    <td className="p-3 border border-gray-200 text-center space-x-1">
+                      <button
+                        onClick={() => handlePrintReceipt(tx)}
+                        className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-md border border-blue-200 transition-all"
+                        title="Cetak Kwitansi"
+                      >
+                        <PrintIcon />
+                      </button>
                       {tx.payment_status === "SUCCESS" && (
                         <button
                           onClick={() =>

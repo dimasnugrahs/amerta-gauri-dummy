@@ -14,7 +14,8 @@ export async function GET(request, { params }) {
         product: true,
         // SESUAIKAN DENGAN SCHEMA ANDA:
         transactions: {
-          orderBy: { created_at: "desc" },
+          orderBy: { created_at: "asc" },
+          where: { payment_status: "SUCCESS" },
         },
       },
     });

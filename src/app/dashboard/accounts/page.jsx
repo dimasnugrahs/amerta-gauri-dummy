@@ -156,36 +156,91 @@ export default function DashboardLoanAccounts() {
         orientation: "landscape",
       });
 
-      // Header - Standar Hitam Putih
+      const logoUrl = "/images/logo-amerta-gauri.png";
+
+      try {
+        // Jika menggunakan URL lokal, pastikan sudah di-load atau gunakan Base64
+        doc.addImage(logoUrl, "PNG", 14, 10, 6, 6);
+      } catch (e) {
+        console.error("Gagal memuat logo:", e);
+      }
+
+      // --- HEADER ---
       doc.setFontSize(16);
-      doc.text("RIWAYAT TRANSAKSI PINJAMAN", 14, 15);
+      doc.setFont("helvetica", "bold");
+      doc.text("RIWAYAT TRANSAKSI PINJAMAN", 23, 15);
 
       doc.setFontSize(10);
-      doc.text(`No. Rekening : ${account.no_rekening}`, 14, 25);
-      doc.text(`Nasabah      : ${account.customer?.full_name || "-"}`, 14, 30);
-      doc.text(
-        `Produk       : ${account.product?.product_name || "-"}`,
-        14,
-        35,
-      );
-      doc.text(`Tanggal Cetak: ${new Date().toLocaleString("id-ID")}`, 14, 40);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text(`No. Rekening`, 14, 25);
+      doc.text(`:`, 44, 25);
+      doc.text(`${account.no_rekening}`, 54, 25);
 
-      const tableRows = transactions.map((t, index) => {
-        const kredit = Number(t.amount_paid || 0);
-        const debet = 0;
-        const totalBayar = kredit;
+      doc.text(`Nasabah`, 14, 30);
+      doc.text(`:`, 44, 30);
+      doc.text(`${account.customer?.full_name || "-"}`, 54, 30);
+
+      doc.text(`Produk`, 14, 35);
+      doc.text(`:`, 44, 35);
+      doc.text(`${account.product?.product_name || "-"}`, 54, 35);
+
+      doc.text(`Tanggal Cetak`, 14, 40);
+      doc.text(`:`, 44, 40);
+      doc.text(`${new Date().toLocaleString("id-ID")}`, 54, 40);
+
+      doc.setFontSize(10);
+      doc.text(`Sisa Hutang`, 124, 25);
+      doc.text(`:`, 154, 25);
+      doc.text(
+        `${formatCurrency(Number(account.current_debt_principal))}`,
+        164,
+        25,
+      );
+
+      doc.setFontSize(10);
+      doc.text(`Tunggakan`, 124, 30);
+      doc.text(`:`, 154, 30);
+      doc.text(
+        `${formatCurrency(Number(account.current_debt_interest))}`,
+        164,
+        30,
+      );
+
+      // --- LOGIKA BARIS TABEL ---
+
+      // 1. Baris Pertama: Pencairan (Debet)
+      const initialRow = [
+        "1",
+        new Date(account.created_at).toLocaleDateString("id-ID"),
+        "PENCAIRAN PINJAMAN (POKOK)",
+        "0", // Kredit
+        formatCurrency(Number(account.principal_amount)), // Debet (Hutang bertambah)
+        formatCurrency(Number(account.principal_amount)), // Total
+        formatCurrency(Number(account.principal_amount)), // Sisa Hutang Awal
+      ];
+
+      // 2. Baris Berikutnya: Pembayaran (Kredit)
+      const paymentRows = transactions.map((t, index) => {
+        const pCut = Number(t.principal_cut || 0);
+        const iCut = Number(t.interest_cut || 0);
+        const total = Number(t.amount_paid || 0);
 
         return [
-          index + 1,
+          index + 2,
           new Date(t.paid_date || t.created_at).toLocaleDateString("id-ID"),
-          `${t.payment_method} - ${t.payment_attachment || "N/A"}`,
-          formatCurrency(kredit),
-          formatCurrency(debet),
-          formatCurrency(totalBayar),
+          // Penjelasan rincian Pokok & Bunga menggunakan newline (\n)
+          `${t.payment_method}\nPokok: ${formatCurrency(pCut)}\nBunga: ${formatCurrency(iCut)}`,
+          formatCurrency(total), // Kredit (Hutang berkurang)
+          "0", // Debet
+          formatCurrency(total),
           formatCurrency(Number(t.remaining_principal || 0)),
         ];
       });
 
+      const tableRows = [initialRow, ...paymentRows];
+
+      // --- GENERATE TABLE ---
       autoTable(doc, {
         startY: 45,
         head: [
@@ -202,11 +257,11 @@ export default function DashboardLoanAccounts() {
         body:
           tableRows.length > 0
             ? tableRows
-            : [["-", "-", "Belum ada transaksi", "-", "-", "-", "-"]],
-        theme: "grid", // Menggunakan grid standar tanpa warna background
+            : [["-", "-", "Data tidak ditemukan", "-", "-", "-", "-"]],
+        theme: "grid",
         headStyles: {
-          fillColor: false, // Menghilangkan warna biru
-          textColor: [0, 0, 0], // Font kepala tabel jadi hitam
+          fillColor: [240, 240, 240],
+          textColor: [0, 0, 0],
           lineColor: [0, 0, 0],
           lineWidth: 0.1,
           halign: "center",
@@ -214,7 +269,7 @@ export default function DashboardLoanAccounts() {
         columnStyles: {
           0: { halign: "center", cellWidth: 10 },
           1: { cellWidth: 30 },
-          2: { cellWidth: 60 },
+          2: { cellWidth: 70 }, // Diperlebar untuk menampung rincian bunga
           3: { halign: "right" },
           4: { halign: "right" },
           5: { halign: "right" },
@@ -224,6 +279,7 @@ export default function DashboardLoanAccounts() {
           fontSize: 8,
           textColor: [0, 0, 0],
           lineColor: [0, 0, 0],
+          valign: "middle", // Agar teks rincian sejajar di tengah cell
         },
       });
 
@@ -231,11 +287,7 @@ export default function DashboardLoanAccounts() {
       Swal.close();
     } catch (error) {
       console.error("Print Error:", error);
-      Swal.fire(
-        "Gagal",
-        "Tidak dapat mengambil riwayat transaksi. Pastikan API history sudah benar.",
-        "error",
-      );
+      Swal.fire("Gagal", "Tidak dapat mengambil riwayat transaksi.", "error");
     }
   };
 

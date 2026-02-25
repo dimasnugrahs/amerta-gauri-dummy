@@ -17,6 +17,8 @@ export async function GET() {
         loan_account: {
           include: { customer: true },
         },
+        processed: true,
+        approved: true,
       },
     });
 
