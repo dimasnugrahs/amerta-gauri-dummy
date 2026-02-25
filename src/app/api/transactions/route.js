@@ -165,9 +165,20 @@ export async function POST(request) {
 
     const total_paid = Number(amount_paid);
     const current_debt_principal = Number(loan.current_debt_principal);
+    const max_allowed = current_debt_principal + total_interest_due;
 
     let interest_cut = 0;
     let principal_cut = 0;
+
+    if (total_paid > max_allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Nominal melebihi total tagihan. Maksimal: Rp ${max_allowed.toLocaleString("id-ID")}`,
+        },
+        { status: 400 },
+      );
+    }
 
     // 4. Logika Perhitungan (Interest First)
     if (total_interest_due > 0) {

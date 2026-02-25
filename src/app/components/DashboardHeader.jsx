@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import UserProfile from "@/public/images/user-profile.jpg";
+import UserProfile from "@/public/images/user-profile.png";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import axiosInstance from "@/src/lib/axios";

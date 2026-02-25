@@ -23,14 +23,20 @@ export async function GET() {
     const arrearsAccounts = await prisma.loanAccount.findMany({
       where: {
         status: "ACTIVE",
+        deleted_at: null,
         // Syarat utama: Tidak ada transaksi pada rentang bulan ini
         transactions: {
           none: {
-            paid_date: {
-              gte: startOfMonth,
-              lte: endOfMonth,
-            },
-            payment_status: "SUCCESS", // Hanya transaksi berhasil yang dihitung
+            AND: [
+              {
+                paid_date: {
+                  gte: startOfMonth,
+                  lte: endOfMonth,
+                },
+              },
+              { payment_status: "SUCCESS" },
+              { deleted_at: null }, // Pastikan transaksi yang dibatalkan tidak dianggap sebagai pembayaran
+            ],
           },
         },
         // Opsional: Pastikan akun ini sudah cair sebelum atau pada bulan ini

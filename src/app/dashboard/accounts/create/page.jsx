@@ -6,6 +6,7 @@ import axiosInstance from "@/src/lib/axios";
 import Swal from "sweetalert2";
 import LayoutDashboard from "@/src/app/components/LayoutDashboard";
 import SearchableSelect from "@/src/app/components/SearchableSelect";
+import { NumericFormat } from "react-number-format";
 
 export default function CreateLoanAccountPage() {
   const router = useRouter();
@@ -51,6 +52,29 @@ export default function CreateLoanAccountPage() {
     };
     fetchData();
   }, []);
+
+  // perhitungan bunga
+  const handleFinancialChange = (field, value) => {
+    const newFormData = { ...formData, [field]: value };
+
+    // Jika yang diubah adalah Plafon atau Persen, maka update Rupiah (Auto)
+    if (field === "principal_amount" || field === "rate_percent") {
+      const principal =
+        parseFloat(
+          field === "principal_amount" ? value : formData.principal_amount,
+        ) || 0;
+      const percent =
+        parseFloat(field === "rate_percent" ? value : formData.rate_percent) ||
+        0;
+
+      newFormData.rate_amount = (principal * (percent / 100)).toString();
+    }
+
+    // Jika yang diubah adalah Rupiah, biarkan saja (Manual Kustom)
+    // Ini memungkinkan admin menghapus atau mengubah angka hasil kalkulasi
+
+    setFormData(newFormData);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -167,15 +191,17 @@ export default function CreateLoanAccountPage() {
               <label className="block text-sm font-semibold text-gray-700 mb-1">
                 Plafon Pinjaman (Pokok)
               </label>
-              <input
-                type="number"
-                required
+              <NumericFormat
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix="Rp "
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none"
                 placeholder="Rp 0"
+                required
                 value={formData.principal_amount}
-                onChange={(e) =>
-                  setFormData({ ...formData, principal_amount: e.target.value })
-                }
+                onValueChange={(values) => {
+                  handleFinancialChange("principal_amount", values.value);
+                }}
               />
             </div>
 
@@ -191,7 +217,7 @@ export default function CreateLoanAccountPage() {
                   placeholder="0.00"
                   value={formData.rate_percent}
                   onChange={(e) =>
-                    setFormData({ ...formData, rate_percent: e.target.value })
+                    handleFinancialChange("rate_percent", e.target.value)
                   }
                 />
               </div>
@@ -199,15 +225,20 @@ export default function CreateLoanAccountPage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   Bunga (Rp)
                 </label>
-                <input
-                  type="number"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none"
+                <NumericFormat
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  prefix="Rp "
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none bg-yellow-50/30 font-bold"
                   placeholder="Rp 0"
                   value={formData.rate_amount}
-                  onChange={(e) =>
-                    setFormData({ ...formData, rate_amount: e.target.value })
-                  }
+                  onValueChange={(values) => {
+                    setFormData({ ...formData, rate_amount: values.value });
+                  }}
                 />
+                <p className="text-[10px] text-gray-400 mt-1 italic">
+                  *Otomatis: Plafon × {formData.rate_percent || 0}%
+                </p>
               </div>
             </div>
 

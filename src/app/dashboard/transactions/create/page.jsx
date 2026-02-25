@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axiosInstance from "@/src/lib/axios";
 import Swal from "sweetalert2";
 import LayoutDashboard from "@/src/app/components/LayoutDashboard";
+import { NumericFormat } from "react-number-format";
 
 export default function CreateTransactionPage() {
   const router = useRouter();
@@ -79,6 +80,8 @@ export default function CreateTransactionPage() {
 
     const totalKewajibanBunga = tunggakanBungaDB + bungaBulanIni;
 
+    const maxPayable = sisaPokok + totalKewajibanBunga;
+
     // Logika potong bunga & pokok
     let interestCut =
       amountPaid >= totalKewajibanBunga ? totalKewajibanBunga : amountPaid;
@@ -92,6 +95,7 @@ export default function CreateTransactionPage() {
       principal_cut: principalCut,
       monthly_interest: bungaBulanIni,
       total_interest_due: totalKewajibanBunga,
+      max_payable: maxPayable,
     };
   }, [loanData, formData.amount_paid, formData.paid_date]);
 
@@ -151,6 +155,18 @@ export default function CreateTransactionPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const amountPaid = Number(formData.amount_paid);
+
+    // Validasi Batasan Nominal
+    if (amountPaid > preview.max_payable) {
+      return Swal.fire(
+        "Nominal Berlebih",
+        `Maksimal pembayaran adalah Rp ${preview.max_payable.toLocaleString("id-ID")} (Sisa Pokok + Bunga)`,
+        "error",
+      );
+    }
+
     if (!loanData || !formData.approved_by_id) {
       return Swal.fire("Peringatan", "Data belum lengkap", "warning");
     }
@@ -309,16 +325,46 @@ export default function CreateTransactionPage() {
                     Nominal Pembayaran
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-amerta-700 text-lg">
-                      Rp
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none text-xl font-bold text-amerta-700"
-                      value={formatDisplay(formData.amount_paid)}
-                      onChange={handleAmountChange}
+                    <NumericFormat
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      prefix="Rp "
+                      placeholder="Rp 0"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amerta-500 outline-none text-xl font-bold text-amerta-700 bg-white"
+                      value={formData.amount_paid}
+                      onValueChange={(values) => {
+                        // Kita kirim string angka bersih (values.value) ke state
+                        setFormData({ ...formData, amount_paid: values.value });
+                      }}
+                      // --- LOGIKA PEMBATASAN REAL-TIME ---
+                      isAllowed={(values) => {
+                        const { floatValue } = values;
+                        // Jika input dikosongkan, izinkan
+                        if (floatValue === undefined) return true;
+                        // Batasi agar tidak bisa mengetik lebih dari sisa hutang + bunga
+                        return floatValue <= preview.max_payable;
+                      }}
+                      allowNegative={false}
                     />
+
+                    <div className="mt-1 flex justify-between items-center">
+                      <p className="text-[11px] text-gray-500 italic">
+                        * Sistem mendahulukan pelunasan bunga, lalu pokok.
+                      </p>
+                      <div className="text-right">
+                        <p className="text-[11px] font-bold text-amerta-600">
+                          Batas Maksimal: Rp{" "}
+                          {preview.max_payable.toLocaleString("id-ID")}
+                        </p>
+                        {/* Indikator visual jika sudah mencapai batas */}
+                        {Number(formData.amount_paid) >=
+                          preview.max_payable && (
+                          <span className="text-[10px] text-orange-500 font-bold animate-pulse">
+                            [SUDAH MENCAPAI BATAS PELUNASAN]
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div>

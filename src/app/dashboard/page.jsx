@@ -21,10 +21,11 @@ export default function DashboardFinancial() {
 
       setLedgers(resLedger.data.data || []);
 
-      // KOREKSI 1: Destructuring dari data.data sesuai struktur API baru
-      const { principalDue, interestDue } = resDueSummary.data.data;
-      setPrincipalDue(principalDue || []);
-      setInterestDue(interestDue || []);
+      // Destructuring dari struktur API: resDueSummary.data.data
+      const { principalDue = [], interestDue = [] } =
+        resDueSummary.data.data || {};
+      setPrincipalDue(principalDue);
+      setInterestDue(interestDue);
     } catch (error) {
       console.error("Error fetching data:", error);
       Swal.fire("Gagal", "Tidak dapat memuat data dashboard.", "error");
@@ -86,32 +87,32 @@ export default function DashboardFinancial() {
             title="Kas Tersedia"
             value={financialStats.sisaKas}
             color="black"
-            subtitle="*Modal Tersedia"
+            // subtitle="*Modal Tersedia"
           />
           <StatCard
             title="Total Bunga"
             value={financialStats.totalLaba}
             color="green-500"
-            subtitle="Laba Kotor"
-            isLabel
+            // subtitle="Laba Kotor"
+            // isLabel
           />
           <StatCard
             title="Laba Bersih"
             value={financialStats.labaBersih}
             color="purple-500"
-            subtitle="Potong Ops"
+            // subtitle="Potong Ops"
           />
           <StatCard
             title="Biaya Ops"
             value={financialStats.totalOps}
             color="orange-500"
-            subtitle="Gaji, Listrik, dll"
+            // subtitle="Gaji, Listrik, dll"
           />
           <StatCard
             title="Pencairan Modal"
             value={financialStats.totalDisbursed}
             color="red-500"
-            subtitle="Pinjaman Aktif"
+            // subtitle="Pinjaman Aktif"
           />
         </div>
       </div>
@@ -121,10 +122,10 @@ export default function DashboardFinancial() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 mx-2">
           <div>
             <h2 className="text-lg font-bold text-gray-800 tracking-tighter uppercase">
-              Jatuh Tempo & <span className="text-red-600">Lewat Pokok</span>
+              Jatuh <span className="text-red-600">Tempo</span>
             </h2>
             <p className="text-[12px] text-gray-400 font-medium">
-              Nasabah yang belum melakukan pelunasan pokok.
+              Nasabah yang belum melakukan angsuran bulanan.
             </p>
           </div>
           <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full border border-red-200">
