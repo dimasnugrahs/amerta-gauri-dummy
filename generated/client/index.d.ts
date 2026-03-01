@@ -43,6 +43,11 @@ export type LoanAccount = $Result.DefaultSelection<Prisma.$LoanAccountPayload>
  * 
  */
 export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
+/**
+ * Model EomLog
+ * 
+ */
+export type EomLog = $Result.DefaultSelection<Prisma.$EomLogPayload>
 
 /**
  * Enums
@@ -84,7 +89,8 @@ export const TypeCapitalLedger: {
   REPAYMENT_PRINCIPAL: 'REPAYMENT_PRINCIPAL',
   REPAYMENT_INTEREST: 'REPAYMENT_INTEREST',
   EXPENSE_OPS: 'EXPENSE_OPS',
-  ADJUSTMENT: 'ADJUSTMENT'
+  ADJUSTMENT: 'ADJUSTMENT',
+  INTEREST_ACCRUAL: 'INTEREST_ACCRUAL'
 };
 
 export type TypeCapitalLedger = (typeof TypeCapitalLedger)[keyof typeof TypeCapitalLedger]
@@ -283,6 +289,16 @@ export class PrismaClient<
     * ```
     */
   get transaction(): Prisma.TransactionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.eomLog`: Exposes CRUD operations for the **EomLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EomLogs
+    * const eomLogs = await prisma.eomLog.findMany()
+    * ```
+    */
+  get eomLog(): Prisma.EomLogDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -722,7 +738,8 @@ export namespace Prisma {
     Product: 'Product',
     CapitalLedger: 'CapitalLedger',
     LoanAccount: 'LoanAccount',
-    Transaction: 'Transaction'
+    Transaction: 'Transaction',
+    EomLog: 'EomLog'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -738,7 +755,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "customer" | "product" | "capitalLedger" | "loanAccount" | "transaction"
+      modelProps: "user" | "customer" | "product" | "capitalLedger" | "loanAccount" | "transaction" | "eomLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1186,6 +1203,80 @@ export namespace Prisma {
           }
         }
       }
+      EomLog: {
+        payload: Prisma.$EomLogPayload<ExtArgs>
+        fields: Prisma.EomLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EomLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EomLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload>
+          }
+          findFirst: {
+            args: Prisma.EomLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EomLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload>
+          }
+          findMany: {
+            args: Prisma.EomLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload>[]
+          }
+          create: {
+            args: Prisma.EomLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload>
+          }
+          createMany: {
+            args: Prisma.EomLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EomLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload>[]
+          }
+          delete: {
+            args: Prisma.EomLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload>
+          }
+          update: {
+            args: Prisma.EomLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.EomLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EomLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EomLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.EomLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EomLogPayload>
+          }
+          aggregate: {
+            args: Prisma.EomLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEomLog>
+          }
+          groupBy: {
+            args: Prisma.EomLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EomLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EomLogCountArgs<ExtArgs>
+            result: $Utils.Optional<EomLogCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1300,6 +1391,7 @@ export namespace Prisma {
     capitalLedger?: CapitalLedgerOmit
     loanAccount?: LoanAccountOmit
     transaction?: TransactionOmit
+    eomLog?: EomLogOmit
   }
 
   /* Types for Logging */
@@ -1386,6 +1478,7 @@ export namespace Prisma {
     loan_accounts: number
     transactions_processed: number
     transactions_approved: number
+    eom_log: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1395,6 +1488,7 @@ export namespace Prisma {
     loan_accounts?: boolean | UserCountOutputTypeCountLoan_accountsArgs
     transactions_processed?: boolean | UserCountOutputTypeCountTransactions_processedArgs
     transactions_approved?: boolean | UserCountOutputTypeCountTransactions_approvedArgs
+    eom_log?: boolean | UserCountOutputTypeCountEom_logArgs
   }
 
   // Custom InputTypes
@@ -1448,6 +1542,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountTransactions_approvedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransactionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountEom_logArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EomLogWhereInput
   }
 
 
@@ -1862,6 +1963,7 @@ export namespace Prisma {
     loan_accounts?: boolean | User$loan_accountsArgs<ExtArgs>
     transactions_processed?: boolean | User$transactions_processedArgs<ExtArgs>
     transactions_approved?: boolean | User$transactions_approvedArgs<ExtArgs>
+    eom_log?: boolean | User$eom_logArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1936,6 +2038,7 @@ export namespace Prisma {
     loan_accounts?: boolean | User$loan_accountsArgs<ExtArgs>
     transactions_processed?: boolean | User$transactions_processedArgs<ExtArgs>
     transactions_approved?: boolean | User$transactions_approvedArgs<ExtArgs>
+    eom_log?: boolean | User$eom_logArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1950,6 +2053,7 @@ export namespace Prisma {
       loan_accounts: Prisma.$LoanAccountPayload<ExtArgs>[]
       transactions_processed: Prisma.$TransactionPayload<ExtArgs>[]
       transactions_approved: Prisma.$TransactionPayload<ExtArgs>[]
+      eom_log: Prisma.$EomLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2370,6 +2474,7 @@ export namespace Prisma {
     loan_accounts<T extends User$loan_accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$loan_accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LoanAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     transactions_processed<T extends User$transactions_processedArgs<ExtArgs> = {}>(args?: Subset<T, User$transactions_processedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     transactions_approved<T extends User$transactions_approvedArgs<ExtArgs> = {}>(args?: Subset<T, User$transactions_approvedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    eom_log<T extends User$eom_logArgs<ExtArgs> = {}>(args?: Subset<T, User$eom_logArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2946,6 +3051,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * User.eom_log
+   */
+  export type User$eom_logArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+    where?: EomLogWhereInput
+    orderBy?: EomLogOrderByWithRelationInput | EomLogOrderByWithRelationInput[]
+    cursor?: EomLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EomLogScalarFieldEnum | EomLogScalarFieldEnum[]
   }
 
   /**
@@ -9219,6 +9348,1136 @@ export namespace Prisma {
 
 
   /**
+   * Model EomLog
+   */
+
+  export type AggregateEomLog = {
+    _count: EomLogCountAggregateOutputType | null
+    _avg: EomLogAvgAggregateOutputType | null
+    _sum: EomLogSumAggregateOutputType | null
+    _min: EomLogMinAggregateOutputType | null
+    _max: EomLogMaxAggregateOutputType | null
+  }
+
+  export type EomLogAvgAggregateOutputType = {
+    period_month: number | null
+    period_year: number | null
+    total_accounts: number | null
+    total_amount: Decimal | null
+  }
+
+  export type EomLogSumAggregateOutputType = {
+    period_month: number | null
+    period_year: number | null
+    total_accounts: number | null
+    total_amount: Decimal | null
+  }
+
+  export type EomLogMinAggregateOutputType = {
+    id: string | null
+    period_month: number | null
+    period_year: number | null
+    executed_by_id: string | null
+    total_accounts: number | null
+    total_amount: Decimal | null
+    created_at: Date | null
+  }
+
+  export type EomLogMaxAggregateOutputType = {
+    id: string | null
+    period_month: number | null
+    period_year: number | null
+    executed_by_id: string | null
+    total_accounts: number | null
+    total_amount: Decimal | null
+    created_at: Date | null
+  }
+
+  export type EomLogCountAggregateOutputType = {
+    id: number
+    period_month: number
+    period_year: number
+    executed_by_id: number
+    total_accounts: number
+    total_amount: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type EomLogAvgAggregateInputType = {
+    period_month?: true
+    period_year?: true
+    total_accounts?: true
+    total_amount?: true
+  }
+
+  export type EomLogSumAggregateInputType = {
+    period_month?: true
+    period_year?: true
+    total_accounts?: true
+    total_amount?: true
+  }
+
+  export type EomLogMinAggregateInputType = {
+    id?: true
+    period_month?: true
+    period_year?: true
+    executed_by_id?: true
+    total_accounts?: true
+    total_amount?: true
+    created_at?: true
+  }
+
+  export type EomLogMaxAggregateInputType = {
+    id?: true
+    period_month?: true
+    period_year?: true
+    executed_by_id?: true
+    total_accounts?: true
+    total_amount?: true
+    created_at?: true
+  }
+
+  export type EomLogCountAggregateInputType = {
+    id?: true
+    period_month?: true
+    period_year?: true
+    executed_by_id?: true
+    total_accounts?: true
+    total_amount?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type EomLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EomLog to aggregate.
+     */
+    where?: EomLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EomLogs to fetch.
+     */
+    orderBy?: EomLogOrderByWithRelationInput | EomLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EomLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EomLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EomLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EomLogs
+    **/
+    _count?: true | EomLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: EomLogAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: EomLogSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EomLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EomLogMaxAggregateInputType
+  }
+
+  export type GetEomLogAggregateType<T extends EomLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateEomLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEomLog[P]>
+      : GetScalarType<T[P], AggregateEomLog[P]>
+  }
+
+
+
+
+  export type EomLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EomLogWhereInput
+    orderBy?: EomLogOrderByWithAggregationInput | EomLogOrderByWithAggregationInput[]
+    by: EomLogScalarFieldEnum[] | EomLogScalarFieldEnum
+    having?: EomLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EomLogCountAggregateInputType | true
+    _avg?: EomLogAvgAggregateInputType
+    _sum?: EomLogSumAggregateInputType
+    _min?: EomLogMinAggregateInputType
+    _max?: EomLogMaxAggregateInputType
+  }
+
+  export type EomLogGroupByOutputType = {
+    id: string
+    period_month: number
+    period_year: number
+    executed_by_id: string
+    total_accounts: number
+    total_amount: Decimal
+    created_at: Date
+    _count: EomLogCountAggregateOutputType | null
+    _avg: EomLogAvgAggregateOutputType | null
+    _sum: EomLogSumAggregateOutputType | null
+    _min: EomLogMinAggregateOutputType | null
+    _max: EomLogMaxAggregateOutputType | null
+  }
+
+  type GetEomLogGroupByPayload<T extends EomLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EomLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EomLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EomLogGroupByOutputType[P]>
+            : GetScalarType<T[P], EomLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EomLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    period_month?: boolean
+    period_year?: boolean
+    executed_by_id?: boolean
+    total_accounts?: boolean
+    total_amount?: boolean
+    created_at?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eomLog"]>
+
+  export type EomLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    period_month?: boolean
+    period_year?: boolean
+    executed_by_id?: boolean
+    total_accounts?: boolean
+    total_amount?: boolean
+    created_at?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eomLog"]>
+
+  export type EomLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    period_month?: boolean
+    period_year?: boolean
+    executed_by_id?: boolean
+    total_accounts?: boolean
+    total_amount?: boolean
+    created_at?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eomLog"]>
+
+  export type EomLogSelectScalar = {
+    id?: boolean
+    period_month?: boolean
+    period_year?: boolean
+    executed_by_id?: boolean
+    total_accounts?: boolean
+    total_amount?: boolean
+    created_at?: boolean
+  }
+
+  export type EomLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "period_month" | "period_year" | "executed_by_id" | "total_accounts" | "total_amount" | "created_at", ExtArgs["result"]["eomLog"]>
+  export type EomLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EomLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EomLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $EomLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EomLog"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      period_month: number
+      period_year: number
+      executed_by_id: string
+      total_accounts: number
+      total_amount: Prisma.Decimal
+      created_at: Date
+    }, ExtArgs["result"]["eomLog"]>
+    composites: {}
+  }
+
+  type EomLogGetPayload<S extends boolean | null | undefined | EomLogDefaultArgs> = $Result.GetResult<Prisma.$EomLogPayload, S>
+
+  type EomLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EomLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EomLogCountAggregateInputType | true
+    }
+
+  export interface EomLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EomLog'], meta: { name: 'EomLog' } }
+    /**
+     * Find zero or one EomLog that matches the filter.
+     * @param {EomLogFindUniqueArgs} args - Arguments to find a EomLog
+     * @example
+     * // Get one EomLog
+     * const eomLog = await prisma.eomLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EomLogFindUniqueArgs>(args: SelectSubset<T, EomLogFindUniqueArgs<ExtArgs>>): Prisma__EomLogClient<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EomLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EomLogFindUniqueOrThrowArgs} args - Arguments to find a EomLog
+     * @example
+     * // Get one EomLog
+     * const eomLog = await prisma.eomLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EomLogFindUniqueOrThrowArgs>(args: SelectSubset<T, EomLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EomLogClient<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EomLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EomLogFindFirstArgs} args - Arguments to find a EomLog
+     * @example
+     * // Get one EomLog
+     * const eomLog = await prisma.eomLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EomLogFindFirstArgs>(args?: SelectSubset<T, EomLogFindFirstArgs<ExtArgs>>): Prisma__EomLogClient<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EomLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EomLogFindFirstOrThrowArgs} args - Arguments to find a EomLog
+     * @example
+     * // Get one EomLog
+     * const eomLog = await prisma.eomLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EomLogFindFirstOrThrowArgs>(args?: SelectSubset<T, EomLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__EomLogClient<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EomLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EomLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EomLogs
+     * const eomLogs = await prisma.eomLog.findMany()
+     * 
+     * // Get first 10 EomLogs
+     * const eomLogs = await prisma.eomLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const eomLogWithIdOnly = await prisma.eomLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EomLogFindManyArgs>(args?: SelectSubset<T, EomLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EomLog.
+     * @param {EomLogCreateArgs} args - Arguments to create a EomLog.
+     * @example
+     * // Create one EomLog
+     * const EomLog = await prisma.eomLog.create({
+     *   data: {
+     *     // ... data to create a EomLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends EomLogCreateArgs>(args: SelectSubset<T, EomLogCreateArgs<ExtArgs>>): Prisma__EomLogClient<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EomLogs.
+     * @param {EomLogCreateManyArgs} args - Arguments to create many EomLogs.
+     * @example
+     * // Create many EomLogs
+     * const eomLog = await prisma.eomLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EomLogCreateManyArgs>(args?: SelectSubset<T, EomLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EomLogs and returns the data saved in the database.
+     * @param {EomLogCreateManyAndReturnArgs} args - Arguments to create many EomLogs.
+     * @example
+     * // Create many EomLogs
+     * const eomLog = await prisma.eomLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EomLogs and only return the `id`
+     * const eomLogWithIdOnly = await prisma.eomLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EomLogCreateManyAndReturnArgs>(args?: SelectSubset<T, EomLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EomLog.
+     * @param {EomLogDeleteArgs} args - Arguments to delete one EomLog.
+     * @example
+     * // Delete one EomLog
+     * const EomLog = await prisma.eomLog.delete({
+     *   where: {
+     *     // ... filter to delete one EomLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EomLogDeleteArgs>(args: SelectSubset<T, EomLogDeleteArgs<ExtArgs>>): Prisma__EomLogClient<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EomLog.
+     * @param {EomLogUpdateArgs} args - Arguments to update one EomLog.
+     * @example
+     * // Update one EomLog
+     * const eomLog = await prisma.eomLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EomLogUpdateArgs>(args: SelectSubset<T, EomLogUpdateArgs<ExtArgs>>): Prisma__EomLogClient<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EomLogs.
+     * @param {EomLogDeleteManyArgs} args - Arguments to filter EomLogs to delete.
+     * @example
+     * // Delete a few EomLogs
+     * const { count } = await prisma.eomLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EomLogDeleteManyArgs>(args?: SelectSubset<T, EomLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EomLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EomLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EomLogs
+     * const eomLog = await prisma.eomLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EomLogUpdateManyArgs>(args: SelectSubset<T, EomLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EomLogs and returns the data updated in the database.
+     * @param {EomLogUpdateManyAndReturnArgs} args - Arguments to update many EomLogs.
+     * @example
+     * // Update many EomLogs
+     * const eomLog = await prisma.eomLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EomLogs and only return the `id`
+     * const eomLogWithIdOnly = await prisma.eomLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EomLogUpdateManyAndReturnArgs>(args: SelectSubset<T, EomLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EomLog.
+     * @param {EomLogUpsertArgs} args - Arguments to update or create a EomLog.
+     * @example
+     * // Update or create a EomLog
+     * const eomLog = await prisma.eomLog.upsert({
+     *   create: {
+     *     // ... data to create a EomLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EomLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EomLogUpsertArgs>(args: SelectSubset<T, EomLogUpsertArgs<ExtArgs>>): Prisma__EomLogClient<$Result.GetResult<Prisma.$EomLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EomLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EomLogCountArgs} args - Arguments to filter EomLogs to count.
+     * @example
+     * // Count the number of EomLogs
+     * const count = await prisma.eomLog.count({
+     *   where: {
+     *     // ... the filter for the EomLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends EomLogCountArgs>(
+      args?: Subset<T, EomLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EomLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EomLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EomLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EomLogAggregateArgs>(args: Subset<T, EomLogAggregateArgs>): Prisma.PrismaPromise<GetEomLogAggregateType<T>>
+
+    /**
+     * Group by EomLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EomLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EomLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EomLogGroupByArgs['orderBy'] }
+        : { orderBy?: EomLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EomLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEomLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EomLog model
+   */
+  readonly fields: EomLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EomLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EomLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EomLog model
+   */
+  interface EomLogFieldRefs {
+    readonly id: FieldRef<"EomLog", 'String'>
+    readonly period_month: FieldRef<"EomLog", 'Int'>
+    readonly period_year: FieldRef<"EomLog", 'Int'>
+    readonly executed_by_id: FieldRef<"EomLog", 'String'>
+    readonly total_accounts: FieldRef<"EomLog", 'Int'>
+    readonly total_amount: FieldRef<"EomLog", 'Decimal'>
+    readonly created_at: FieldRef<"EomLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EomLog findUnique
+   */
+  export type EomLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+    /**
+     * Filter, which EomLog to fetch.
+     */
+    where: EomLogWhereUniqueInput
+  }
+
+  /**
+   * EomLog findUniqueOrThrow
+   */
+  export type EomLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+    /**
+     * Filter, which EomLog to fetch.
+     */
+    where: EomLogWhereUniqueInput
+  }
+
+  /**
+   * EomLog findFirst
+   */
+  export type EomLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+    /**
+     * Filter, which EomLog to fetch.
+     */
+    where?: EomLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EomLogs to fetch.
+     */
+    orderBy?: EomLogOrderByWithRelationInput | EomLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EomLogs.
+     */
+    cursor?: EomLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EomLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EomLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EomLogs.
+     */
+    distinct?: EomLogScalarFieldEnum | EomLogScalarFieldEnum[]
+  }
+
+  /**
+   * EomLog findFirstOrThrow
+   */
+  export type EomLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+    /**
+     * Filter, which EomLog to fetch.
+     */
+    where?: EomLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EomLogs to fetch.
+     */
+    orderBy?: EomLogOrderByWithRelationInput | EomLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EomLogs.
+     */
+    cursor?: EomLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EomLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EomLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EomLogs.
+     */
+    distinct?: EomLogScalarFieldEnum | EomLogScalarFieldEnum[]
+  }
+
+  /**
+   * EomLog findMany
+   */
+  export type EomLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+    /**
+     * Filter, which EomLogs to fetch.
+     */
+    where?: EomLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EomLogs to fetch.
+     */
+    orderBy?: EomLogOrderByWithRelationInput | EomLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EomLogs.
+     */
+    cursor?: EomLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EomLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EomLogs.
+     */
+    skip?: number
+    distinct?: EomLogScalarFieldEnum | EomLogScalarFieldEnum[]
+  }
+
+  /**
+   * EomLog create
+   */
+  export type EomLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EomLog.
+     */
+    data: XOR<EomLogCreateInput, EomLogUncheckedCreateInput>
+  }
+
+  /**
+   * EomLog createMany
+   */
+  export type EomLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EomLogs.
+     */
+    data: EomLogCreateManyInput | EomLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EomLog createManyAndReturn
+   */
+  export type EomLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many EomLogs.
+     */
+    data: EomLogCreateManyInput | EomLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EomLog update
+   */
+  export type EomLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EomLog.
+     */
+    data: XOR<EomLogUpdateInput, EomLogUncheckedUpdateInput>
+    /**
+     * Choose, which EomLog to update.
+     */
+    where: EomLogWhereUniqueInput
+  }
+
+  /**
+   * EomLog updateMany
+   */
+  export type EomLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EomLogs.
+     */
+    data: XOR<EomLogUpdateManyMutationInput, EomLogUncheckedUpdateManyInput>
+    /**
+     * Filter which EomLogs to update
+     */
+    where?: EomLogWhereInput
+    /**
+     * Limit how many EomLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EomLog updateManyAndReturn
+   */
+  export type EomLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * The data used to update EomLogs.
+     */
+    data: XOR<EomLogUpdateManyMutationInput, EomLogUncheckedUpdateManyInput>
+    /**
+     * Filter which EomLogs to update
+     */
+    where?: EomLogWhereInput
+    /**
+     * Limit how many EomLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EomLog upsert
+   */
+  export type EomLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EomLog to update in case it exists.
+     */
+    where: EomLogWhereUniqueInput
+    /**
+     * In case the EomLog found by the `where` argument doesn't exist, create a new EomLog with this data.
+     */
+    create: XOR<EomLogCreateInput, EomLogUncheckedCreateInput>
+    /**
+     * In case the EomLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EomLogUpdateInput, EomLogUncheckedUpdateInput>
+  }
+
+  /**
+   * EomLog delete
+   */
+  export type EomLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+    /**
+     * Filter which EomLog to delete.
+     */
+    where: EomLogWhereUniqueInput
+  }
+
+  /**
+   * EomLog deleteMany
+   */
+  export type EomLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EomLogs to delete
+     */
+    where?: EomLogWhereInput
+    /**
+     * Limit how many EomLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EomLog without action
+   */
+  export type EomLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EomLog
+     */
+    select?: EomLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EomLog
+     */
+    omit?: EomLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EomLogInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -9352,6 +10611,19 @@ export namespace Prisma {
   };
 
   export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
+
+
+  export const EomLogScalarFieldEnum: {
+    id: 'id',
+    period_month: 'period_month',
+    period_year: 'period_year',
+    executed_by_id: 'executed_by_id',
+    total_accounts: 'total_accounts',
+    total_amount: 'total_amount',
+    created_at: 'created_at'
+  };
+
+  export type EomLogScalarFieldEnum = (typeof EomLogScalarFieldEnum)[keyof typeof EomLogScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -9500,6 +10772,20 @@ export namespace Prisma {
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
   /**
    * Deep Input Types
    */
@@ -9533,6 +10819,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountListRelationFilter
     transactions_processed?: TransactionListRelationFilter
     transactions_approved?: TransactionListRelationFilter
+    eom_log?: EomLogListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -9560,6 +10847,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountOrderByRelationAggregateInput
     transactions_processed?: TransactionOrderByRelationAggregateInput
     transactions_approved?: TransactionOrderByRelationAggregateInput
+    eom_log?: EomLogOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -9590,6 +10878,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountListRelationFilter
     transactions_processed?: TransactionListRelationFilter
     transactions_approved?: TransactionListRelationFilter
+    eom_log?: EomLogListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -10171,6 +11460,74 @@ export namespace Prisma {
     deleted_at?: DateTimeNullableWithAggregatesFilter<"Transaction"> | Date | string | null
   }
 
+  export type EomLogWhereInput = {
+    AND?: EomLogWhereInput | EomLogWhereInput[]
+    OR?: EomLogWhereInput[]
+    NOT?: EomLogWhereInput | EomLogWhereInput[]
+    id?: StringFilter<"EomLog"> | string
+    period_month?: IntFilter<"EomLog"> | number
+    period_year?: IntFilter<"EomLog"> | number
+    executed_by_id?: StringFilter<"EomLog"> | string
+    total_accounts?: IntFilter<"EomLog"> | number
+    total_amount?: DecimalFilter<"EomLog"> | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFilter<"EomLog"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type EomLogOrderByWithRelationInput = {
+    id?: SortOrder
+    period_month?: SortOrder
+    period_year?: SortOrder
+    executed_by_id?: SortOrder
+    total_accounts?: SortOrder
+    total_amount?: SortOrder
+    created_at?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type EomLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    period_month_period_year?: EomLogPeriod_monthPeriod_yearCompoundUniqueInput
+    AND?: EomLogWhereInput | EomLogWhereInput[]
+    OR?: EomLogWhereInput[]
+    NOT?: EomLogWhereInput | EomLogWhereInput[]
+    period_month?: IntFilter<"EomLog"> | number
+    period_year?: IntFilter<"EomLog"> | number
+    executed_by_id?: StringFilter<"EomLog"> | string
+    total_accounts?: IntFilter<"EomLog"> | number
+    total_amount?: DecimalFilter<"EomLog"> | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFilter<"EomLog"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "period_month_period_year">
+
+  export type EomLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    period_month?: SortOrder
+    period_year?: SortOrder
+    executed_by_id?: SortOrder
+    total_accounts?: SortOrder
+    total_amount?: SortOrder
+    created_at?: SortOrder
+    _count?: EomLogCountOrderByAggregateInput
+    _avg?: EomLogAvgOrderByAggregateInput
+    _max?: EomLogMaxOrderByAggregateInput
+    _min?: EomLogMinOrderByAggregateInput
+    _sum?: EomLogSumOrderByAggregateInput
+  }
+
+  export type EomLogScalarWhereWithAggregatesInput = {
+    AND?: EomLogScalarWhereWithAggregatesInput | EomLogScalarWhereWithAggregatesInput[]
+    OR?: EomLogScalarWhereWithAggregatesInput[]
+    NOT?: EomLogScalarWhereWithAggregatesInput | EomLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EomLog"> | string
+    period_month?: IntWithAggregatesFilter<"EomLog"> | number
+    period_year?: IntWithAggregatesFilter<"EomLog"> | number
+    executed_by_id?: StringWithAggregatesFilter<"EomLog"> | string
+    total_accounts?: IntWithAggregatesFilter<"EomLog"> | number
+    total_amount?: DecimalWithAggregatesFilter<"EomLog"> | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeWithAggregatesFilter<"EomLog"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     full_name: string
@@ -10196,6 +11553,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionCreateNestedManyWithoutProcessedInput
     transactions_approved?: TransactionCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -10223,6 +11581,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUncheckedCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionUncheckedCreateNestedManyWithoutProcessedInput
     transactions_approved?: TransactionUncheckedCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -10250,6 +11609,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUpdateManyWithoutProcessedNestedInput
     transactions_approved?: TransactionUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -10277,6 +11637,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUncheckedUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUncheckedUpdateManyWithoutProcessedNestedInput
     transactions_approved?: TransactionUncheckedUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -10932,6 +12293,75 @@ export namespace Prisma {
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type EomLogCreateInput = {
+    id?: string
+    period_month: number
+    period_year: number
+    total_accounts: number
+    total_amount: Decimal | DecimalJsLike | number | string
+    created_at?: Date | string
+    user: UserCreateNestedOneWithoutEom_logInput
+  }
+
+  export type EomLogUncheckedCreateInput = {
+    id?: string
+    period_month: number
+    period_year: number
+    executed_by_id: string
+    total_accounts: number
+    total_amount: Decimal | DecimalJsLike | number | string
+    created_at?: Date | string
+  }
+
+  export type EomLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period_month?: IntFieldUpdateOperationsInput | number
+    period_year?: IntFieldUpdateOperationsInput | number
+    total_accounts?: IntFieldUpdateOperationsInput | number
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutEom_logNestedInput
+  }
+
+  export type EomLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period_month?: IntFieldUpdateOperationsInput | number
+    period_year?: IntFieldUpdateOperationsInput | number
+    executed_by_id?: StringFieldUpdateOperationsInput | string
+    total_accounts?: IntFieldUpdateOperationsInput | number
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EomLogCreateManyInput = {
+    id?: string
+    period_month: number
+    period_year: number
+    executed_by_id: string
+    total_accounts: number
+    total_amount: Decimal | DecimalJsLike | number | string
+    created_at?: Date | string
+  }
+
+  export type EomLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period_month?: IntFieldUpdateOperationsInput | number
+    period_year?: IntFieldUpdateOperationsInput | number
+    total_accounts?: IntFieldUpdateOperationsInput | number
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EomLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period_month?: IntFieldUpdateOperationsInput | number
+    period_year?: IntFieldUpdateOperationsInput | number
+    executed_by_id?: StringFieldUpdateOperationsInput | string
+    total_accounts?: IntFieldUpdateOperationsInput | number
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -11026,6 +12456,12 @@ export namespace Prisma {
     none?: TransactionWhereInput
   }
 
+  export type EomLogListRelationFilter = {
+    every?: EomLogWhereInput
+    some?: EomLogWhereInput
+    none?: EomLogWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -11048,6 +12484,10 @@ export namespace Prisma {
   }
 
   export type TransactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EomLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -11601,6 +13041,82 @@ export namespace Prisma {
     _max?: NestedEnumStatusTransactionFilter<$PrismaModel>
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type EomLogPeriod_monthPeriod_yearCompoundUniqueInput = {
+    period_month: number
+    period_year: number
+  }
+
+  export type EomLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    period_month?: SortOrder
+    period_year?: SortOrder
+    executed_by_id?: SortOrder
+    total_accounts?: SortOrder
+    total_amount?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type EomLogAvgOrderByAggregateInput = {
+    period_month?: SortOrder
+    period_year?: SortOrder
+    total_accounts?: SortOrder
+    total_amount?: SortOrder
+  }
+
+  export type EomLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    period_month?: SortOrder
+    period_year?: SortOrder
+    executed_by_id?: SortOrder
+    total_accounts?: SortOrder
+    total_amount?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type EomLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    period_month?: SortOrder
+    period_year?: SortOrder
+    executed_by_id?: SortOrder
+    total_accounts?: SortOrder
+    total_amount?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type EomLogSumOrderByAggregateInput = {
+    period_month?: SortOrder
+    period_year?: SortOrder
+    total_accounts?: SortOrder
+    total_amount?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type CustomerCreateNestedManyWithoutUserInput = {
     create?: XOR<CustomerCreateWithoutUserInput, CustomerUncheckedCreateWithoutUserInput> | CustomerCreateWithoutUserInput[] | CustomerUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CustomerCreateOrConnectWithoutUserInput | CustomerCreateOrConnectWithoutUserInput[]
@@ -11643,6 +13159,13 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
+  export type EomLogCreateNestedManyWithoutUserInput = {
+    create?: XOR<EomLogCreateWithoutUserInput, EomLogUncheckedCreateWithoutUserInput> | EomLogCreateWithoutUserInput[] | EomLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EomLogCreateOrConnectWithoutUserInput | EomLogCreateOrConnectWithoutUserInput[]
+    createMany?: EomLogCreateManyUserInputEnvelope
+    connect?: EomLogWhereUniqueInput | EomLogWhereUniqueInput[]
+  }
+
   export type CustomerUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<CustomerCreateWithoutUserInput, CustomerUncheckedCreateWithoutUserInput> | CustomerCreateWithoutUserInput[] | CustomerUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CustomerCreateOrConnectWithoutUserInput | CustomerCreateOrConnectWithoutUserInput[]
@@ -11683,6 +13206,13 @@ export namespace Prisma {
     connectOrCreate?: TransactionCreateOrConnectWithoutApprovedInput | TransactionCreateOrConnectWithoutApprovedInput[]
     createMany?: TransactionCreateManyApprovedInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type EomLogUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<EomLogCreateWithoutUserInput, EomLogUncheckedCreateWithoutUserInput> | EomLogCreateWithoutUserInput[] | EomLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EomLogCreateOrConnectWithoutUserInput | EomLogCreateOrConnectWithoutUserInput[]
+    createMany?: EomLogCreateManyUserInputEnvelope
+    connect?: EomLogWhereUniqueInput | EomLogWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -11793,6 +13323,20 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
+  export type EomLogUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EomLogCreateWithoutUserInput, EomLogUncheckedCreateWithoutUserInput> | EomLogCreateWithoutUserInput[] | EomLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EomLogCreateOrConnectWithoutUserInput | EomLogCreateOrConnectWithoutUserInput[]
+    upsert?: EomLogUpsertWithWhereUniqueWithoutUserInput | EomLogUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EomLogCreateManyUserInputEnvelope
+    set?: EomLogWhereUniqueInput | EomLogWhereUniqueInput[]
+    disconnect?: EomLogWhereUniqueInput | EomLogWhereUniqueInput[]
+    delete?: EomLogWhereUniqueInput | EomLogWhereUniqueInput[]
+    connect?: EomLogWhereUniqueInput | EomLogWhereUniqueInput[]
+    update?: EomLogUpdateWithWhereUniqueWithoutUserInput | EomLogUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EomLogUpdateManyWithWhereWithoutUserInput | EomLogUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EomLogScalarWhereInput | EomLogScalarWhereInput[]
+  }
+
   export type CustomerUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<CustomerCreateWithoutUserInput, CustomerUncheckedCreateWithoutUserInput> | CustomerCreateWithoutUserInput[] | CustomerUncheckedCreateWithoutUserInput[]
     connectOrCreate?: CustomerCreateOrConnectWithoutUserInput | CustomerCreateOrConnectWithoutUserInput[]
@@ -11875,6 +13419,20 @@ export namespace Prisma {
     update?: TransactionUpdateWithWhereUniqueWithoutApprovedInput | TransactionUpdateWithWhereUniqueWithoutApprovedInput[]
     updateMany?: TransactionUpdateManyWithWhereWithoutApprovedInput | TransactionUpdateManyWithWhereWithoutApprovedInput[]
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type EomLogUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EomLogCreateWithoutUserInput, EomLogUncheckedCreateWithoutUserInput> | EomLogCreateWithoutUserInput[] | EomLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EomLogCreateOrConnectWithoutUserInput | EomLogCreateOrConnectWithoutUserInput[]
+    upsert?: EomLogUpsertWithWhereUniqueWithoutUserInput | EomLogUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EomLogCreateManyUserInputEnvelope
+    set?: EomLogWhereUniqueInput | EomLogWhereUniqueInput[]
+    disconnect?: EomLogWhereUniqueInput | EomLogWhereUniqueInput[]
+    delete?: EomLogWhereUniqueInput | EomLogWhereUniqueInput[]
+    connect?: EomLogWhereUniqueInput | EomLogWhereUniqueInput[]
+    update?: EomLogUpdateWithWhereUniqueWithoutUserInput | EomLogUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EomLogUpdateManyWithWhereWithoutUserInput | EomLogUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EomLogScalarWhereInput | EomLogScalarWhereInput[]
   }
 
   export type LoanAccountCreateNestedManyWithoutCustomerInput = {
@@ -12265,6 +13823,28 @@ export namespace Prisma {
     deleteMany?: CapitalLedgerScalarWhereInput | CapitalLedgerScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutEom_logInput = {
+    create?: XOR<UserCreateWithoutEom_logInput, UserUncheckedCreateWithoutEom_logInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEom_logInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutEom_logNestedInput = {
+    create?: XOR<UserCreateWithoutEom_logInput, UserUncheckedCreateWithoutEom_logInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEom_logInput
+    upsert?: UserUpsertWithoutEom_logInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEom_logInput, UserUpdateWithoutEom_logInput>, UserUncheckedUpdateWithoutEom_logInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -12505,6 +14085,33 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumStatusTransactionFilter<$PrismaModel>
     _max?: NestedEnumStatusTransactionFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type CustomerCreateWithoutUserInput = {
@@ -12773,6 +14380,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type EomLogCreateWithoutUserInput = {
+    id?: string
+    period_month: number
+    period_year: number
+    total_accounts: number
+    total_amount: Decimal | DecimalJsLike | number | string
+    created_at?: Date | string
+  }
+
+  export type EomLogUncheckedCreateWithoutUserInput = {
+    id?: string
+    period_month: number
+    period_year: number
+    total_accounts: number
+    total_amount: Decimal | DecimalJsLike | number | string
+    created_at?: Date | string
+  }
+
+  export type EomLogCreateOrConnectWithoutUserInput = {
+    where: EomLogWhereUniqueInput
+    create: XOR<EomLogCreateWithoutUserInput, EomLogUncheckedCreateWithoutUserInput>
+  }
+
+  export type EomLogCreateManyUserInputEnvelope = {
+    data: EomLogCreateManyUserInput | EomLogCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CustomerUpsertWithWhereUniqueWithoutUserInput = {
     where: CustomerWhereUniqueInput
     update: XOR<CustomerUpdateWithoutUserInput, CustomerUncheckedUpdateWithoutUserInput>
@@ -12967,6 +14602,35 @@ export namespace Prisma {
     data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutApprovedInput>
   }
 
+  export type EomLogUpsertWithWhereUniqueWithoutUserInput = {
+    where: EomLogWhereUniqueInput
+    update: XOR<EomLogUpdateWithoutUserInput, EomLogUncheckedUpdateWithoutUserInput>
+    create: XOR<EomLogCreateWithoutUserInput, EomLogUncheckedCreateWithoutUserInput>
+  }
+
+  export type EomLogUpdateWithWhereUniqueWithoutUserInput = {
+    where: EomLogWhereUniqueInput
+    data: XOR<EomLogUpdateWithoutUserInput, EomLogUncheckedUpdateWithoutUserInput>
+  }
+
+  export type EomLogUpdateManyWithWhereWithoutUserInput = {
+    where: EomLogScalarWhereInput
+    data: XOR<EomLogUpdateManyMutationInput, EomLogUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type EomLogScalarWhereInput = {
+    AND?: EomLogScalarWhereInput | EomLogScalarWhereInput[]
+    OR?: EomLogScalarWhereInput[]
+    NOT?: EomLogScalarWhereInput | EomLogScalarWhereInput[]
+    id?: StringFilter<"EomLog"> | string
+    period_month?: IntFilter<"EomLog"> | number
+    period_year?: IntFilter<"EomLog"> | number
+    executed_by_id?: StringFilter<"EomLog"> | string
+    total_accounts?: IntFilter<"EomLog"> | number
+    total_amount?: DecimalFilter<"EomLog"> | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFilter<"EomLog"> | Date | string
+  }
+
   export type LoanAccountCreateWithoutCustomerInput = {
     id?: string
     no_rekening: string
@@ -13041,6 +14705,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionCreateNestedManyWithoutProcessedInput
     transactions_approved?: TransactionCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCustomersInput = {
@@ -13067,6 +14732,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUncheckedCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionUncheckedCreateNestedManyWithoutProcessedInput
     transactions_approved?: TransactionUncheckedCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCustomersInput = {
@@ -13125,6 +14791,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUpdateManyWithoutProcessedNestedInput
     transactions_approved?: TransactionUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCustomersInput = {
@@ -13151,6 +14818,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUncheckedUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUncheckedUpdateManyWithoutProcessedNestedInput
     transactions_approved?: TransactionUncheckedUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type LoanAccountCreateWithoutProductInput = {
@@ -13227,6 +14895,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionCreateNestedManyWithoutProcessedInput
     transactions_approved?: TransactionCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProductsInput = {
@@ -13253,6 +14922,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUncheckedCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionUncheckedCreateNestedManyWithoutProcessedInput
     transactions_approved?: TransactionUncheckedCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProductsInput = {
@@ -13311,6 +14981,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUpdateManyWithoutProcessedNestedInput
     transactions_approved?: TransactionUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProductsInput = {
@@ -13337,6 +15008,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUncheckedUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUncheckedUpdateManyWithoutProcessedNestedInput
     transactions_approved?: TransactionUncheckedUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutCapital_ledgersInput = {
@@ -13363,6 +15035,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionCreateNestedManyWithoutProcessedInput
     transactions_approved?: TransactionCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCapital_ledgersInput = {
@@ -13389,6 +15062,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUncheckedCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionUncheckedCreateNestedManyWithoutProcessedInput
     transactions_approved?: TransactionUncheckedCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCapital_ledgersInput = {
@@ -13521,6 +15195,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUpdateManyWithoutProcessedNestedInput
     transactions_approved?: TransactionUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCapital_ledgersInput = {
@@ -13547,6 +15222,7 @@ export namespace Prisma {
     loan_accounts?: LoanAccountUncheckedUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUncheckedUpdateManyWithoutProcessedNestedInput
     transactions_approved?: TransactionUncheckedUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type LoanAccountUpsertWithoutCapital_ledgersInput = {
@@ -13763,6 +15439,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionCreateNestedManyWithoutProcessedInput
     transactions_approved?: TransactionCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutLoan_accountsInput = {
@@ -13789,6 +15466,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionUncheckedCreateNestedManyWithoutProcessedInput
     transactions_approved?: TransactionUncheckedCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutLoan_accountsInput = {
@@ -13931,6 +15609,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUpdateManyWithoutProcessedNestedInput
     transactions_approved?: TransactionUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLoan_accountsInput = {
@@ -13957,6 +15636,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUncheckedUpdateManyWithoutProcessedNestedInput
     transactions_approved?: TransactionUncheckedUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CustomerUpsertWithoutLoan_accountsInput = {
@@ -14146,6 +15826,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerCreateNestedManyWithoutUserInput
     loan_accounts?: LoanAccountCreateNestedManyWithoutUserInput
     transactions_approved?: TransactionCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTransactions_processedInput = {
@@ -14172,6 +15853,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutUserInput
     loan_accounts?: LoanAccountUncheckedCreateNestedManyWithoutUserInput
     transactions_approved?: TransactionUncheckedCreateNestedManyWithoutApprovedInput
+    eom_log?: EomLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTransactions_processedInput = {
@@ -14203,6 +15885,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerCreateNestedManyWithoutUserInput
     loan_accounts?: LoanAccountCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionCreateNestedManyWithoutProcessedInput
+    eom_log?: EomLogCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTransactions_approvedInput = {
@@ -14229,6 +15912,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutUserInput
     loan_accounts?: LoanAccountUncheckedCreateNestedManyWithoutUserInput
     transactions_processed?: TransactionUncheckedCreateNestedManyWithoutProcessedInput
+    eom_log?: EomLogUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTransactions_approvedInput = {
@@ -14338,6 +16022,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerUpdateManyWithoutUserNestedInput
     loan_accounts?: LoanAccountUpdateManyWithoutUserNestedInput
     transactions_approved?: TransactionUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransactions_processedInput = {
@@ -14364,6 +16049,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutUserNestedInput
     loan_accounts?: LoanAccountUncheckedUpdateManyWithoutUserNestedInput
     transactions_approved?: TransactionUncheckedUpdateManyWithoutApprovedNestedInput
+    eom_log?: EomLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutTransactions_approvedInput = {
@@ -14401,6 +16087,7 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerUpdateManyWithoutUserNestedInput
     loan_accounts?: LoanAccountUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUpdateManyWithoutProcessedNestedInput
+    eom_log?: EomLogUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransactions_approvedInput = {
@@ -14427,6 +16114,131 @@ export namespace Prisma {
     capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutUserNestedInput
     loan_accounts?: LoanAccountUncheckedUpdateManyWithoutUserNestedInput
     transactions_processed?: TransactionUncheckedUpdateManyWithoutProcessedNestedInput
+    eom_log?: EomLogUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutEom_logInput = {
+    id?: string
+    full_name: string
+    username: string
+    email: string
+    password_hash: string
+    phone_number?: string | null
+    birthday?: Date | string | null
+    address?: string | null
+    regency?: string | null
+    province?: string | null
+    zip_code?: string | null
+    images?: string | null
+    access_token?: string | null
+    role?: $Enums.UserRole
+    isActive?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+    customers?: CustomerCreateNestedManyWithoutUserInput
+    products?: ProductCreateNestedManyWithoutUserInput
+    capital_ledgers?: CapitalLedgerCreateNestedManyWithoutUserInput
+    loan_accounts?: LoanAccountCreateNestedManyWithoutUserInput
+    transactions_processed?: TransactionCreateNestedManyWithoutProcessedInput
+    transactions_approved?: TransactionCreateNestedManyWithoutApprovedInput
+  }
+
+  export type UserUncheckedCreateWithoutEom_logInput = {
+    id?: string
+    full_name: string
+    username: string
+    email: string
+    password_hash: string
+    phone_number?: string | null
+    birthday?: Date | string | null
+    address?: string | null
+    regency?: string | null
+    province?: string | null
+    zip_code?: string | null
+    images?: string | null
+    access_token?: string | null
+    role?: $Enums.UserRole
+    isActive?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    deleted_at?: Date | string | null
+    customers?: CustomerUncheckedCreateNestedManyWithoutUserInput
+    products?: ProductUncheckedCreateNestedManyWithoutUserInput
+    capital_ledgers?: CapitalLedgerUncheckedCreateNestedManyWithoutUserInput
+    loan_accounts?: LoanAccountUncheckedCreateNestedManyWithoutUserInput
+    transactions_processed?: TransactionUncheckedCreateNestedManyWithoutProcessedInput
+    transactions_approved?: TransactionUncheckedCreateNestedManyWithoutApprovedInput
+  }
+
+  export type UserCreateOrConnectWithoutEom_logInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutEom_logInput, UserUncheckedCreateWithoutEom_logInput>
+  }
+
+  export type UserUpsertWithoutEom_logInput = {
+    update: XOR<UserUpdateWithoutEom_logInput, UserUncheckedUpdateWithoutEom_logInput>
+    create: XOR<UserCreateWithoutEom_logInput, UserUncheckedCreateWithoutEom_logInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutEom_logInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutEom_logInput, UserUncheckedUpdateWithoutEom_logInput>
+  }
+
+  export type UserUpdateWithoutEom_logInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    phone_number?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    regency?: NullableStringFieldUpdateOperationsInput | string | null
+    province?: NullableStringFieldUpdateOperationsInput | string | null
+    zip_code?: NullableStringFieldUpdateOperationsInput | string | null
+    images?: NullableStringFieldUpdateOperationsInput | string | null
+    access_token?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    customers?: CustomerUpdateManyWithoutUserNestedInput
+    products?: ProductUpdateManyWithoutUserNestedInput
+    capital_ledgers?: CapitalLedgerUpdateManyWithoutUserNestedInput
+    loan_accounts?: LoanAccountUpdateManyWithoutUserNestedInput
+    transactions_processed?: TransactionUpdateManyWithoutProcessedNestedInput
+    transactions_approved?: TransactionUpdateManyWithoutApprovedNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutEom_logInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    phone_number?: NullableStringFieldUpdateOperationsInput | string | null
+    birthday?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    regency?: NullableStringFieldUpdateOperationsInput | string | null
+    province?: NullableStringFieldUpdateOperationsInput | string | null
+    zip_code?: NullableStringFieldUpdateOperationsInput | string | null
+    images?: NullableStringFieldUpdateOperationsInput | string | null
+    access_token?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    customers?: CustomerUncheckedUpdateManyWithoutUserNestedInput
+    products?: ProductUncheckedUpdateManyWithoutUserNestedInput
+    capital_ledgers?: CapitalLedgerUncheckedUpdateManyWithoutUserNestedInput
+    loan_accounts?: LoanAccountUncheckedUpdateManyWithoutUserNestedInput
+    transactions_processed?: TransactionUncheckedUpdateManyWithoutProcessedNestedInput
+    transactions_approved?: TransactionUncheckedUpdateManyWithoutApprovedNestedInput
   }
 
   export type CustomerCreateManyUserInput = {
@@ -14524,6 +16336,15 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     deleted_at?: Date | string | null
+  }
+
+  export type EomLogCreateManyUserInput = {
+    id?: string
+    period_month: number
+    period_year: number
+    total_accounts: number
+    total_amount: Decimal | DecimalJsLike | number | string
+    created_at?: Date | string
   }
 
   export type CustomerUpdateWithoutUserInput = {
@@ -14827,6 +16648,33 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     deleted_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type EomLogUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period_month?: IntFieldUpdateOperationsInput | number
+    period_year?: IntFieldUpdateOperationsInput | number
+    total_accounts?: IntFieldUpdateOperationsInput | number
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EomLogUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period_month?: IntFieldUpdateOperationsInput | number
+    period_year?: IntFieldUpdateOperationsInput | number
+    total_accounts?: IntFieldUpdateOperationsInput | number
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EomLogUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period_month?: IntFieldUpdateOperationsInput | number
+    period_year?: IntFieldUpdateOperationsInput | number
+    total_accounts?: IntFieldUpdateOperationsInput | number
+    total_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LoanAccountCreateManyCustomerInput = {

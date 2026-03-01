@@ -41,6 +41,7 @@ enum TypeCapitalLedger {
   REPAYMENT_INTEREST // Pendapatan bunga (Keuntungan) (+)
   EXPENSE_OPS // Biaya operasional: Listrik, gaji, sewa, dll (-)
   ADJUSTMENT // Koreksi saldo jika ada kesalahan input (+/-)
+  INTEREST_ACCRUAL // Cron job EOM
 }
 
 model User {
@@ -70,6 +71,7 @@ model User {
   loan_accounts          LoanAccount[]
   transactions_processed Transaction[]   @relation("processed")
   transactions_approved  Transaction[]   @relation("approved")
+  eom_log                EomLog[]
 
   @@map("users")
 }
@@ -196,4 +198,18 @@ model Transaction {
   approved     User        @relation("approved", fields: [approved_by_id], references: [id])
 
   @@map("transactions")
+}
+
+model EomLog {
+  id             String   @id @default(uuid())
+  period_month   Int // 1-12
+  period_year    Int // 2026
+  executed_by_id String
+  total_accounts Int // Jumlah rekening yang diproses
+  total_amount   Decimal  @db.Decimal(15, 2)
+  created_at     DateTime @default(now())
+
+  user User @relation(fields: [executed_by_id], references: [id])
+
+  @@unique([period_month, period_year]) // Proteksi double EOM
 }

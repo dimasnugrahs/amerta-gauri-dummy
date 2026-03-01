@@ -71,13 +71,30 @@ export async function POST(request) {
     const { payload } = await jwtVerify(token, secret);
     const creator_id = payload.id;
 
+    const amountToDisburse = parseFloat(principal_amount);
+
     // 2. Validasi Relasi
-    const [marketing, customer, product, lastLoan] = await Promise.all([
-      prisma.user.findUnique({ where: { id: marketing_id } }),
-      prisma.customer.findUnique({ where: { id: customer_id } }),
-      prisma.product.findUnique({ where: { id: product_id } }),
-      prisma.loanAccount.findFirst({ orderBy: { no_rekening: "desc" } }),
-    ]);
+    const [marketing, customer, product, lastLoan, cashAggregation] =
+      await Promise.all([
+        prisma.user.findUnique({ where: { id: marketing_id } }),
+        prisma.customer.findUnique({ where: { id: customer_id } }),
+        prisma.product.findUnique({ where: { id: product_id } }),
+        prisma.loanAccount.findFirst({ orderBy: { no_rekening: "desc" } }),
+        prisma.capitalLedger.aggregate({
+          _sum: { amount: true },
+        }),
+      ]);
+
+    const currentCashBalance = Number(cashAggregation._sum.amount || 0);
+    if (currentCashBalance < amountToDisburse) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Saldo Kas tidak mencukupi. Tersisa: ${new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(currentCashBalance)}. Dibutuhkan: ${new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(amountToDisburse)}`,
+        },
+        { status: 400 },
+      );
+    }
 
     if (!marketing || !customer || !product) {
       return NextResponse.json(

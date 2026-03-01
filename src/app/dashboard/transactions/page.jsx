@@ -189,9 +189,23 @@ export default function DashboardTransactions() {
           { content: formatIDR(tx.amount_paid), styles: { fontStyle: "bold" } },
         ],
       ],
-      theme: "plain",
-      styles: { fontSize: 10, cellPadding: 2 },
-      columnStyles: { 1: { halign: "right" } },
+      theme: "grid",
+      styles: {
+        fontSize: 10,
+        cellPadding: 2,
+        lineColor: [0, 0, 0], // Warna border hitam
+        lineWidth: 0.2, // Ketebalan garis border
+      },
+      headStyles: {
+        fillColor: [255, 255, 255], // Latar belakang header putih
+        textColor: [0, 0, 0], // Teks header hitam
+        fontStyle: "bold",
+        lineWidth: 0.2,
+      },
+      columnStyles: {
+        0: { cellWidth: "auto" },
+        1: { halign: "right", cellWidth: 40 }, // Mengatur lebar kolom jumlah agar seragam
+      },
     });
 
     const finalY = doc.lastAutoTable.finalY + 10;

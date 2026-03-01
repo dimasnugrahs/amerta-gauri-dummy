@@ -224,6 +224,16 @@ exports.Prisma.TransactionScalarFieldEnum = {
   deleted_at: 'deleted_at'
 };
 
+exports.Prisma.EomLogScalarFieldEnum = {
+  id: 'id',
+  period_month: 'period_month',
+  period_year: 'period_year',
+  executed_by_id: 'executed_by_id',
+  total_accounts: 'total_accounts',
+  total_amount: 'total_amount',
+  created_at: 'created_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -251,7 +261,8 @@ exports.TypeCapitalLedger = exports.$Enums.TypeCapitalLedger = {
   REPAYMENT_PRINCIPAL: 'REPAYMENT_PRINCIPAL',
   REPAYMENT_INTEREST: 'REPAYMENT_INTEREST',
   EXPENSE_OPS: 'EXPENSE_OPS',
-  ADJUSTMENT: 'ADJUSTMENT'
+  ADJUSTMENT: 'ADJUSTMENT',
+  INTEREST_ACCRUAL: 'INTEREST_ACCRUAL'
 };
 
 exports.StatusLoan = exports.$Enums.StatusLoan = {
@@ -274,7 +285,8 @@ exports.Prisma.ModelName = {
   Product: 'Product',
   CapitalLedger: 'CapitalLedger',
   LoanAccount: 'LoanAccount',
-  Transaction: 'Transaction'
+  Transaction: 'Transaction',
+  EomLog: 'EomLog'
 };
 
 /**
