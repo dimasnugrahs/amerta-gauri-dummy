@@ -17,6 +17,10 @@ export async function GET(request, { params }) {
           orderBy: { created_at: "asc" },
           where: { payment_status: "SUCCESS" },
         },
+        capital_ledgers: {
+          orderBy: { created_at: "asc" },
+          where: { type: "INTEREST_ACCRUAL" },
+        },
       },
     });
 
