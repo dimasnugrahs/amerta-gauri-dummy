@@ -56,7 +56,7 @@ export async function POST(request) {
         username: username.toLowerCase(),
         email: email.toLowerCase(),
         password_hash: hashedPassword,
-        role: "ADMIN",
+        role: "USER",
         phone_number: "082100000000",
         birthday: null,
         address: "Belum diisi",

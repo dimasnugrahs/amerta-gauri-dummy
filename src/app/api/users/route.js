@@ -141,7 +141,7 @@ export async function POST(request) {
         username: username.toLowerCase(),
         email: email.toLowerCase(),
         password_hash: hashedPassword,
-        role: role || "ADMIN",
+        role: role || "USER",
         phone_number: phone_number || "082100000000",
         birthday: formattedBirthday,
         address: address,
