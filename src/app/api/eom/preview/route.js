@@ -40,6 +40,9 @@ export async function GET() {
         status: "ACTIVE",
         deleted_at: null,
         current_debt_principal: { gt: 0 },
+        period_start: {
+          lte: endOfMonth,
+        },
         // Logika: Cari yang TIDAK memiliki transaksi sukses di bulan ini
         transactions: {
           none: {

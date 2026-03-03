@@ -60,6 +60,9 @@ export async function POST(request) {
           status: "ACTIVE",
           deleted_at: null,
           current_debt_principal: { gt: 0 },
+          period_start: {
+            lte: endOfMonth,
+          },
           transactions: {
             none: {
               paid_date: { gte: startOfMonth, lte: endOfMonth },

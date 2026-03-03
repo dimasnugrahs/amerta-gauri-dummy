@@ -130,6 +130,8 @@ export async function POST(request) {
 
     // --- LOGIKA BUNGA FLAT BULANAN ---
     const targetDate = paid_date ? new Date(paid_date) : new Date();
+    const periodStart = new Date(loan.period_start);
+
     const startOfMonth = new Date(
       targetDate.getFullYear(),
       targetDate.getMonth(),
@@ -155,10 +157,13 @@ export async function POST(request) {
 
     let total_interest_due = Number(loan.current_debt_interest);
 
+    const isPastPeriodStart = targetDate >= periodStart;
+
     if (
       !everHadTransactionThisMonth &&
       total_interest_due === 0 &&
-      Number(loan.current_debt_principal) > 0
+      Number(loan.current_debt_principal) > 0 &&
+      isPastPeriodStart
     ) {
       total_interest_due += Number(loan.rate_amount);
     }

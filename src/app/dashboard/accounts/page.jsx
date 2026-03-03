@@ -161,7 +161,9 @@ export default function DashboardLoanAccounts() {
         ...transactions.map((t) => ({
           date: new Date(t.paid_date || t.created_at),
           description: `ANGSURAN - ${t.payment_method}\n(Pokok: ${formatCurrency(Number(t.principal_cut))} | Bunga: ${formatCurrency(Number(t.interest_cut))})`,
-          kredit: Number(t.amount_paid), // Pembayaran mengurangi hutang
+          kredit: Number(t.amount_paid),
+          principal_cut: Number(t.principal_cut),
+          interest_cut: Number(t.interest_cut),
           debet: 0,
           type: "PAYMENT",
         })),
@@ -169,6 +171,8 @@ export default function DashboardLoanAccounts() {
           date: new Date(l.created_at),
           description: `BUNGA OTOMATIS (EOM)\n${l.description || ""}`,
           kredit: 0,
+          principal_cut: 0,
+          interest_cut: 0,
           debet: Number(l.amount), // Bunga menambah hutang
           type: "INTEREST",
         })),
@@ -239,15 +243,16 @@ export default function DashboardLoanAccounts() {
           new Date(account.created_at).toLocaleDateString("id-ID"),
           "PENCAIRAN PINJAMAN (POKOK AWAL)",
           "-",
-          formatCurrency(runningBalance),
+          "-",
           formatCurrency(runningBalance),
         ],
       ];
 
       // Baris transaksi gabungan
       combinedHistory.forEach((item, index) => {
-        if (item.debet > 0) runningBalance += item.debet; // Bunga nambah hutang
-        if (item.kredit > 0) runningBalance -= item.kredit; // Bayar ngurangin hutang
+        if (item.type === "PAYMENT") {
+          runningBalance -= item.principal_cut;
+        }
 
         tableRows.push([
           (index + 2).toString(),
@@ -288,7 +293,6 @@ export default function DashboardLoanAccounts() {
           5: { halign: "right", fontStyle: "bold" },
         },
         styles: { fontSize: 8, valign: "middle" },
-        // PERBAIKAN DI SINI:
         didParseCell: (data) => {
           if (data.section === "body") {
             // Ambil teks dari kolom keterangan (indeks 2)
@@ -309,159 +313,6 @@ export default function DashboardLoanAccounts() {
       Swal.fire("Gagal", "Terjadi kesalahan: " + error.message, "error");
     }
   };
-
-  // const handlePrint = async (noRekening) => {
-  //   Swal.fire({
-  //     title: "Menyiapkan PDF...",
-  //     allowOutsideClick: false,
-  //     didOpen: () => Swal.showLoading(),
-  //   });
-
-  //   try {
-  //     const res = await axiosInstance.get(
-  //       `/loanaccounts/${noRekening}/history`,
-  //     );
-  //     const account = res.data.data;
-  //     const transactions = account.transactions || [];
-
-  //     const doc = new jsPDF({
-  //       orientation: "landscape",
-  //     });
-
-  //     const logoUrl = "/images/logo-amerta-gauri.png";
-
-  //     try {
-  //       // Jika menggunakan URL lokal, pastikan sudah di-load atau gunakan Base64
-  //       doc.addImage(logoUrl, "PNG", 14, 10, 6, 6);
-  //     } catch (e) {
-  //       console.error("Gagal memuat logo:", e);
-  //     }
-
-  //     // --- HEADER ---
-  //     doc.setFontSize(16);
-  //     doc.setFont("helvetica", "bold");
-  //     doc.text("RIWAYAT TRANSAKSI PINJAMAN", 23, 15);
-
-  //     doc.setFontSize(10);
-  //     doc.setFont("helvetica", "normal");
-  //     doc.setFontSize(10);
-  //     doc.text(`No. Rekening`, 14, 25);
-  //     doc.text(`:`, 44, 25);
-  //     doc.text(`${account.no_rekening}`, 54, 25);
-
-  //     doc.text(`Nasabah`, 14, 30);
-  //     doc.text(`:`, 44, 30);
-  //     doc.text(`${account.customer?.full_name || "-"}`, 54, 30);
-
-  //     doc.text(`Produk`, 14, 35);
-  //     doc.text(`:`, 44, 35);
-  //     doc.text(`${account.product?.product_name || "-"}`, 54, 35);
-
-  //     doc.text(`Tanggal Cetak`, 14, 40);
-  //     doc.text(`:`, 44, 40);
-  //     doc.text(`${new Date().toLocaleString("id-ID")}`, 54, 40);
-
-  //     doc.setFontSize(10);
-  //     doc.text(`Sisa Hutang`, 124, 25);
-  //     doc.text(`:`, 154, 25);
-  //     doc.text(
-  //       `${formatCurrency(Number(account.current_debt_principal))}`,
-  //       164,
-  //       25,
-  //     );
-
-  //     doc.setFontSize(10);
-  //     doc.text(`Tunggakan`, 124, 30);
-  //     doc.text(`:`, 154, 30);
-  //     doc.text(
-  //       `${formatCurrency(Number(account.current_debt_interest))}`,
-  //       164,
-  //       30,
-  //     );
-
-  //     // --- LOGIKA BARIS TABEL ---
-
-  //     // 1. Baris Pertama: Pencairan (Debet)
-  //     const initialRow = [
-  //       "1",
-  //       new Date(account.created_at).toLocaleDateString("id-ID"),
-  //       "PENCAIRAN PINJAMAN (POKOK)",
-  //       "0", // Kredit
-  //       formatCurrency(Number(account.principal_amount)), // Debet (Hutang bertambah)
-  //       formatCurrency(Number(account.principal_amount)), // Total
-  //       formatCurrency(Number(account.principal_amount)), // Sisa Hutang Awal
-  //     ];
-
-  //     // 2. Baris Berikutnya: Pembayaran (Kredit)
-  //     const paymentRows = transactions.map((t, index) => {
-  //       const pCut = Number(t.principal_cut || 0);
-  //       const iCut = Number(t.interest_cut || 0);
-  //       const total = Number(t.amount_paid || 0);
-
-  //       return [
-  //         index + 2,
-  //         new Date(t.paid_date || t.created_at).toLocaleDateString("id-ID"),
-  //         // Penjelasan rincian Pokok & Bunga menggunakan newline (\n)
-  //         `${t.payment_method}\nPokok: ${formatCurrency(pCut)}\nBunga: ${formatCurrency(iCut)}`,
-  //         formatCurrency(total), // Kredit (Hutang berkurang)
-  //         "0", // Debet
-  //         formatCurrency(total),
-  //         formatCurrency(Number(t.remaining_principal || 0)),
-  //       ];
-  //     });
-
-  //     const tableRows = [initialRow, ...paymentRows];
-
-  //     // --- GENERATE TABLE ---
-  //     autoTable(doc, {
-  //       startY: 45,
-  //       head: [
-  //         [
-  //           "No",
-  //           "Tanggal",
-  //           "Keterangan Pembayaran",
-  //           "Kredit",
-  //           "Debet",
-  //           "Total",
-  //           "Sisa Hutang",
-  //         ],
-  //       ],
-  //       body:
-  //         tableRows.length > 0
-  //           ? tableRows
-  //           : [["-", "-", "Data tidak ditemukan", "-", "-", "-", "-"]],
-  //       theme: "grid",
-  //       headStyles: {
-  //         fillColor: [240, 240, 240],
-  //         textColor: [0, 0, 0],
-  //         lineColor: [0, 0, 0],
-  //         lineWidth: 0.1,
-  //         halign: "center",
-  //       },
-  //       columnStyles: {
-  //         0: { halign: "center", cellWidth: 10 },
-  //         1: { cellWidth: 30 },
-  //         2: { cellWidth: 70 }, // Diperlebar untuk menampung rincian bunga
-  //         3: { halign: "right" },
-  //         4: { halign: "right" },
-  //         5: { halign: "right" },
-  //         6: { halign: "right", fontStyle: "bold" },
-  //       },
-  //       styles: {
-  //         fontSize: 8,
-  //         textColor: [0, 0, 0],
-  //         lineColor: [0, 0, 0],
-  //         valign: "middle", // Agar teks rincian sejajar di tengah cell
-  //       },
-  //     });
-
-  //     doc.save(`History_${noRekening}.pdf`);
-  //     Swal.close();
-  //   } catch (error) {
-  //     console.error("Print Error:", error);
-  //     Swal.fire("Gagal", "Tidak dapat mengambil riwayat transaksi.", "error");
-  //   }
-  // };
 
   return (
     <LayoutDashboard>
