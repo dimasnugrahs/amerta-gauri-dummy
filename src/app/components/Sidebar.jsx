@@ -173,7 +173,7 @@ export default function Sidebar() {
       {/* DESKTOP SIDEBAR */}
       <aside className="hidden md:flex flex-col w-64 h-screen bg-white border-r border-gray-200 sticky top-0 p-4">
         <h2 className="text-xl text-white font-semibold p-4 text-center bg-amerta-500 rounded-lg mb-8">
-          Amerta Gauri
+          Amerta Gauri DUMMY
         </h2>
         <nav className="flex-1 space-y-1">
           {menuItems.map((item) => {

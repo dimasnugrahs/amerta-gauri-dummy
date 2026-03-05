@@ -56,6 +56,9 @@ export default function DashboardHeader() {
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 bg-white mt-6 mb-2 md:mb-6 rounded py-4 shadow">
         <div className="flex items-center text-xl font-bold px-4">
+          <span className="mx-2 text-start bg-gray-300 rounded p-2 text-sm text-red-500">
+            DASHBOARD DUMMY
+          </span>
           {getGreeting()} {user ? <>{user.full_name}</> : ""}, Welcome to
           Dashboard - {dynamicTitle}{" "}
         </div>
