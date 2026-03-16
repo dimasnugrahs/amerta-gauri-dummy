@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "@/src/lib/axios";
 
 export default function DashboardHeader() {
-  const pathname = usePathname(); // Mengambil path (contoh: /dashboard/categories)
+  const pathname = usePathname();
   const [user, setUser] = useState(null);
 
   const getGreeting = () => {
@@ -30,10 +30,9 @@ export default function DashboardHeader() {
   }, []);
 
   const getDynamicTitle = () => {
-    // 1. Jika path adalah root dashboard atau home
     if (pathname === "/" || pathname === "/dashboard") {
       return "Dashboard";
-    } // 2. Pecah string dan ambil bagian terakhir
+    }
 
     const segments = pathname.split("/").filter((item) => item !== "");
     let lastSegment = segments[segments.length - 1];
