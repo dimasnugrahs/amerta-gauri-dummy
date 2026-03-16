@@ -38,7 +38,11 @@ export default function DashboardFinancial() {
   }, [fetchData]);
 
   const financialStats = useMemo(() => {
-    const sisaKas = ledgers.reduce((acc, curr) => acc + Number(curr.amount), 0);
+    // const sisaKas = ledgers.reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+    const sisaKas = ledgers
+      .filter((l) => l.type !== "REPAYMENT_INTEREST")
+      .reduce((acc, curr) => acc + Number(curr.amount), 0);
     const totalBunga = ledgers
       .filter((l) => l.type === "REPAYMENT_INTEREST")
       .reduce((acc, curr) => acc + Number(curr.amount), 0);

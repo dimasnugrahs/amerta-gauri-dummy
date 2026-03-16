@@ -53,8 +53,14 @@ export default function DashboardLedgers() {
     setLoading(true);
     try {
       const response = await axiosInstance.get("/ledgers");
-      setLedgers(response.data.data || []);
-      setBalance(response.data.current_balance || 0);
+      const dataLedgers = response.data.data || [];
+      setLedgers(dataLedgers);
+
+      const calculatedBalance = dataLedgers
+        .filter((l) => l.type !== "REPAYMENT_INTEREST")
+        .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+      setBalance(calculatedBalance);
     } catch (error) {
       Swal.fire("Gagal", "Tidak dapat mengambil data buku besar.", "error");
     } finally {
