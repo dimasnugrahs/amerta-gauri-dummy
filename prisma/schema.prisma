@@ -42,6 +42,8 @@ enum TypeCapitalLedger {
   EXPENSE_OPS     // Biaya operasional: Listrik, gaji, sewa, dll (-)
   ADJUSTMENT      // Koreksi saldo jika ada kesalahan input (+/-)
   INTEREST_ACCRUAL // Cron job EOM
+  DISCOUNT_INTEREST // Diskon bunga
+  DISCOUNT_PRINCIPAL // Diskon pokok
 }
 
 

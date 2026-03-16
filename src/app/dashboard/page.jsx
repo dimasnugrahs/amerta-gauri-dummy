@@ -38,17 +38,34 @@ export default function DashboardFinancial() {
   }, [fetchData]);
 
   const financialStats = useMemo(() => {
-    // const sisaKas = ledgers.reduce((acc, curr) => acc + Number(curr.amount), 0);
+    // 1. Filter Diskon (Agar tidak mengurangi Kas)
+    // const diskonPokok = ledgers
+    //   .filter((l) => l.type === "DISCOUNT_PRINCIPAL")
+    //   .reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0);
 
+    const diskonBunga = ledgers
+      .filter((l) => l.type === "DISCOUNT_INTEREST")
+      .reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0);
+
+    // 2. Sisa Kas (Hanya dari mutasi uang masuk/keluar riil)
+    // Abaikan tipe DISCOUNT agar saldo kas tetap utuh
     const sisaKas = ledgers
-      .filter((l) => l.type !== "REPAYMENT_INTEREST")
+      .filter(
+        (l) =>
+          l.type !== "REPAYMENT_INTEREST" &&
+          l.type !== "DISCOUNT_INTEREST" &&
+          l.type !== "DISCOUNT_PRINCIPAL",
+      )
       .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
     const totalBunga = ledgers
       .filter((l) => l.type === "REPAYMENT_INTEREST")
       .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
     const totalOps = ledgers
       .filter((l) => l.type === "EXPENSE_OPS")
       .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
     const totalDisbursed = ledgers
       .filter((l) => l.type === "DISBURSEMENT")
       .reduce((acc, curr) => acc + Number(curr.amount), 0);
@@ -56,9 +73,11 @@ export default function DashboardFinancial() {
     return {
       sisaKas,
       totalLaba: totalBunga,
-      labaBersih: totalBunga + totalOps,
+      labaBersih: totalBunga + totalOps, // Pengeluaran ops biasanya negatif, jadi ditambah (mengurangi)
       totalOps: Math.abs(totalOps),
       totalDisbursed: Math.abs(totalDisbursed),
+      // diskonPokok,
+      diskonBunga,
     };
   }, [ledgers]);
 
@@ -110,6 +129,13 @@ export default function DashboardFinancial() {
             title="Pencairan Modal"
             value={financialStats.totalDisbursed}
             color="red-500"
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+          <StatCard
+            title="Diskon Bunga"
+            value={financialStats.diskonBunga}
+            color="orange-500"
           />
         </div>
       </div>

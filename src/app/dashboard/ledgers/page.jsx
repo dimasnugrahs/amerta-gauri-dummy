@@ -3,7 +3,6 @@
 import Link from "next/link";
 import LayoutDashboard from "../../components/LayoutDashboard";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import axiosInstance from "@/src/lib/axios";
 import Swal from "sweetalert2";
 import jsPDF from "jspdf";
@@ -56,8 +55,14 @@ export default function DashboardLedgers() {
       const dataLedgers = response.data.data || [];
       setLedgers(dataLedgers);
 
+      // Hitung saldo kas yang tersedia untuk dipinjamkan kembali
       const calculatedBalance = dataLedgers
-        .filter((l) => l.type !== "REPAYMENT_INTEREST")
+        .filter(
+          (l) =>
+            l.type !== "REPAYMENT_INTEREST" &&
+            l.type !== "DISCOUNT_INTEREST" &&
+            l.type !== "DISCOUNT_PRINCIPAL",
+        )
         .reduce((acc, curr) => acc + Number(curr.amount), 0);
 
       setBalance(calculatedBalance);
@@ -72,6 +77,10 @@ export default function DashboardLedgers() {
     fetchLedgers();
   }, [fetchLedgers]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, typeFilter]);
+
   // Fungsi Cetak Neraca
   const handleDownloadReport = async () => {
     setDownloading(true);
@@ -81,12 +90,37 @@ export default function DashboardLedgers() {
       );
       const data = res.data;
 
-      // KOREKSI: Kas di Tangan murni = Total Kas - Laba (Bunga)
+      // 1. HITUNG DISKON
+      const totalDiskonPokok = ledgers
+        .filter((l) => l.type === "DISCOUNT_PRINCIPAL")
+        .reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0);
+
+      const totalDiskonBunga = ledgers
+        .filter((l) => l.type === "DISCOUNT_INTEREST")
+        .reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0);
+
+      // 2. HITUNG KOMPONEN UNTUK KAS MURNI
+      const totalInjection = ledgers
+        .filter((l) => l.type === "INJECTION")
+        .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+      const totalDisbursement = ledgers
+        .filter((l) => l.type === "DISBURSEMENT")
+        .reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0);
+
+      const totalRepaymentPrincipal = ledgers
+        .filter((l) => l.type === "REPAYMENT_PRINCIPAL")
+        .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+      // Rumus Kas Murni (Aset Lancar)
       const pureCashOnHand =
-        Number(data.assets.cash_on_hand) -
-        Number(data.liabilities_equity.current_period_profit);
-      const loanReceivables = Number(data.assets.loan_receivables);
-      const correctedTotalAssets = pureCashOnHand + loanReceivables;
+        totalInjection - totalDisbursement + totalRepaymentPrincipal;
+
+      // 3. PIUTANG & LABA
+      const loanReceivables = Number(data.assets?.loan_receivables || 0);
+      const totalBungaDiterima = ledgers
+        .filter((l) => l.type === "REPAYMENT_INTEREST")
+        .reduce((acc, curr) => acc + Number(curr.amount), 0);
 
       const doc = new jsPDF();
       const formatIDR = (val) => "Rp " + Number(val).toLocaleString("id-ID");
@@ -106,7 +140,6 @@ export default function DashboardLedgers() {
         theme: "grid",
         head: [["Deskripsi Akun", "Nominal"]],
         body: [
-          // SEKSI AKTIVA
           [
             {
               content: "AKTIVA (ASSETS)",
@@ -115,18 +148,12 @@ export default function DashboardLedgers() {
             "",
           ],
           ["   Kas di Tangan (Murni Modal)", formatIDR(pureCashOnHand)],
-          [
-            "   Piutang Pokok Nasabah (Receivables)",
-            formatIDR(loanReceivables),
-          ],
+          ["   Piutang Pokok Nasabah", formatIDR(loanReceivables)],
           [
             { content: "TOTAL AKTIVA", styles: { fontStyle: "bold" } },
-            formatIDR(correctedTotalAssets),
+            formatIDR(pureCashOnHand + loanReceivables),
           ],
-
-          ["", ""], // Spacing
-
-          // SEKSI PASIVA
+          ["", ""],
           [
             {
               content: "PASIVA (EQUITY & LIABILITIES)",
@@ -134,37 +161,43 @@ export default function DashboardLedgers() {
             },
             "",
           ],
+          ["   Modal Disetor (Net/Injection)", formatIDR(totalInjection)],
+          ["   Laba (Total Bunga)", formatIDR(totalBungaDiterima)],
           [
-            "   Modal Disetor (Capital Injection)",
-            formatIDR(data.liabilities_equity.capital_injection),
+            {
+              content: "PENYESUAIAN (DISCOUNT)",
+              styles: { fontStyle: "bold", fillColor: [255, 245, 230] },
+            },
+            "",
           ],
+          ["   Total Diskon Pokok", `(${formatIDR(totalDiskonPokok)})`],
+          ["   Total Diskon Bunga", `(${formatIDR(totalDiskonBunga)})`],
+          ["", ""],
           [
-            "   Laba Bersih (Akumulasi Bunga)",
-            formatIDR(data.liabilities_equity.current_period_profit),
-          ],
-          [
-            { content: "TOTAL PASIVA", styles: { fontStyle: "bold" } },
-            formatIDR(data.liabilities_equity.total_equity),
+            {
+              content: "TOTAL PASIVA (Balance)",
+              styles: { fontStyle: "bold", fillColor: [240, 240, 240] },
+            },
+            formatIDR(totalInjection + totalBungaDiterima - totalDiskonPokok),
           ],
         ],
         headStyles: {
           fillColor: [31, 41, 55],
           textColor: [255, 255, 255],
-          fontStyle: "bold",
           halign: "center",
         },
-        columnStyles: { 1: { halign: "right", cellWidth: 50 } },
+        columnStyles: { 1: { halign: "right", cellWidth: 60 } },
       });
 
       doc.save(`Neraca_${reportDates.start}.pdf`);
     } catch (error) {
+      console.error(error);
       Swal.fire("Error", "Gagal mengunduh laporan neraca", "error");
     } finally {
       setDownloading(false);
     }
   };
 
-  // Filter Logic
   const filteredLedgers = useMemo(() => {
     return ledgers.filter((l) => {
       const description = (l.description || "").toLowerCase();
@@ -186,9 +219,7 @@ export default function DashboardLedgers() {
 
   return (
     <LayoutDashboard>
-      {/* 1. Summary & Report Downloader */}
       <div className="flex flex-col md:flex-row gap-4 mb-6">
-        {/* Saldo Card */}
         <div className="flex-1 p-5 bg-white rounded-lg shadow border-l-4 border-amerta-600">
           <div className="flex items-center justify-between">
             <div>
@@ -205,7 +236,6 @@ export default function DashboardLedgers() {
           </div>
         </div>
 
-        {/* Neraca Downloader Card */}
         <div className="flex-2 p-5 bg-white rounded-lg shadow border-l-4 border-blue-500">
           <p className="text-xs font-bold text-gray-400 uppercase mb-3">
             Cetak Laporan Neraca (PDF)
@@ -257,7 +287,6 @@ export default function DashboardLedgers() {
           </Link>
         </div>
 
-        {/* Filter Section (Search & Type) */}
         <div className="flex flex-col md:flex-row gap-4 mb-6 p-4 mx-2 bg-gray-50 rounded-lg border border-gray-100">
           <div className="flex-1">
             <label className="text-xs font-bold uppercase text-gray-400 mb-1 block">
@@ -288,13 +317,13 @@ export default function DashboardLedgers() {
               <option value="REPAYMENT_INTEREST">Bunga</option>
               <option value="EXPENSE_OPS">Biaya Ops</option>
               <option value="ADJUSTMENT">Adjustment</option>
+              <option value="DISCOUNT_PRINCIPAL">Diskon Pokok</option>
+              <option value="DISCOUNT_INTEREST">Diskon Bunga</option>
             </select>
           </div>
         </div>
 
-        {/* Table - Sesuai dengan kode awal Anda */}
         <div className="overflow-x-auto rounded-lg mx-2 shadow border border-gray-200">
-          {/* ... bagian <table> Anda tetap sama seperti sebelumnya ... */}
           <table className="w-full min-w-200 border-collapse bg-white">
             <thead>
               <tr className="bg-amerta-600 text-white">
@@ -315,50 +344,82 @@ export default function DashboardLedgers() {
               </tr>
             </thead>
             <tbody>
-              {/* Gunakan currentData.map Anda yang lama di sini */}
-              {currentData.map((l, index) => (
-                <tr key={l.id} className="hover:bg-gray-50">
-                  <td className="p-3 text-center border border-gray-200">
-                    {startIndex + index + 1}
-                  </td>
-                  <td className="p-3 border border-gray-200 text-sm">
-                    {new Date(l.created_at).toLocaleDateString("id-ID")}
-                  </td>
-                  <td className="p-3 border border-gray-200 text-center">
-                    <span
-                      className={`px-2 py-1 rounded-full text-[9px] font-bold border uppercase ${getTypeBadge(l.type)}`}
+              {currentData.length > 0 ? (
+                currentData.map((l, index) => (
+                  <tr key={l.id} className="hover:bg-gray-50">
+                    <td className="p-3 text-center border border-gray-200">
+                      {startIndex + index + 1}
+                    </td>
+                    <td className="p-3 border border-gray-200 text-sm">
+                      {new Date(l.created_at).toLocaleDateString("id-ID")}
+                    </td>
+                    <td className="p-3 border border-gray-200 text-center">
+                      <span
+                        className={`px-2 py-1 rounded-full text-[9px] font-bold border uppercase ${getTypeBadge(l.type)}`}
+                      >
+                        {l.type?.replace("_", " ") || "N/A"}
+                      </span>
+                    </td>
+                    <td className="p-3 border border-gray-200">
+                      <div className="text-sm font-semibold">
+                        {l.description}
+                      </div>
+                      <div className="text-[10px] text-gray-400 italic">
+                        {l.refrence_number || "-"}
+                      </div>
+                    </td>
+                    <td
+                      className={`p-3 border border-gray-200 text-right font-bold ${Number(l.amount) >= 0 ? "text-green-600" : "text-red-600"}`}
                     >
-                      {l.type.replace("_", " ")}
-                    </span>
-                  </td>
-                  <td className="p-3 border border-gray-200">
-                    <div className="text-sm font-semibold">{l.description}</div>
-                    <div className="text-[10px] text-gray-400 italic">
-                      {l.refrence_number || "-"}
-                    </div>
-                  </td>
+                      {Number(l.amount) >= 0 ? "+" : ""} Rp{" "}
+                      {Number(l.amount).toLocaleString()}
+                    </td>
+                    <td className="p-3 border border-gray-200 text-sm">
+                      {l.user?.full_name || "System"}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
                   <td
-                    className={`p-3 border border-gray-200 text-right font-bold ${l.amount >= 0 ? "text-green-600" : "text-red-600"}`}
+                    colSpan="6"
+                    className="p-5 text-center text-gray-500 italic"
                   >
-                    {l.amount >= 0 ? "+" : ""} Rp{" "}
-                    {Number(l.amount).toLocaleString()}
-                  </td>
-                  <td className="p-3 border border-gray-200 text-sm">
-                    {l.user?.full_name || "System"}
+                    Data tidak ditemukan.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination - Sesuai dengan kode awal Anda */}
+        {/* Pagination Controls */}
+        <div className="mt-4 flex justify-between items-center mx-2">
+          <p className="text-sm text-gray-500">
+            Halaman {currentPage} dari {totalPages || 1}
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 border rounded disabled:opacity-50 text-sm"
+            >
+              Prev
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages || totalPages === 0}
+              className="px-3 py-1 border rounded disabled:opacity-50 text-sm"
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </LayoutDashboard>
   );
 }
 
-// Tambahkan helper getTypeBadge kembali di bawah
 function getTypeBadge(type) {
   switch (type) {
     case "INJECTION":
