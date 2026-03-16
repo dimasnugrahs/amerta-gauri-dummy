@@ -81,10 +81,16 @@ export default function DashboardLedgers() {
       );
       const data = res.data;
 
+      // KOREKSI: Kas di Tangan murni = Total Kas - Laba (Bunga)
+      const pureCashOnHand =
+        Number(data.assets.cash_on_hand) -
+        Number(data.liabilities_equity.current_period_profit);
+      const loanReceivables = Number(data.assets.loan_receivables);
+      const correctedTotalAssets = pureCashOnHand + loanReceivables;
+
       const doc = new jsPDF();
       const formatIDR = (val) => "Rp " + Number(val).toLocaleString("id-ID");
 
-      // Header
       doc.setFontSize(14);
       doc.text("LAPORAN NERACA (BALANCE SHEET)", 105, 15, { align: "center" });
       doc.setFontSize(10);
@@ -108,21 +114,17 @@ export default function DashboardLedgers() {
             },
             "",
           ],
-          [
-            "   Kas di Tangan (Cash on Hand)",
-            formatIDR(data.assets.cash_on_hand),
-          ],
+          ["   Kas di Tangan (Murni Modal)", formatIDR(pureCashOnHand)],
           [
             "   Piutang Pokok Nasabah (Receivables)",
-            formatIDR(data.assets.loan_receivables),
+            formatIDR(loanReceivables),
           ],
           [
             { content: "TOTAL AKTIVA", styles: { fontStyle: "bold" } },
-            formatIDR(data.assets.total_assets),
+            formatIDR(correctedTotalAssets),
           ],
 
-          // SPACING
-          ["", ""],
+          ["", ""], // Spacing
 
           // SEKSI PASIVA
           [
@@ -137,7 +139,7 @@ export default function DashboardLedgers() {
             formatIDR(data.liabilities_equity.capital_injection),
           ],
           [
-            "   Laba Bersih Periode Berjalan",
+            "   Laba Bersih (Akumulasi Bunga)",
             formatIDR(data.liabilities_equity.current_period_profit),
           ],
           [
@@ -146,21 +148,15 @@ export default function DashboardLedgers() {
           ],
         ],
         headStyles: {
-          fillColor: [31, 41, 55], // Warna abu-abu gelap profesional (Slate 800)
-          textColor: [255, 255, 255], // Teks putih
+          fillColor: [31, 41, 55],
+          textColor: [255, 255, 255],
           fontStyle: "bold",
           halign: "center",
         },
-        styles: {
-          lineColor: [200, 200, 200], // Warna garis border abu-abu lembut
-          lineWidth: 0.1,
-        },
-        columnStyles: {
-          1: { halign: "right", cellWidth: 50 },
-        },
+        columnStyles: { 1: { halign: "right", cellWidth: 50 } },
       });
 
-      doc.save(`Neraca_${reportDates.start}_to_${reportDates.end}.pdf`);
+      doc.save(`Neraca_${reportDates.start}.pdf`);
     } catch (error) {
       Swal.fire("Error", "Gagal mengunduh laporan neraca", "error");
     } finally {
