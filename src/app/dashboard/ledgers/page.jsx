@@ -61,6 +61,7 @@ export default function DashboardLedgers() {
           (l) =>
             l.type !== "REPAYMENT_INTEREST" &&
             l.type !== "DISCOUNT_INTEREST" &&
+            l.type !== "INTEREST_ACCRUAL" &&
             l.type !== "DISCOUNT_PRINCIPAL",
         )
         .reduce((acc, curr) => acc + Number(curr.amount), 0);
@@ -119,7 +120,10 @@ export default function DashboardLedgers() {
       // 3. PIUTANG & LABA
       const loanReceivables = Number(data.assets?.loan_receivables || 0);
       const totalBungaDiterima = ledgers
-        .filter((l) => l.type === "REPAYMENT_INTEREST")
+        .filter(
+          (l) =>
+            l.type === "REPAYMENT_INTEREST" && l.type !== "INTEREST_ACCRUAL",
+        )
         .reduce((acc, curr) => acc + Number(curr.amount), 0);
 
       const doc = new jsPDF();

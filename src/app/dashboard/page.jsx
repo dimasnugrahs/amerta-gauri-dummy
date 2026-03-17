@@ -54,12 +54,15 @@ export default function DashboardFinancial() {
         (l) =>
           l.type !== "REPAYMENT_INTEREST" &&
           l.type !== "DISCOUNT_INTEREST" &&
-          l.type !== "DISCOUNT_PRINCIPAL",
+          l.type !== "DISCOUNT_PRINCIPAL" &&
+          l.type !== "INTEREST_ACCRUAL",
       )
       .reduce((acc, curr) => acc + Number(curr.amount), 0);
 
     const totalBunga = ledgers
-      .filter((l) => l.type === "REPAYMENT_INTEREST")
+      .filter(
+        (l) => l.type === "REPAYMENT_INTEREST" && l.type !== "INTEREST_ACCRUAL",
+      )
       .reduce((acc, curr) => acc + Number(curr.amount), 0);
 
     const totalOps = ledgers
