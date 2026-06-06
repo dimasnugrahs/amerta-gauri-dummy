@@ -56,6 +56,7 @@ export async function POST(request) {
       start_date,
       period_start,
       status,
+      notes,
     } = body;
 
     // 1. Verifikasi Sesi (Tetap sama)
@@ -128,6 +129,7 @@ export async function POST(request) {
           start_date: start_date ? new Date(start_date) : new Date(),
           period_start: period_start ? new Date(period_start) : new Date(),
           status: status || "ACTIVE",
+          notes: notes || "",
         },
       });
 

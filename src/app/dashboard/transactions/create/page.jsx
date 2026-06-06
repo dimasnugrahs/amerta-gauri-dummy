@@ -246,13 +246,32 @@ export default function CreateTransactionPage() {
                 <div
                   key={loan.id}
                   onClick={() => handleSelectLoan(loan)}
-                  className="p-3 hover:bg-amerta-50 cursor-pointer border-b last:border-0"
+                  className="p-3 hover:bg-amerta-50 cursor-pointer border-b last:border-0 grid grid-cols-1 md:grid-cols-3"
                 >
-                  <div className="font-bold text-gray-800">
-                    {loan.customer?.full_name}
+                  <div>
+                    <div className="font-bold text-gray-800">
+                      {loan.customer?.full_name}
+                    </div>
+                    <div className="text-xs text-amerta-600 font-mono">
+                      {loan.no_rekening}
+                    </div>
                   </div>
-                  <div className="text-xs text-amerta-600 font-mono">
-                    {loan.no_rekening}
+                  <div className="bg-amerta-100 rounded pl-2 mt-2 md:mt-0">
+                    <div className="font-bold text-gray-800">
+                      HUTANG AWAL : Rp{" "}
+                      {Number(loan.principal_amount).toLocaleString("id-ID")}
+                    </div>
+                    <div className="font-bold text-gray-800">
+                      HUTANG SAAT INI : Rp{" "}
+                      {Number(loan.current_debt_principal).toLocaleString(
+                        "id-ID",
+                      )}
+                    </div>
+                  </div>
+                  <div className="pl-2 mt-2 md:mt-0">
+                    <div className="font-bold text-gray-800">
+                      NOTES : {loan.notes}
+                    </div>
                   </div>
                 </div>
               ))}

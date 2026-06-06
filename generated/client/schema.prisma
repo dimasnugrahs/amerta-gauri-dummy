@@ -153,6 +153,7 @@ model LoanAccount {
   rate_amount      Decimal  @db.Decimal(15, 2)
   start_date       DateTime
   period_start     DateTime
+  notes            String   @db.Text
 
   current_debt_principal Decimal @db.Decimal(15, 2)
   current_debt_interest  Decimal @db.Decimal(15, 2)

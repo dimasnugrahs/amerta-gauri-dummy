@@ -196,6 +196,7 @@ exports.Prisma.LoanAccountScalarFieldEnum = {
   rate_amount: 'rate_amount',
   start_date: 'start_date',
   period_start: 'period_start',
+  notes: 'notes',
   current_debt_principal: 'current_debt_principal',
   current_debt_interest: 'current_debt_interest',
   status: 'status',

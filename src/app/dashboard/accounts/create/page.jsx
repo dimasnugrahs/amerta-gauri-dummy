@@ -271,6 +271,20 @@ export default function CreateLoanAccountPage() {
                 }
               />
             </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-bold text-gray-600 mb-1 uppercase">
+                Notes
+              </label>
+              <textarea
+                rows="4"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-amerta-500 bg-white text-gray-800"
+                placeholder="Tambahkan catatan apabila ada..."
+                value={formData.notes}
+                onChange={(e) =>
+                  setFormData({ ...formData, notes: e.target.value })
+                }
+              />
+            </div>
           </div>
 
           <div className="pt-8 grid grid-cols-1 md:grid-cols-2 gap-4">

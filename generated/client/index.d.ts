@@ -6753,6 +6753,7 @@ export namespace Prisma {
     rate_amount: Decimal | null
     start_date: Date | null
     period_start: Date | null
+    notes: string | null
     current_debt_principal: Decimal | null
     current_debt_interest: Decimal | null
     status: $Enums.StatusLoan | null
@@ -6772,6 +6773,7 @@ export namespace Prisma {
     rate_amount: Decimal | null
     start_date: Date | null
     period_start: Date | null
+    notes: string | null
     current_debt_principal: Decimal | null
     current_debt_interest: Decimal | null
     status: $Enums.StatusLoan | null
@@ -6791,6 +6793,7 @@ export namespace Prisma {
     rate_amount: number
     start_date: number
     period_start: number
+    notes: number
     current_debt_principal: number
     current_debt_interest: number
     status: number
@@ -6828,6 +6831,7 @@ export namespace Prisma {
     rate_amount?: true
     start_date?: true
     period_start?: true
+    notes?: true
     current_debt_principal?: true
     current_debt_interest?: true
     status?: true
@@ -6847,6 +6851,7 @@ export namespace Prisma {
     rate_amount?: true
     start_date?: true
     period_start?: true
+    notes?: true
     current_debt_principal?: true
     current_debt_interest?: true
     status?: true
@@ -6866,6 +6871,7 @@ export namespace Prisma {
     rate_amount?: true
     start_date?: true
     period_start?: true
+    notes?: true
     current_debt_principal?: true
     current_debt_interest?: true
     status?: true
@@ -6972,6 +6978,7 @@ export namespace Prisma {
     rate_amount: Decimal
     start_date: Date
     period_start: Date
+    notes: string
     current_debt_principal: Decimal
     current_debt_interest: Decimal
     status: $Enums.StatusLoan
@@ -7010,6 +7017,7 @@ export namespace Prisma {
     rate_amount?: boolean
     start_date?: boolean
     period_start?: boolean
+    notes?: boolean
     current_debt_principal?: boolean
     current_debt_interest?: boolean
     status?: boolean
@@ -7035,6 +7043,7 @@ export namespace Prisma {
     rate_amount?: boolean
     start_date?: boolean
     period_start?: boolean
+    notes?: boolean
     current_debt_principal?: boolean
     current_debt_interest?: boolean
     status?: boolean
@@ -7057,6 +7066,7 @@ export namespace Prisma {
     rate_amount?: boolean
     start_date?: boolean
     period_start?: boolean
+    notes?: boolean
     current_debt_principal?: boolean
     current_debt_interest?: boolean
     status?: boolean
@@ -7079,6 +7089,7 @@ export namespace Prisma {
     rate_amount?: boolean
     start_date?: boolean
     period_start?: boolean
+    notes?: boolean
     current_debt_principal?: boolean
     current_debt_interest?: boolean
     status?: boolean
@@ -7087,7 +7098,7 @@ export namespace Prisma {
     deleted_at?: boolean
   }
 
-  export type LoanAccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "no_rekening" | "marketing_id" | "customer_id" | "product_id" | "principal_amount" | "rate_percent" | "rate_amount" | "start_date" | "period_start" | "current_debt_principal" | "current_debt_interest" | "status" | "created_at" | "updated_at" | "deleted_at", ExtArgs["result"]["loanAccount"]>
+  export type LoanAccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "no_rekening" | "marketing_id" | "customer_id" | "product_id" | "principal_amount" | "rate_percent" | "rate_amount" | "start_date" | "period_start" | "notes" | "current_debt_principal" | "current_debt_interest" | "status" | "created_at" | "updated_at" | "deleted_at", ExtArgs["result"]["loanAccount"]>
   export type LoanAccountInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transactions?: boolean | LoanAccount$transactionsArgs<ExtArgs>
     capital_ledgers?: boolean | LoanAccount$capital_ledgersArgs<ExtArgs>
@@ -7127,6 +7138,7 @@ export namespace Prisma {
       rate_amount: Prisma.Decimal
       start_date: Date
       period_start: Date
+      notes: string
       current_debt_principal: Prisma.Decimal
       current_debt_interest: Prisma.Decimal
       status: $Enums.StatusLoan
@@ -7571,6 +7583,7 @@ export namespace Prisma {
     readonly rate_amount: FieldRef<"LoanAccount", 'Decimal'>
     readonly start_date: FieldRef<"LoanAccount", 'DateTime'>
     readonly period_start: FieldRef<"LoanAccount", 'DateTime'>
+    readonly notes: FieldRef<"LoanAccount", 'String'>
     readonly current_debt_principal: FieldRef<"LoanAccount", 'Decimal'>
     readonly current_debt_interest: FieldRef<"LoanAccount", 'Decimal'>
     readonly status: FieldRef<"LoanAccount", 'StatusLoan'>
@@ -10581,6 +10594,7 @@ export namespace Prisma {
     rate_amount: 'rate_amount',
     start_date: 'start_date',
     period_start: 'period_start',
+    notes: 'notes',
     current_debt_principal: 'current_debt_principal',
     current_debt_interest: 'current_debt_interest',
     status: 'status',
@@ -11226,6 +11240,7 @@ export namespace Prisma {
     rate_amount?: DecimalFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFilter<"LoanAccount"> | Date | string
     period_start?: DateTimeFilter<"LoanAccount"> | Date | string
+    notes?: StringFilter<"LoanAccount"> | string
     current_debt_principal?: DecimalFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFilter<"LoanAccount"> | $Enums.StatusLoan
@@ -11250,6 +11265,7 @@ export namespace Prisma {
     rate_amount?: SortOrder
     start_date?: SortOrder
     period_start?: SortOrder
+    notes?: SortOrder
     current_debt_principal?: SortOrder
     current_debt_interest?: SortOrder
     status?: SortOrder
@@ -11277,6 +11293,7 @@ export namespace Prisma {
     rate_amount?: DecimalFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFilter<"LoanAccount"> | Date | string
     period_start?: DateTimeFilter<"LoanAccount"> | Date | string
+    notes?: StringFilter<"LoanAccount"> | string
     current_debt_principal?: DecimalFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFilter<"LoanAccount"> | $Enums.StatusLoan
@@ -11301,6 +11318,7 @@ export namespace Prisma {
     rate_amount?: SortOrder
     start_date?: SortOrder
     period_start?: SortOrder
+    notes?: SortOrder
     current_debt_principal?: SortOrder
     current_debt_interest?: SortOrder
     status?: SortOrder
@@ -11328,6 +11346,7 @@ export namespace Prisma {
     rate_amount?: DecimalWithAggregatesFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeWithAggregatesFilter<"LoanAccount"> | Date | string
     period_start?: DateTimeWithAggregatesFilter<"LoanAccount"> | Date | string
+    notes?: StringWithAggregatesFilter<"LoanAccount"> | string
     current_debt_principal?: DecimalWithAggregatesFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalWithAggregatesFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanWithAggregatesFilter<"LoanAccount"> | $Enums.StatusLoan
@@ -12024,6 +12043,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -12048,6 +12068,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -12066,6 +12087,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -12090,6 +12112,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -12111,6 +12134,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -12127,6 +12151,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -12146,6 +12171,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -12873,6 +12899,7 @@ export namespace Prisma {
     rate_amount?: SortOrder
     start_date?: SortOrder
     period_start?: SortOrder
+    notes?: SortOrder
     current_debt_principal?: SortOrder
     current_debt_interest?: SortOrder
     status?: SortOrder
@@ -12900,6 +12927,7 @@ export namespace Prisma {
     rate_amount?: SortOrder
     start_date?: SortOrder
     period_start?: SortOrder
+    notes?: SortOrder
     current_debt_principal?: SortOrder
     current_debt_interest?: SortOrder
     status?: SortOrder
@@ -12919,6 +12947,7 @@ export namespace Prisma {
     rate_amount?: SortOrder
     start_date?: SortOrder
     period_start?: SortOrder
+    notes?: SortOrder
     current_debt_principal?: SortOrder
     current_debt_interest?: SortOrder
     status?: SortOrder
@@ -14240,6 +14269,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -14262,6 +14292,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -14541,6 +14572,7 @@ export namespace Prisma {
     rate_amount?: DecimalFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFilter<"LoanAccount"> | Date | string
     period_start?: DateTimeFilter<"LoanAccount"> | Date | string
+    notes?: StringFilter<"LoanAccount"> | string
     current_debt_principal?: DecimalFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFilter<"LoanAccount"> | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFilter<"LoanAccount"> | $Enums.StatusLoan
@@ -14641,6 +14673,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -14663,6 +14696,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -14831,6 +14865,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -14853,6 +14888,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -15080,6 +15116,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -15103,6 +15140,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -15246,6 +15284,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -15269,6 +15308,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -15767,6 +15807,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -15790,6 +15831,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -15957,6 +15999,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -15980,6 +16023,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -16294,6 +16338,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -16484,6 +16529,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -16506,6 +16552,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -16526,6 +16573,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -16689,6 +16737,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -16705,6 +16754,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -16727,6 +16777,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -16747,6 +16798,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -16765,6 +16817,7 @@ export namespace Prisma {
     rate_amount: Decimal | DecimalJsLike | number | string
     start_date: Date | string
     period_start: Date | string
+    notes: string
     current_debt_principal: Decimal | DecimalJsLike | number | string
     current_debt_interest: Decimal | DecimalJsLike | number | string
     status?: $Enums.StatusLoan
@@ -16781,6 +16834,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -16803,6 +16857,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
@@ -16823,6 +16878,7 @@ export namespace Prisma {
     rate_amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     start_date?: DateTimeFieldUpdateOperationsInput | Date | string
     period_start?: DateTimeFieldUpdateOperationsInput | Date | string
+    notes?: StringFieldUpdateOperationsInput | string
     current_debt_principal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     current_debt_interest?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumStatusLoanFieldUpdateOperationsInput | $Enums.StatusLoan
